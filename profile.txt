@@ -1,0 +1,627 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 50.02      0.02     0.02        2    10.00    20.01  std::vector<double, std::allocator<double> >::~vector()
+ 25.01      0.03     0.01  1421732     0.00     0.00  __gnu_cxx::new_allocator<double>::deallocate(double*, unsigned long)
+ 25.01      0.04     0.01  1247236     0.00     0.00  void std::_Destroy<double*, double>(double*, double*, std::allocator<double>&)
+  0.00      0.04     0.00  1484310     0.00     0.00  void std::_Destroy_aux<true>::__destroy<double*>(double*, double*)
+  0.00      0.04     0.00  1484310     0.00     0.00  void std::_Destroy<double*>(double*, double*)
+  0.00      0.04     0.00  1247236     0.00     0.00  __gnu_cxx::new_allocator<double>::~new_allocator()
+  0.00      0.04     0.00  1247236     0.00     0.00  std::allocator<double>::~allocator()
+  0.00      0.04     0.00  1247236     0.00     0.00  std::_Vector_base<double, std::allocator<double> >::_Vector_impl::~_Vector_impl()
+  0.00      0.04     0.00  1247236     0.00     0.00  std::_Vector_base<double, std::allocator<double> >::_M_deallocate(double*, unsigned long)
+  0.00      0.04     0.00  1247236     0.00     0.00  std::_Vector_base<double, std::allocator<double> >::_M_get_Tp_allocator()
+  0.00      0.04     0.00  1247236     0.00     0.00  std::_Vector_base<double, std::allocator<double> >::~_Vector_base()
+  0.00      0.04     0.00    53495     0.00     0.00  __gnu_cxx::new_allocator<double>::new_allocator()
+  0.00      0.04     0.00    53495     0.00     0.00  std::allocator<double>::allocator()
+  0.00      0.04     0.00    53495     0.00     0.00  std::_Vector_base<double, std::allocator<double> >::_Vector_impl::_Vector_impl()
+  0.00      0.04     0.00    53495     0.00     0.00  std::_Vector_base<double, std::allocator<double> >::_Vector_base()
+  0.00      0.04     0.00    40000     0.00     0.00  boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::min()
+  0.00      0.04     0.00    40000     0.00     0.00  boost::random::detail::subtract<unsigned int, false>::operator()(unsigned int, unsigned int)
+  0.00      0.04     0.00    20010     0.00     0.00  boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::max()
+  0.00      0.04     0.00    20000     0.00     0.00  boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::operator()()
+  0.00      0.04     0.00    20000     0.00     0.00  double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double)
+  0.00      0.04     0.00    20000     0.00     0.00  double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double, mpl_::bool_<true>)
+  0.00      0.04     0.00    20000     0.00     0.00  double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const
+  0.00      0.04     0.00       66     0.00     0.00  long double const boost::math::tools::make_big_value<long double>(long double, char const*, mpl_::bool_<true> const&, mpl_::bool_<false> const&)
+  0.00      0.04     0.00       40     0.00     0.00  boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::twist()
+  0.00      0.04     0.00       10     0.00     0.00  boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::seed(unsigned int const&)
+  0.00      0.04     0.00       10     0.00     0.00  boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&)
+  0.00      0.04     0.00       10     0.00     0.00  boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double)
+  0.00      0.04     0.00        9     0.00     0.00  greens_functions::GreensFunction::GreensFunction(double)
+  0.00      0.04     0.00        9     0.00     0.00  greens_functions::GreensFunction::~GreensFunction()
+  0.00      0.04     0.00        4     0.00     0.00  boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::force_instantiate()
+  0.00      0.04     0.00        4     0.00     0.00  boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::force_instantiate() const
+  0.00      0.04     0.00        2     0.00     0.00  long double boost::math::tools::evaluate_rational<17ul, long double, long double, long double>(long double const (&) [17ul], long double const (&) [17ul], long double const&)
+  0.00      0.04     0.00        2     0.00     0.00  long double boost::math::tools::detail::evaluate_rational_c_imp<long double, long double, long double>(long double const*, long double const*, long double const&, mpl_::int_<17> const*)
+  0.00      0.04     0.00        2     0.00     0.00  boost::array<boost::detail::multi_array::index_range<long, unsigned long>, 1ul>::array()
+  0.00      0.04     0.00        2     0.00     0.00  boost::array<boost::detail::multi_array::extent_range<long, unsigned long>, 1ul>::array()
+  0.00      0.04     0.00        2     0.00     0.00  boost::detail::multi_array::index_range<long, unsigned long>::from_start()
+  0.00      0.04     0.00        2     0.00     0.00  boost::detail::multi_array::index_range<long, unsigned long>::to_end()
+  0.00      0.04     0.00        2     0.00     0.00  boost::detail::multi_array::index_range<long, unsigned long>::index_range()
+  0.00      0.04     0.00        2     0.00     0.00  boost::detail::multi_array::extent_range<long, unsigned long>::extent_range()
+  0.00      0.04     0.00        2     0.00     0.00  std::numeric_limits<long>::max()
+  0.00      0.04     0.00        2     0.00     0.00  std::numeric_limits<long>::min()
+  0.00      0.04     0.00        2     0.00     0.00  std::pair<long, long>::pair(long const&, long const&)
+  0.00      0.04     0.00        2     0.00     0.00  std::vector<double, std::allocator<double> >::vector()
+  0.00      0.04     0.00        1     0.00     0.00  _GLOBAL__sub_I_main
+  0.00      0.04     0.00        1     0.00     0.00  __static_initialization_and_destruction_0(int, int)
+  0.00      0.04     0.00        1     0.00     0.00  void test_func<greens_functions::GreensFunction3D>(greens_functions::GreensFunction3D, std::string)
+  0.00      0.04     0.00        1     0.00     0.00  void test_func<greens_functions::GreensFunction3DAbs>(greens_functions::GreensFunction3DAbs, std::string)
+  0.00      0.04     0.00        1     0.00     0.00  void test_func<greens_functions::GreensFunction1DAbsAbs>(greens_functions::GreensFunction1DAbsAbs, std::string)
+  0.00      0.04     0.00        1     0.00     0.00  void test_func<greens_functions::GreensFunction1DRadAbs>(greens_functions::GreensFunction1DRadAbs, std::string)
+  0.00      0.04     0.00        1     0.00     0.00  void test_func<greens_functions::GreensFunction2DAbsSym>(greens_functions::GreensFunction2DAbsSym, std::string)
+  0.00      0.04     0.00        1     0.00     0.00  void test_func<greens_functions::GreensFunction2DRadAbs>(greens_functions::GreensFunction2DRadAbs, std::string)
+  0.00      0.04     0.00        1     0.00     0.00  void test_func<greens_functions::GreensFunction3DAbsSym>(greens_functions::GreensFunction3DAbsSym, std::string)
+  0.00      0.04     0.00        1     0.00     0.00  void test_func<greens_functions::GreensFunction3DRadAbs>(greens_functions::GreensFunction3DRadAbs, std::string)
+  0.00      0.04     0.00        1     0.00     0.00  void test_func<greens_functions::GreensFunction3DRadInf>(greens_functions::GreensFunction3DRadInf, std::string)
+  0.00      0.04     0.00        1     0.00     0.00  void test_func<greens_functions::GreensFunction1DAbsSinkAbs>(greens_functions::GreensFunction1DAbsSinkAbs, std::string)
+  0.00      0.04     0.00        1     0.00     0.00  greens_functions::GreensFunction3D::GreensFunction3D(double, double)
+  0.00      0.04     0.00        1     0.00     0.00  greens_functions::PairGreensFunction::PairGreensFunction(double, double, double, double)
+  0.00      0.04     0.00        1     0.00     0.00  greens_functions::GreensFunction1DAbsAbs::GreensFunction1DAbsAbs(double, double, double, double)
+  0.00      0.04     0.00        1     0.00     0.00  greens_functions::GreensFunction1DAbsAbs::~GreensFunction1DAbsAbs()
+  0.00      0.04     0.00        1     0.00     0.00  greens_functions::GreensFunction1DRadAbs::GreensFunction1DRadAbs(double, double, double, double, double)
+  0.00      0.04     0.00        1     0.00    20.01  greens_functions::GreensFunction1DRadAbs::~GreensFunction1DRadAbs()
+  0.00      0.04     0.00        1     0.00     0.00  greens_functions::GreensFunction2DAbsSym::GreensFunction2DAbsSym(double, double)
+  0.00      0.04     0.00        1     0.00     0.00  greens_functions::GreensFunction2DAbsSym::~GreensFunction2DAbsSym()
+  0.00      0.04     0.00        1     0.00     0.00  greens_functions::GreensFunction3DAbsSym::GreensFunction3DAbsSym(double, double)
+  0.00      0.04     0.00        1     0.00     0.00  greens_functions::GreensFunction3DAbsSym::~GreensFunction3DAbsSym()
+  0.00      0.04     0.00        1     0.00     0.00  greens_functions::GreensFunction1DAbsSinkAbs::GreensFunction1DAbsSinkAbs(double, double, double, double, double, double)
+  0.00      0.04     0.00        1     0.00    20.01  greens_functions::GreensFunction1DAbsSinkAbs::~GreensFunction1DAbsSinkAbs()
+  0.00      0.04     0.00        1     0.00     0.00  long double boost::math::lanczos::lanczos17m64::lanczos_sum<long double>(long double const&)
+  0.00      0.04     0.00        1     0.00     0.00  long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_1<long double>(long double const&)
+  0.00      0.04     0.00        1     0.00     0.00  long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_2<long double>(long double const&)
+  0.00      0.04     0.00        1     0.00     0.00  boost::math::lanczos::lanczos17m64::g()
+  0.00      0.04     0.00        1     0.00     0.00  long double boost::math::lanczos::lanczos17m64::lanczos_sum_expG_scaled<long double>(long double const&)
+  0.00      0.04     0.00        1     0.00     0.00  boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::init()
+  0.00      0.04     0.00        1     0.00     0.00  boost::detail::multi_array::extent_gen<0ul>::extent_gen()
+  0.00      0.04     0.00        1     0.00     0.00  boost::detail::multi_array::index_gen<0, 0>::index_gen()
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 24.99% of 0.04 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]    100.0    0.00    0.04                 main [1]
+                0.00    0.02       1/1           greens_functions::GreensFunction1DAbsSinkAbs::~GreensFunction1DAbsSinkAbs() [4]
+                0.00    0.02       1/1           greens_functions::GreensFunction1DRadAbs::~GreensFunction1DRadAbs() [3]
+                0.00    0.00       1/1           greens_functions::GreensFunction1DAbsAbs::GreensFunction1DAbsAbs(double, double, double, double) [67]
+                0.00    0.00       1/1           void test_func<greens_functions::GreensFunction1DAbsAbs>(greens_functions::GreensFunction1DAbsAbs, std::string) [57]
+                0.00    0.00       1/1           greens_functions::GreensFunction1DAbsAbs::~GreensFunction1DAbsAbs() [68]
+                0.00    0.00       1/1           greens_functions::GreensFunction1DAbsSinkAbs::GreensFunction1DAbsSinkAbs(double, double, double, double, double, double) [74]
+                0.00    0.00       1/1           void test_func<greens_functions::GreensFunction1DAbsSinkAbs>(greens_functions::GreensFunction1DAbsSinkAbs, std::string) [64]
+                0.00    0.00       1/1           greens_functions::GreensFunction1DRadAbs::GreensFunction1DRadAbs(double, double, double, double, double) [69]
+                0.00    0.00       1/1           void test_func<greens_functions::GreensFunction1DRadAbs>(greens_functions::GreensFunction1DRadAbs, std::string) [58]
+                0.00    0.00       1/1           greens_functions::GreensFunction2DAbsSym::GreensFunction2DAbsSym(double, double) [70]
+                0.00    0.00       1/1           void test_func<greens_functions::GreensFunction2DAbsSym>(greens_functions::GreensFunction2DAbsSym, std::string) [59]
+                0.00    0.00       1/1           greens_functions::GreensFunction2DAbsSym::~GreensFunction2DAbsSym() [71]
+                0.00    0.00       1/1           void test_func<greens_functions::GreensFunction2DRadAbs>(greens_functions::GreensFunction2DRadAbs, std::string) [60]
+                0.00    0.00       1/1           greens_functions::GreensFunction3D::GreensFunction3D(double, double) [65]
+                0.00    0.00       1/1           void test_func<greens_functions::GreensFunction3D>(greens_functions::GreensFunction3D, std::string) [55]
+                0.00    0.00       1/1           void test_func<greens_functions::GreensFunction3DAbs>(greens_functions::GreensFunction3DAbs, std::string) [56]
+                0.00    0.00       1/1           greens_functions::GreensFunction3DAbsSym::GreensFunction3DAbsSym(double, double) [72]
+                0.00    0.00       1/1           void test_func<greens_functions::GreensFunction3DAbsSym>(greens_functions::GreensFunction3DAbsSym, std::string) [61]
+                0.00    0.00       1/1           greens_functions::GreensFunction3DAbsSym::~GreensFunction3DAbsSym() [73]
+                0.00    0.00       1/1           void test_func<greens_functions::GreensFunction3DRadAbs>(greens_functions::GreensFunction3DRadAbs, std::string) [62]
+                0.00    0.00       1/1           void test_func<greens_functions::GreensFunction3DRadInf>(greens_functions::GreensFunction3DRadInf, std::string) [63]
+-----------------------------------------------
+                0.01    0.01       1/2           greens_functions::GreensFunction1DAbsSinkAbs::~GreensFunction1DAbsSinkAbs() [4]
+                0.01    0.01       1/2           greens_functions::GreensFunction1DRadAbs::~GreensFunction1DRadAbs() [3]
+[2]    100.0    0.02    0.02       2         std::vector<double, std::allocator<double> >::~vector() [2]
+                0.01    0.00 1247236/1247236     void std::_Destroy<double*, double>(double*, double*, std::allocator<double>&) [8]
+                0.00    0.01 1247236/1247236     std::_Vector_base<double, std::allocator<double> >::~_Vector_base() [7]
+                0.00    0.00 1247236/1247236     std::_Vector_base<double, std::allocator<double> >::_M_get_Tp_allocator() [20]
+-----------------------------------------------
+                0.00    0.02       1/1           main [1]
+[3]     50.0    0.00    0.02       1         greens_functions::GreensFunction1DRadAbs::~GreensFunction1DRadAbs() [3]
+                0.01    0.01       1/2           std::vector<double, std::allocator<double> >::~vector() [2]
+                0.00    0.00       1/9           greens_functions::GreensFunction::~GreensFunction() [38]
+-----------------------------------------------
+                0.00    0.02       1/1           main [1]
+[4]     50.0    0.00    0.02       1         greens_functions::GreensFunction1DAbsSinkAbs::~GreensFunction1DAbsSinkAbs() [4]
+                0.01    0.01       1/2           std::vector<double, std::allocator<double> >::~vector() [2]
+                0.00    0.00       1/9           greens_functions::GreensFunction::~GreensFunction() [38]
+-----------------------------------------------
+                0.01    0.00 1421732/1421732     std::_Vector_base<double, std::allocator<double> >::_M_deallocate(double*, unsigned long) [6]
+[5]     25.0    0.01    0.00 1421732         __gnu_cxx::new_allocator<double>::deallocate(double*, unsigned long) [5]
+-----------------------------------------------
+                0.00    0.01 1247236/1247236     std::_Vector_base<double, std::allocator<double> >::~_Vector_base() [7]
+[6]     25.0    0.00    0.01 1247236         std::_Vector_base<double, std::allocator<double> >::_M_deallocate(double*, unsigned long) [6]
+                0.01    0.00 1421732/1421732     __gnu_cxx::new_allocator<double>::deallocate(double*, unsigned long) [5]
+-----------------------------------------------
+                0.00    0.01 1247236/1247236     std::vector<double, std::allocator<double> >::~vector() [2]
+[7]     25.0    0.00    0.01 1247236         std::_Vector_base<double, std::allocator<double> >::~_Vector_base() [7]
+                0.00    0.01 1247236/1247236     std::_Vector_base<double, std::allocator<double> >::_M_deallocate(double*, unsigned long) [6]
+                0.00    0.00 1247236/1247236     std::_Vector_base<double, std::allocator<double> >::_Vector_impl::~_Vector_impl() [19]
+-----------------------------------------------
+                0.01    0.00 1247236/1247236     std::vector<double, std::allocator<double> >::~vector() [2]
+[8]     25.0    0.01    0.00 1247236         void std::_Destroy<double*, double>(double*, double*, std::allocator<double>&) [8]
+                0.00    0.00 1484310/1484310     void std::_Destroy<double*>(double*, double*) [16]
+-----------------------------------------------
+                0.00    0.00 1484310/1484310     void std::_Destroy<double*>(double*, double*) [16]
+[15]     0.0    0.00    0.00 1484310         void std::_Destroy_aux<true>::__destroy<double*>(double*, double*) [15]
+-----------------------------------------------
+                0.00    0.00 1484310/1484310     void std::_Destroy<double*, double>(double*, double*, std::allocator<double>&) [8]
+[16]     0.0    0.00    0.00 1484310         void std::_Destroy<double*>(double*, double*) [16]
+                0.00    0.00 1484310/1484310     void std::_Destroy_aux<true>::__destroy<double*>(double*, double*) [15]
+-----------------------------------------------
+                0.00    0.00 1247236/1247236     std::allocator<double>::~allocator() [18]
+[17]     0.0    0.00    0.00 1247236         __gnu_cxx::new_allocator<double>::~new_allocator() [17]
+-----------------------------------------------
+                0.00    0.00 1247236/1247236     std::_Vector_base<double, std::allocator<double> >::_Vector_impl::~_Vector_impl() [19]
+[18]     0.0    0.00    0.00 1247236         std::allocator<double>::~allocator() [18]
+                0.00    0.00 1247236/1247236     __gnu_cxx::new_allocator<double>::~new_allocator() [17]
+-----------------------------------------------
+                0.00    0.00 1247236/1247236     std::_Vector_base<double, std::allocator<double> >::~_Vector_base() [7]
+[19]     0.0    0.00    0.00 1247236         std::_Vector_base<double, std::allocator<double> >::_Vector_impl::~_Vector_impl() [19]
+                0.00    0.00 1247236/1247236     std::allocator<double>::~allocator() [18]
+-----------------------------------------------
+                0.00    0.00 1247236/1247236     std::vector<double, std::allocator<double> >::~vector() [2]
+[20]     0.0    0.00    0.00 1247236         std::_Vector_base<double, std::allocator<double> >::_M_get_Tp_allocator() [20]
+-----------------------------------------------
+                0.00    0.00   53495/53495       std::allocator<double>::allocator() [22]
+[21]     0.0    0.00    0.00   53495         __gnu_cxx::new_allocator<double>::new_allocator() [21]
+-----------------------------------------------
+                0.00    0.00   53495/53495       std::_Vector_base<double, std::allocator<double> >::_Vector_impl::_Vector_impl() [23]
+[22]     0.0    0.00    0.00   53495         std::allocator<double>::allocator() [22]
+                0.00    0.00   53495/53495       __gnu_cxx::new_allocator<double>::new_allocator() [21]
+-----------------------------------------------
+                0.00    0.00   53495/53495       std::_Vector_base<double, std::allocator<double> >::_Vector_base() [24]
+[23]     0.0    0.00    0.00   53495         std::_Vector_base<double, std::allocator<double> >::_Vector_impl::_Vector_impl() [23]
+                0.00    0.00   53495/53495       std::allocator<double>::allocator() [22]
+-----------------------------------------------
+                0.00    0.00   53495/53495       std::vector<double, std::allocator<double> >::vector() [52]
+[24]     0.0    0.00    0.00   53495         std::_Vector_base<double, std::allocator<double> >::_Vector_base() [24]
+                0.00    0.00   53495/53495       std::_Vector_base<double, std::allocator<double> >::_Vector_impl::_Vector_impl() [23]
+-----------------------------------------------
+                0.00    0.00   40000/40000       double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double, mpl_::bool_<true>) [30]
+[25]     0.0    0.00    0.00   40000         boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::min() [25]
+-----------------------------------------------
+                0.00    0.00   40000/40000       double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double, mpl_::bool_<true>) [30]
+[26]     0.0    0.00    0.00   40000         boost::random::detail::subtract<unsigned int, false>::operator()(unsigned int, unsigned int) [26]
+-----------------------------------------------
+                0.00    0.00      10/20010       boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::seed(unsigned int const&) [34]
+                0.00    0.00   20000/20010       double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double, mpl_::bool_<true>) [30]
+[27]     0.0    0.00    0.00   20010         boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::max() [27]
+-----------------------------------------------
+                0.00    0.00   20000/20000       double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double, mpl_::bool_<true>) [30]
+[28]     0.0    0.00    0.00   20000         boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::operator()() [28]
+                0.00    0.00      40/40          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::twist() [33]
+-----------------------------------------------
+                0.00    0.00   20000/20000       double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+[29]     0.0    0.00    0.00   20000         double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double) [29]
+                0.00    0.00   20000/20000       double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double, mpl_::bool_<true>) [30]
+-----------------------------------------------
+                0.00    0.00   20000/20000       double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double) [29]
+[30]     0.0    0.00    0.00   20000         double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double, mpl_::bool_<true>) [30]
+                0.00    0.00   40000/40000       boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::min() [25]
+                0.00    0.00   40000/40000       boost::random::detail::subtract<unsigned int, false>::operator()(unsigned int, unsigned int) [26]
+                0.00    0.00   20000/20000       boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::operator()() [28]
+                0.00    0.00   20000/20010       boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::max() [27]
+-----------------------------------------------
+                0.00    0.00    2000/20000       void test_func<greens_functions::GreensFunction1DAbsAbs>(greens_functions::GreensFunction1DAbsAbs, std::string) [57]
+                0.00    0.00    2000/20000       void test_func<greens_functions::GreensFunction1DAbsSinkAbs>(greens_functions::GreensFunction1DAbsSinkAbs, std::string) [64]
+                0.00    0.00    2000/20000       void test_func<greens_functions::GreensFunction1DRadAbs>(greens_functions::GreensFunction1DRadAbs, std::string) [58]
+                0.00    0.00    2000/20000       void test_func<greens_functions::GreensFunction2DAbsSym>(greens_functions::GreensFunction2DAbsSym, std::string) [59]
+                0.00    0.00    2000/20000       void test_func<greens_functions::GreensFunction2DRadAbs>(greens_functions::GreensFunction2DRadAbs, std::string) [60]
+                0.00    0.00    2000/20000       void test_func<greens_functions::GreensFunction3D>(greens_functions::GreensFunction3D, std::string) [55]
+                0.00    0.00    2000/20000       void test_func<greens_functions::GreensFunction3DAbs>(greens_functions::GreensFunction3DAbs, std::string) [56]
+                0.00    0.00    2000/20000       void test_func<greens_functions::GreensFunction3DAbsSym>(greens_functions::GreensFunction3DAbsSym, std::string) [61]
+                0.00    0.00    2000/20000       void test_func<greens_functions::GreensFunction3DRadAbs>(greens_functions::GreensFunction3DRadAbs, std::string) [62]
+                0.00    0.00    2000/20000       void test_func<greens_functions::GreensFunction3DRadInf>(greens_functions::GreensFunction3DRadInf, std::string) [63]
+[31]     0.0    0.00    0.00   20000         double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+                0.00    0.00   20000/20000       double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double) [29]
+-----------------------------------------------
+                0.00    0.00      16/66          long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_1<long double>(long double const&) [76]
+                0.00    0.00      16/66          long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_2<long double>(long double const&) [77]
+                0.00    0.00      17/66          long double boost::math::lanczos::lanczos17m64::lanczos_sum_expG_scaled<long double>(long double const&) [79]
+                0.00    0.00      17/66          long double boost::math::lanczos::lanczos17m64::lanczos_sum<long double>(long double const&) [75]
+[32]     0.0    0.00    0.00      66         long double const boost::math::tools::make_big_value<long double>(long double, char const*, mpl_::bool_<true> const&, mpl_::bool_<false> const&) [32]
+-----------------------------------------------
+                0.00    0.00      40/40          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::operator()() [28]
+[33]     0.0    0.00    0.00      40         boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::twist() [33]
+-----------------------------------------------
+                0.00    0.00      10/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+[34]     0.0    0.00    0.00      10         boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::seed(unsigned int const&) [34]
+                0.00    0.00      10/20010       boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::max() [27]
+-----------------------------------------------
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction1DAbsAbs>(greens_functions::GreensFunction1DAbsAbs, std::string) [57]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction1DAbsSinkAbs>(greens_functions::GreensFunction1DAbsSinkAbs, std::string) [64]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction1DRadAbs>(greens_functions::GreensFunction1DRadAbs, std::string) [58]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction2DAbsSym>(greens_functions::GreensFunction2DAbsSym, std::string) [59]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction2DRadAbs>(greens_functions::GreensFunction2DRadAbs, std::string) [60]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction3D>(greens_functions::GreensFunction3D, std::string) [55]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction3DAbs>(greens_functions::GreensFunction3DAbs, std::string) [56]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction3DAbsSym>(greens_functions::GreensFunction3DAbsSym, std::string) [61]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction3DRadAbs>(greens_functions::GreensFunction3DRadAbs, std::string) [62]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction3DRadInf>(greens_functions::GreensFunction3DRadInf, std::string) [63]
+[35]     0.0    0.00    0.00      10         boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+                0.00    0.00      10/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::seed(unsigned int const&) [34]
+-----------------------------------------------
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction1DAbsAbs>(greens_functions::GreensFunction1DAbsAbs, std::string) [57]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction1DAbsSinkAbs>(greens_functions::GreensFunction1DAbsSinkAbs, std::string) [64]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction1DRadAbs>(greens_functions::GreensFunction1DRadAbs, std::string) [58]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction2DAbsSym>(greens_functions::GreensFunction2DAbsSym, std::string) [59]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction2DRadAbs>(greens_functions::GreensFunction2DRadAbs, std::string) [60]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction3D>(greens_functions::GreensFunction3D, std::string) [55]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction3DAbs>(greens_functions::GreensFunction3DAbs, std::string) [56]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction3DAbsSym>(greens_functions::GreensFunction3DAbsSym, std::string) [61]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction3DRadAbs>(greens_functions::GreensFunction3DRadAbs, std::string) [62]
+                0.00    0.00       1/10          void test_func<greens_functions::GreensFunction3DRadInf>(greens_functions::GreensFunction3DRadInf, std::string) [63]
+[36]     0.0    0.00    0.00      10         boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double) [36]
+-----------------------------------------------
+                0.00    0.00       1/9           greens_functions::GreensFunction1DAbsAbs::GreensFunction1DAbsAbs(double, double, double, double) [67]
+                0.00    0.00       1/9           greens_functions::GreensFunction1DAbsSinkAbs::GreensFunction1DAbsSinkAbs(double, double, double, double, double, double) [74]
+                0.00    0.00       1/9           greens_functions::GreensFunction1DRadAbs::GreensFunction1DRadAbs(double, double, double, double, double) [69]
+                0.00    0.00       1/9           greens_functions::GreensFunction3DAbsSym::GreensFunction3DAbsSym(double, double) [72]
+                0.00    0.00       5/9           greens_functions::PairGreensFunction::PairGreensFunction(double, double, double, double) [66]
+[37]     0.0    0.00    0.00       9         greens_functions::GreensFunction::GreensFunction(double) [37]
+-----------------------------------------------
+                0.00    0.00       1/9           greens_functions::GreensFunction1DAbsAbs::~GreensFunction1DAbsAbs() [68]
+                0.00    0.00       1/9           greens_functions::GreensFunction1DAbsSinkAbs::~GreensFunction1DAbsSinkAbs() [4]
+                0.00    0.00       1/9           greens_functions::GreensFunction1DRadAbs::~GreensFunction1DRadAbs() [3]
+                0.00    0.00       1/9           greens_functions::GreensFunction3DAbsSym::~GreensFunction3DAbsSym() [73]
+                0.00    0.00       5/9           greens_functions::PairGreensFunction::~PairGreensFunction() [84]
+[38]     0.0    0.00    0.00       9         greens_functions::GreensFunction::~GreensFunction() [38]
+-----------------------------------------------
+                0.00    0.00       1/4           long double boost::math::lanczos::lanczos17m64::lanczos_sum_expG_scaled<long double>(long double const&) [79]
+                0.00    0.00       1/4           long double boost::math::lanczos::lanczos17m64::lanczos_sum<long double>(long double const&) [75]
+                0.00    0.00       1/4           long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_1<long double>(long double const&) [76]
+                0.00    0.00       1/4           long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_2<long double>(long double const&) [77]
+[39]     0.0    0.00    0.00       4         boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::force_instantiate() [39]
+                0.00    0.00       4/4           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::force_instantiate() const [40]
+-----------------------------------------------
+                0.00    0.00       4/4           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::force_instantiate() [39]
+[40]     0.0    0.00    0.00       4         boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::force_instantiate() const [40]
+-----------------------------------------------
+                0.00    0.00       1/2           long double boost::math::lanczos::lanczos17m64::lanczos_sum_expG_scaled<long double>(long double const&) [79]
+                0.00    0.00       1/2           long double boost::math::lanczos::lanczos17m64::lanczos_sum<long double>(long double const&) [75]
+[41]     0.0    0.00    0.00       2         long double boost::math::tools::evaluate_rational<17ul, long double, long double, long double>(long double const (&) [17ul], long double const (&) [17ul], long double const&) [41]
+                0.00    0.00       2/2           long double boost::math::tools::detail::evaluate_rational_c_imp<long double, long double, long double>(long double const*, long double const*, long double const&, mpl_::int_<17> const*) [42]
+-----------------------------------------------
+                0.00    0.00       2/2           long double boost::math::tools::evaluate_rational<17ul, long double, long double, long double>(long double const (&) [17ul], long double const (&) [17ul], long double const&) [41]
+[42]     0.0    0.00    0.00       2         long double boost::math::tools::detail::evaluate_rational_c_imp<long double, long double, long double>(long double const*, long double const*, long double const&, mpl_::int_<17> const*) [42]
+-----------------------------------------------
+                0.00    0.00       2/2           boost::detail::multi_array::index_gen<0, 0>::index_gen() [82]
+[43]     0.0    0.00    0.00       2         boost::array<boost::detail::multi_array::index_range<long, unsigned long>, 1ul>::array() [43]
+                0.00    0.00       2/2           boost::detail::multi_array::index_range<long, unsigned long>::index_range() [47]
+-----------------------------------------------
+                0.00    0.00       2/2           boost::detail::multi_array::extent_gen<0ul>::extent_gen() [81]
+[44]     0.0    0.00    0.00       2         boost::array<boost::detail::multi_array::extent_range<long, unsigned long>, 1ul>::array() [44]
+                0.00    0.00       2/2           boost::detail::multi_array::extent_range<long, unsigned long>::extent_range() [48]
+-----------------------------------------------
+                0.00    0.00       2/2           boost::detail::multi_array::index_range<long, unsigned long>::index_range() [47]
+[45]     0.0    0.00    0.00       2         boost::detail::multi_array::index_range<long, unsigned long>::from_start() [45]
+                0.00    0.00       2/2           std::numeric_limits<long>::min() [50]
+-----------------------------------------------
+                0.00    0.00       2/2           boost::detail::multi_array::index_range<long, unsigned long>::index_range() [47]
+[46]     0.0    0.00    0.00       2         boost::detail::multi_array::index_range<long, unsigned long>::to_end() [46]
+                0.00    0.00       2/2           std::numeric_limits<long>::max() [49]
+-----------------------------------------------
+                0.00    0.00       2/2           boost::array<boost::detail::multi_array::index_range<long, unsigned long>, 1ul>::array() [43]
+[47]     0.0    0.00    0.00       2         boost::detail::multi_array::index_range<long, unsigned long>::index_range() [47]
+                0.00    0.00       2/2           boost::detail::multi_array::index_range<long, unsigned long>::from_start() [45]
+                0.00    0.00       2/2           boost::detail::multi_array::index_range<long, unsigned long>::to_end() [46]
+-----------------------------------------------
+                0.00    0.00       2/2           boost::array<boost::detail::multi_array::extent_range<long, unsigned long>, 1ul>::array() [44]
+[48]     0.0    0.00    0.00       2         boost::detail::multi_array::extent_range<long, unsigned long>::extent_range() [48]
+                0.00    0.00       2/2           std::pair<long, long>::pair(long const&, long const&) [51]
+-----------------------------------------------
+                0.00    0.00       2/2           boost::detail::multi_array::index_range<long, unsigned long>::to_end() [46]
+[49]     0.0    0.00    0.00       2         std::numeric_limits<long>::max() [49]
+-----------------------------------------------
+                0.00    0.00       2/2           boost::detail::multi_array::index_range<long, unsigned long>::from_start() [45]
+[50]     0.0    0.00    0.00       2         std::numeric_limits<long>::min() [50]
+-----------------------------------------------
+                0.00    0.00       2/2           boost::detail::multi_array::extent_range<long, unsigned long>::extent_range() [48]
+[51]     0.0    0.00    0.00       2         std::pair<long, long>::pair(long const&, long const&) [51]
+-----------------------------------------------
+                0.00    0.00       1/2           greens_functions::GreensFunction1DAbsSinkAbs::GreensFunction1DAbsSinkAbs(double, double, double, double, double, double) [74]
+                0.00    0.00       1/2           greens_functions::GreensFunction1DRadAbs::GreensFunction1DRadAbs(double, double, double, double, double) [69]
+[52]     0.0    0.00    0.00       2         std::vector<double, std::allocator<double> >::vector() [52]
+                0.00    0.00   53495/53495       std::_Vector_base<double, std::allocator<double> >::_Vector_base() [24]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [91]
+[53]     0.0    0.00    0.00       1         _GLOBAL__sub_I_main [53]
+                0.00    0.00       1/1           __static_initialization_and_destruction_0(int, int) [54]
+-----------------------------------------------
+                0.00    0.00       1/1           _GLOBAL__sub_I_main [53]
+[54]     0.0    0.00    0.00       1         __static_initialization_and_destruction_0(int, int) [54]
+                0.00    0.00       1/1           boost::detail::multi_array::extent_gen<0ul>::extent_gen() [81]
+                0.00    0.00       1/1           boost::detail::multi_array::index_gen<0, 0>::index_gen() [82]
+                0.00    0.00       1/1           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::init() [80]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[55]     0.0    0.00    0.00       1         void test_func<greens_functions::GreensFunction3D>(greens_functions::GreensFunction3D, std::string) [55]
+                0.00    0.00    2000/20000       double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+                0.00    0.00       1/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+                0.00    0.00       1/10          boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double) [36]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[56]     0.0    0.00    0.00       1         void test_func<greens_functions::GreensFunction3DAbs>(greens_functions::GreensFunction3DAbs, std::string) [56]
+                0.00    0.00    2000/20000       double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+                0.00    0.00       1/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+                0.00    0.00       1/10          boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double) [36]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[57]     0.0    0.00    0.00       1         void test_func<greens_functions::GreensFunction1DAbsAbs>(greens_functions::GreensFunction1DAbsAbs, std::string) [57]
+                0.00    0.00    2000/20000       double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+                0.00    0.00       1/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+                0.00    0.00       1/10          boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double) [36]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[58]     0.0    0.00    0.00       1         void test_func<greens_functions::GreensFunction1DRadAbs>(greens_functions::GreensFunction1DRadAbs, std::string) [58]
+                0.00    0.00    2000/20000       double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+                0.00    0.00       1/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+                0.00    0.00       1/10          boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double) [36]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[59]     0.0    0.00    0.00       1         void test_func<greens_functions::GreensFunction2DAbsSym>(greens_functions::GreensFunction2DAbsSym, std::string) [59]
+                0.00    0.00    2000/20000       double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+                0.00    0.00       1/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+                0.00    0.00       1/10          boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double) [36]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[60]     0.0    0.00    0.00       1         void test_func<greens_functions::GreensFunction2DRadAbs>(greens_functions::GreensFunction2DRadAbs, std::string) [60]
+                0.00    0.00    2000/20000       double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+                0.00    0.00       1/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+                0.00    0.00       1/10          boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double) [36]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[61]     0.0    0.00    0.00       1         void test_func<greens_functions::GreensFunction3DAbsSym>(greens_functions::GreensFunction3DAbsSym, std::string) [61]
+                0.00    0.00    2000/20000       double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+                0.00    0.00       1/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+                0.00    0.00       1/10          boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double) [36]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[62]     0.0    0.00    0.00       1         void test_func<greens_functions::GreensFunction3DRadAbs>(greens_functions::GreensFunction3DRadAbs, std::string) [62]
+                0.00    0.00    2000/20000       double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+                0.00    0.00       1/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+                0.00    0.00       1/10          boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double) [36]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[63]     0.0    0.00    0.00       1         void test_func<greens_functions::GreensFunction3DRadInf>(greens_functions::GreensFunction3DRadInf, std::string) [63]
+                0.00    0.00    2000/20000       double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+                0.00    0.00       1/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+                0.00    0.00       1/10          boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double) [36]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[64]     0.0    0.00    0.00       1         void test_func<greens_functions::GreensFunction1DAbsSinkAbs>(greens_functions::GreensFunction1DAbsSinkAbs, std::string) [64]
+                0.00    0.00    2000/20000       double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const [31]
+                0.00    0.00       1/10          boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [35]
+                0.00    0.00       1/10          boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double) [36]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[65]     0.0    0.00    0.00       1         greens_functions::GreensFunction3D::GreensFunction3D(double, double) [65]
+                0.00    0.00       1/1           greens_functions::PairGreensFunction::PairGreensFunction(double, double, double, double) [66]
+-----------------------------------------------
+                0.00    0.00       1/1           greens_functions::GreensFunction3D::GreensFunction3D(double, double) [65]
+[66]     0.0    0.00    0.00       1         greens_functions::PairGreensFunction::PairGreensFunction(double, double, double, double) [66]
+                0.00    0.00       5/9           greens_functions::GreensFunction::GreensFunction(double) [37]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[67]     0.0    0.00    0.00       1         greens_functions::GreensFunction1DAbsAbs::GreensFunction1DAbsAbs(double, double, double, double) [67]
+                0.00    0.00       1/9           greens_functions::GreensFunction::GreensFunction(double) [37]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[68]     0.0    0.00    0.00       1         greens_functions::GreensFunction1DAbsAbs::~GreensFunction1DAbsAbs() [68]
+                0.00    0.00       1/9           greens_functions::GreensFunction::~GreensFunction() [38]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[69]     0.0    0.00    0.00       1         greens_functions::GreensFunction1DRadAbs::GreensFunction1DRadAbs(double, double, double, double, double) [69]
+                0.00    0.00       1/9           greens_functions::GreensFunction::GreensFunction(double) [37]
+                0.00    0.00       1/2           std::vector<double, std::allocator<double> >::vector() [52]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[70]     0.0    0.00    0.00       1         greens_functions::GreensFunction2DAbsSym::GreensFunction2DAbsSym(double, double) [70]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[71]     0.0    0.00    0.00       1         greens_functions::GreensFunction2DAbsSym::~GreensFunction2DAbsSym() [71]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[72]     0.0    0.00    0.00       1         greens_functions::GreensFunction3DAbsSym::GreensFunction3DAbsSym(double, double) [72]
+                0.00    0.00       1/9           greens_functions::GreensFunction::GreensFunction(double) [37]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[73]     0.0    0.00    0.00       1         greens_functions::GreensFunction3DAbsSym::~GreensFunction3DAbsSym() [73]
+                0.00    0.00       1/9           greens_functions::GreensFunction::~GreensFunction() [38]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[74]     0.0    0.00    0.00       1         greens_functions::GreensFunction1DAbsSinkAbs::GreensFunction1DAbsSinkAbs(double, double, double, double, double, double) [74]
+                0.00    0.00       1/9           greens_functions::GreensFunction::GreensFunction(double) [37]
+                0.00    0.00       1/2           std::vector<double, std::allocator<double> >::vector() [52]
+-----------------------------------------------
+                0.00    0.00       1/1           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::init() [80]
+[75]     0.0    0.00    0.00       1         long double boost::math::lanczos::lanczos17m64::lanczos_sum<long double>(long double const&) [75]
+                0.00    0.00      17/66          long double const boost::math::tools::make_big_value<long double>(long double, char const*, mpl_::bool_<true> const&, mpl_::bool_<false> const&) [32]
+                0.00    0.00       1/4           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::force_instantiate() [39]
+                0.00    0.00       1/2           long double boost::math::tools::evaluate_rational<17ul, long double, long double, long double>(long double const (&) [17ul], long double const (&) [17ul], long double const&) [41]
+-----------------------------------------------
+                0.00    0.00       1/1           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::init() [80]
+[76]     0.0    0.00    0.00       1         long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_1<long double>(long double const&) [76]
+                0.00    0.00      16/66          long double const boost::math::tools::make_big_value<long double>(long double, char const*, mpl_::bool_<true> const&, mpl_::bool_<false> const&) [32]
+                0.00    0.00       1/4           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::force_instantiate() [39]
+-----------------------------------------------
+                0.00    0.00       1/1           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::init() [80]
+[77]     0.0    0.00    0.00       1         long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_2<long double>(long double const&) [77]
+                0.00    0.00      16/66          long double const boost::math::tools::make_big_value<long double>(long double, char const*, mpl_::bool_<true> const&, mpl_::bool_<false> const&) [32]
+                0.00    0.00       1/4           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::force_instantiate() [39]
+-----------------------------------------------
+                0.00    0.00       1/1           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::init() [80]
+[78]     0.0    0.00    0.00       1         boost::math::lanczos::lanczos17m64::g() [78]
+-----------------------------------------------
+                0.00    0.00       1/1           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::init() [80]
+[79]     0.0    0.00    0.00       1         long double boost::math::lanczos::lanczos17m64::lanczos_sum_expG_scaled<long double>(long double const&) [79]
+                0.00    0.00      17/66          long double const boost::math::tools::make_big_value<long double>(long double, char const*, mpl_::bool_<true> const&, mpl_::bool_<false> const&) [32]
+                0.00    0.00       1/4           boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::force_instantiate() [39]
+                0.00    0.00       1/2           long double boost::math::tools::evaluate_rational<17ul, long double, long double, long double>(long double const (&) [17ul], long double const (&) [17ul], long double const&) [41]
+-----------------------------------------------
+                0.00    0.00       1/1           __static_initialization_and_destruction_0(int, int) [54]
+[80]     0.0    0.00    0.00       1         boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::init() [80]
+                0.00    0.00       1/1           long double boost::math::lanczos::lanczos17m64::lanczos_sum_expG_scaled<long double>(long double const&) [79]
+                0.00    0.00       1/1           long double boost::math::lanczos::lanczos17m64::lanczos_sum<long double>(long double const&) [75]
+                0.00    0.00       1/1           long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_1<long double>(long double const&) [76]
+                0.00    0.00       1/1           long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_2<long double>(long double const&) [77]
+                0.00    0.00       1/1           boost::math::lanczos::lanczos17m64::g() [78]
+-----------------------------------------------
+                0.00    0.00       1/1           __static_initialization_and_destruction_0(int, int) [54]
+[81]     0.0    0.00    0.00       1         boost::detail::multi_array::extent_gen<0ul>::extent_gen() [81]
+                0.00    0.00       2/2           boost::array<boost::detail::multi_array::extent_range<long, unsigned long>, 1ul>::array() [44]
+-----------------------------------------------
+                0.00    0.00       1/1           __static_initialization_and_destruction_0(int, int) [54]
+[82]     0.0    0.00    0.00       1         boost::detail::multi_array::index_gen<0, 0>::index_gen() [82]
+                0.00    0.00       2/2           boost::array<boost::detail::multi_array::index_range<long, unsigned long>, 1ul>::array() [43]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [53] _GLOBAL__sub_I_main     [4] greens_functions::GreensFunction1DAbsSinkAbs::~GreensFunction1DAbsSinkAbs() [36] boost::random::uniform_real_distribution<double>::uniform_real_distribution(double, double)
+  [54] __static_initialization_and_destruction_0(int, int) [32] long double const boost::math::tools::make_big_value<long double>(long double, char const*, mpl_::bool_<true> const&, mpl_::bool_<false> const&) [29] double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double)
+  [55] void test_func<greens_functions::GreensFunction3D>(greens_functions::GreensFunction3D, std::string) [41] long double boost::math::tools::evaluate_rational<17ul, long double, long double, long double>(long double const (&) [17ul], long double const (&) [17ul], long double const&) [30] double boost::random::detail::generate_uniform_real<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>, double>(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&, double, double, mpl_::bool_<true>)
+  [56] void test_func<greens_functions::GreensFunction3DAbs>(greens_functions::GreensFunction3DAbs, std::string) [42] long double boost::math::tools::detail::evaluate_rational_c_imp<long double, long double, long double>(long double const*, long double const*, long double const&, mpl_::int_<17> const*) [26] boost::random::detail::subtract<unsigned int, false>::operator()(unsigned int, unsigned int)
+  [57] void test_func<greens_functions::GreensFunction1DAbsAbs>(greens_functions::GreensFunction1DAbsAbs, std::string) [75] long double boost::math::lanczos::lanczos17m64::lanczos_sum<long double>(long double const&) [5] __gnu_cxx::new_allocator<double>::deallocate(double*, unsigned long)
+  [58] void test_func<greens_functions::GreensFunction1DRadAbs>(greens_functions::GreensFunction1DRadAbs, std::string) [76] long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_1<long double>(long double const&) [21] __gnu_cxx::new_allocator<double>::new_allocator()
+  [59] void test_func<greens_functions::GreensFunction2DAbsSym>(greens_functions::GreensFunction2DAbsSym, std::string) [77] long double boost::math::lanczos::lanczos17m64::lanczos_sum_near_2<long double>(long double const&) [17] __gnu_cxx::new_allocator<double>::~new_allocator()
+  [60] void test_func<greens_functions::GreensFunction2DRadAbs>(greens_functions::GreensFunction2DRadAbs, std::string) [78] boost::math::lanczos::lanczos17m64::g() [40] boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::force_instantiate() const
+  [61] void test_func<greens_functions::GreensFunction3DAbsSym>(greens_functions::GreensFunction3DAbsSym, std::string) [79] long double boost::math::lanczos::lanczos17m64::lanczos_sum_expG_scaled<long double>(long double const&) [31] double boost::random::uniform_real_distribution<double>::operator()<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >(boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>&) const
+  [62] void test_func<greens_functions::GreensFunction3DRadAbs>(greens_functions::GreensFunction3DRadAbs, std::string) [39] boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::force_instantiate() [22] std::allocator<double>::allocator()
+  [63] void test_func<greens_functions::GreensFunction3DRadInf>(greens_functions::GreensFunction3DRadInf, std::string) [80] boost::math::lanczos::lanczos_initializer<boost::math::lanczos::lanczos17m64, long double>::init::init() [18] std::allocator<double>::~allocator()
+  [64] void test_func<greens_functions::GreensFunction1DAbsSinkAbs>(greens_functions::GreensFunction1DAbsSinkAbs, std::string) [43] boost::array<boost::detail::multi_array::index_range<long, unsigned long>, 1ul>::array() [15] void std::_Destroy_aux<true>::__destroy<double*>(double*, double*)
+  [37] greens_functions::GreensFunction::GreensFunction(double) [44] boost::array<boost::detail::multi_array::extent_range<long, unsigned long>, 1ul>::array() [23] std::_Vector_base<double, std::allocator<double> >::_Vector_impl::_Vector_impl()
+  [38] greens_functions::GreensFunction::~GreensFunction() [81] boost::detail::multi_array::extent_gen<0ul>::extent_gen() [19] std::_Vector_base<double, std::allocator<double> >::_Vector_impl::~_Vector_impl()
+  [65] greens_functions::GreensFunction3D::GreensFunction3D(double, double) [45] boost::detail::multi_array::index_range<long, unsigned long>::from_start() [6] std::_Vector_base<double, std::allocator<double> >::_M_deallocate(double*, unsigned long)
+  [66] greens_functions::PairGreensFunction::PairGreensFunction(double, double, double, double) [46] boost::detail::multi_array::index_range<long, unsigned long>::to_end() [20] std::_Vector_base<double, std::allocator<double> >::_M_get_Tp_allocator()
+  [67] greens_functions::GreensFunction1DAbsAbs::GreensFunction1DAbsAbs(double, double, double, double) [47] boost::detail::multi_array::index_range<long, unsigned long>::index_range() [24] std::_Vector_base<double, std::allocator<double> >::_Vector_base()
+  [68] greens_functions::GreensFunction1DAbsAbs::~GreensFunction1DAbsAbs() [48] boost::detail::multi_array::extent_range<long, unsigned long>::extent_range() [7] std::_Vector_base<double, std::allocator<double> >::~_Vector_base()
+  [69] greens_functions::GreensFunction1DRadAbs::GreensFunction1DRadAbs(double, double, double, double, double) [82] boost::detail::multi_array::index_gen<0, 0>::index_gen() [49] std::numeric_limits<long>::max()
+   [3] greens_functions::GreensFunction1DRadAbs::~GreensFunction1DRadAbs() [27] boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::max() [50] std::numeric_limits<long>::min()
+  [70] greens_functions::GreensFunction2DAbsSym::GreensFunction2DAbsSym(double, double) [25] boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::min() [51] std::pair<long, long>::pair(long const&, long const&)
+  [71] greens_functions::GreensFunction2DAbsSym::~GreensFunction2DAbsSym() [34] boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::seed(unsigned int const&) [52] std::vector<double, std::allocator<double> >::vector()
+  [72] greens_functions::GreensFunction3DAbsSym::GreensFunction3DAbsSym(double, double) [33] boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::twist() [2] std::vector<double, std::allocator<double> >::~vector()
+  [73] greens_functions::GreensFunction3DAbsSym::~GreensFunction3DAbsSym() [35] boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::mersenne_twister_engine(unsigned int const&) [16] void std::_Destroy<double*>(double*, double*)
+  [74] greens_functions::GreensFunction1DAbsSinkAbs::GreensFunction1DAbsSinkAbs(double, double, double, double, double, double) [28] boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u>::operator()() [8] void std::_Destroy<double*, double>(double*, double*, std::allocator<double>&)

@@ -1,0 +1,21 @@
+Start testing: May 22 18:23 JST
+----------------------------------------------------------
+1/1 Testing: GreensFunction3DSym_test
+1/1 Test: GreensFunction3DSym_test
+Command: "/home/niina/greens_functions/tests/GreensFunction3DSym_test"
+Directory: /home/niina/greens_functions/tests
+"GreensFunction3DSym_test" start time: May 22 18:23 JST
+Output:
+----------------------------------------------------------
+Running 4 test cases...
+
+*** No errors detected
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"GreensFunction3DSym_test" end time: May 22 18:23 JST
+"GreensFunction3DSym_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: May 22 18:23 JST
