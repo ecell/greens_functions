@@ -1,2 +1,4 @@
-GreensFunction3DSym_test 2 0.00233591
+GreensFunction3DSym_test 4 0.00115925
+GreensFunction1DAbsAbs_test 0 0
 ---
+GreensFunction1DAbsAbs_test

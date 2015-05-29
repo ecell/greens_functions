@@ -122,6 +122,32 @@ greens_functions/fast:
 .PHONY : greens_functions/fast
 
 #=============================================================================
+# Target rules for targets named GreensFunction1DAbsAbs_test
+
+# Build rule for target.
+GreensFunction1DAbsAbs_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 GreensFunction1DAbsAbs_test
+.PHONY : GreensFunction1DAbsAbs_test
+
+# fast build rule for target.
+GreensFunction1DAbsAbs_test/fast:
+	$(MAKE) -f tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/build
+.PHONY : GreensFunction1DAbsAbs_test/fast
+
+#=============================================================================
+# Target rules for targets named GreensFunction1DRadAbs_test
+
+# Build rule for target.
+GreensFunction1DRadAbs_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 GreensFunction1DRadAbs_test
+.PHONY : GreensFunction1DRadAbs_test
+
+# fast build rule for target.
+GreensFunction1DRadAbs_test/fast:
+	$(MAKE) -f tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/build
+.PHONY : GreensFunction1DRadAbs_test/fast
+
+#=============================================================================
 # Target rules for targets named GreensFunction3DSym_test
 
 # Build rule for target.
@@ -528,6 +554,8 @@ help:
 	@echo "... greens_functions"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... GreensFunction1DAbsAbs_test"
+	@echo "... GreensFunction1DRadAbs_test"
 	@echo "... GreensFunction3DSym_test"
 	@echo "... GreensFunction1DAbsAbs.o"
 	@echo "... GreensFunction1DAbsAbs.i"

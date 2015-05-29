@@ -13,15 +13,15 @@ set (HPP_FILES
     GreensFunction3DRadInf.hpp GreensFunction3DSym.hpp SphericalBesselGenerator.hpp findRoot.hpp funcSum.hpp freeFunctions.hpp PairGreensFunction.hpp
 )
 
-add_definitions("-DHAVE_DECL_INFINITY -pg")
+add_definitions("-DHAVE_DECL_INFINITY")
 
 find_library(GSL_LIBRARIES gsl)
 find_library(GSL_CBLAS_LIBRARIES gslcblas)
 
-#add_executable(Main
+#add_executable(main
 #    main.cpp ${CPP_FILES} ${HPP_FILES} "compat.h")
 
-#target_link_libraries(Main
+#target_link_libraries(main
 #    ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
 
 add_library(greens_functions SHARED

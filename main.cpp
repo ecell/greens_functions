@@ -13,61 +13,86 @@
 #include <iostream>
 #include <time.h>
 
-#define loopnum 1000
+const int  loopnum(10000);
 
 //using namespace greens_functions;
 
 template <typename T_>
-void test_func(T_ gf, std::string const name, Real* randomarray)
+void test_drawTime(T_ gf, std::string const name, Real* randomarray)
 {
     Real const t(1.0);
-    Real bufT, bufR;
+    Real bufT;
 
-    std::cout << name << std::endl;
+//    std::cout << name << std::endl;
 
     clock_t start, end, dur;
-    start = clock();
 
-    for (int i=0; i < 1000; i++)
+    start = clock();
+    for (int i=0; i < loopnum; i++)
     {
 	bufT = gf.drawTime(randomarray[i]);
-	bufR = gf.drawR(randomarray[i], t);
     }
-
     end = clock();
 
-    std::cout << (double)(end - start) / 1000 << "msec" << std::endl;
-
-//    std::cout << "drawTime: " << gf.drawTime(rand(rng)) << std::endl;
-//    std::cout << "drawR: " << gf.drawR(rand(rng), t) << std::endl;
-    std::cout << std::endl;
+    std::cout << name << " drawtime  " << loopnum <<  " times: " << (double)(end - start) / 1000 << " msec" << std::endl;
+//    std::cout << std::endl;
 }
 
+template <typename T_>
+void test_drawR(T_ gf, std::string const name, Real* randomarray)
+{
+    Real const t(1.0);
+    Real bufR;
+
+//    std::cout << name << std::endl;
+
+    clock_t start, end, dur;
+
+    start = clock();
+    for (int i=0; i < loopnum; i++)
+    {
+      bufR = gf.drawR(randomarray[i], t);
+    }
+    end = clock();
+
+    std::cout << name << " drawR     " << loopnum <<  " times: " << (double)(end - start) / 1000 << " msec" << std::endl;
+//    std::cout << std::endl;
+}
 template <typename T_>
 void test_theta(T_ gf, std::string const name, Real* randomarray)
 {
     Real const t(1.0);
     Real const r(5e-1);
-
-    std::cout << name << std::endl;
-
     Real bufTheta;
-    int eventType;
+    clock_t start, end;
 
-    clock_t start, end, dur;
-    start = clock();
-
-    for (int i=0; i < 1000; i++)
+  start = clock();
+    for (int i=0; i < loopnum; i++)
     {
 	bufTheta = gf.drawTheta(randomarray[i], r, t);
-	eventType = gf.drawEventType(randomarray[i], t);
     }
-
     end = clock();
 
-    std::cout << (double)(end - start) / 1000 << "msec" << std::endl;
+    std::cout << name << " drawtheta " << loopnum << " times: " << (double)(end - start) / 1000 << "msec" << std::endl;
+//    std::cout << std::endl;
+}
 
-    std::cout << std::endl;
+template <typename T_>
+void test_event(T_ gf, std::string const name, Real* randomarray)
+{
+    Real const t(1.0);
+    int eventType;
+    clock_t start, end;
+
+    start = clock();
+    for (int i=0; i < loopnum; i++)
+    {
+	eventType = gf.drawEventType(randomarray[i], t);
+    }
+    end = clock();
+
+    std::cout << name << " eventType " << loopnum << " times: " << (double)(end - start) / 1000 << "msec" << std::endl;
+//    std::cout << std::endl;
 }
 
 int main()
@@ -89,20 +114,43 @@ int main()
 	randomarray[i] = rand(rng);
     }
 
-    test_func(greens_functions::GreensFunction1DAbsAbs(D, r0, sigma, a), "GreensFunction1DAbsAbs", randomarray); //drawEventType
-    test_func(greens_functions::GreensFunction1DAbsSinkAbs(D, k, r0, rsink, sigma, a), "GreensFunction1DAbsSinkAbs", randomarray); //drawEventType
-    test_func(greens_functions::GreensFunction1DRadAbs(D, k, r0, sigma, a), "GreensFunction1DRadAbs", randomarray); //drawEventType
-    test_func(greens_functions::GreensFunction2DAbsSym(D, a), "GreensFunction2DAbsSym", randomarray); //
-    test_func(greens_functions::GreensFunction2DRadAbs(D, k, r0, sigma, a), "GreensFunction2DRadAbs", randomarray); //drawEventType, drawTheta
-    test_func(greens_functions::GreensFunction3D(D, a), "GreensFunction3D", randomarray); //drawTheta
-    test_func(greens_functions::GreensFunction3DAbs(D, r0, a), "GreensFunction3DAbs", randomarray); //drawEventType drawTheta
-    test_func(greens_functions::GreensFunction3DAbsSym(D, a), "GreensFunction3DAbsSym", randomarray); //
-    test_func(greens_functions::GreensFunction3DRadAbs(D, k, r0, sigma, a), "GreensFunction3DRadAbs", randomarray); //drawEventType, drawTheta
-    test_func(greens_functions::GreensFunction3DRadInf(D, k, r0, sigma), "GreensFunction3DRadInf", randomarray); //drawTheta
+    test_drawTime(greens_functions::GreensFunction1DAbsAbs(D, r0, sigma, a), "GreensFunction1DAbsAbs    ", randomarray); //drawEventType
+    test_drawTime(greens_functions::GreensFunction1DAbsSinkAbs(D, k, r0, rsink, sigma, a), "GreensFunction1DAbsSinkAbs", randomarray); //drawEventType
+    test_drawTime(greens_functions::GreensFunction1DRadAbs(D, k, r0, sigma, a), "GreensFunction1DRadAbs    ", randomarray); //drawEventType
+    test_drawTime(greens_functions::GreensFunction2DAbsSym(D, a), "GreensFunction2DAbsSym    ", randomarray); //
+    test_drawTime(greens_functions::GreensFunction2DRadAbs(D, k, r0, sigma, a), "GreensFunction2DRadAbs    ", randomarray); //drawEventType, drawTheta
+    test_drawTime(greens_functions::GreensFunction3D(D, a), "GreensFunction3D          ", randomarray); //drawTheta
+    test_drawTime(greens_functions::GreensFunction3DAbs(D, r0, a), "GreensFunction3DAbs       ", randomarray); //drawEventType drawTheta
+    test_drawTime(greens_functions::GreensFunction3DAbsSym(D, a), "GreensFunction3DAbsSym    ", randomarray); //
+    test_drawTime(greens_functions::GreensFunction3DRadAbs(D, k, r0, sigma, a), "GreensFunction3DRadAbs    ", randomarray); //drawEventType, drawTheta
+    test_drawTime(greens_functions::GreensFunction3DRadInf(D, k, r0, sigma), "GreensFunction3DRadInf    ", randomarray); //drawTheta
+    std::cout << std::endl;
 
-    test_theta(greens_functions::GreensFunction3DRadAbs(D, k, r0, sigma, a), "GreensFunction3DRadAbs", randomarray); //drawEventType, drawTheta
-    test_theta(greens_functions::GreensFunction2DRadAbs(D, k, r0, sigma, a), "GreensFunction2DRadAbs", randomarray); //drawEventType, drawTheta
+    test_drawR(greens_functions::GreensFunction1DAbsAbs(D, r0, sigma, a), "GreensFunction1DAbsAbs    ", randomarray); //drawEventType
+    test_drawR(greens_functions::GreensFunction1DAbsSinkAbs(D, k, r0, rsink, sigma, a), "GreensFunction1DAbsSinkAbs", randomarray); //drawEventType
+    test_drawR(greens_functions::GreensFunction1DRadAbs(D, k, r0, sigma, a), "GreensFunction1DRadAbs    ", randomarray); //drawEventType
+    test_drawR(greens_functions::GreensFunction2DAbsSym(D, a), "GreensFunction2DAbsSym    ", randomarray); //
+    test_drawR(greens_functions::GreensFunction2DRadAbs(D, k, r0, sigma, a), "GreensFunction2DRadAbs    ", randomarray); //drawEventType, drawTheta
+    test_drawR(greens_functions::GreensFunction3D(D, a), "GreensFunction3D          ", randomarray); //drawTheta
+    test_drawR(greens_functions::GreensFunction3DAbs(D, r0, a), "GreensFunction3DAbs       ", randomarray); //drawEventType drawTheta
+    test_drawR(greens_functions::GreensFunction3DAbsSym(D, a), "GreensFunction3DAbsSym    ", randomarray); //
+    test_drawR(greens_functions::GreensFunction3DRadAbs(D, k, r0, sigma, a), "GreensFunction3DRadAbs    ", randomarray); //drawEventType, drawTheta
+    test_drawR(greens_functions::GreensFunction3DRadInf(D, k, r0, sigma), "GreensFunction3DRadInf    ", randomarray); //drawTheta
+    std::cout << std::endl;
 
+    test_theta(greens_functions::GreensFunction2DRadAbs(D, k, r0, sigma, a), "GreensFunction2DRadAbs    ", randomarray);
+    test_theta(greens_functions::GreensFunction3D(D, a), "GreensFunction3D          ", randomarray);
+    test_theta(greens_functions::GreensFunction3DAbs(D, r0, a), "GreensFunction3DAbs       ", randomarray);
+    test_theta(greens_functions::GreensFunction3DRadAbs(D, k, r0, sigma, a), "GreensFunction3DRadAbs    ", randomarray);
+    test_theta(greens_functions::GreensFunction3DRadInf(D, k, r0, sigma), "GreensFunction3DRadInf    ", randomarray);
+    std::cout << std::endl;
+
+    test_event(greens_functions::GreensFunction1DAbsAbs(D, r0, sigma, a), "GreensFunction1DAbsAbs    ", randomarray); //drawEventType
+    test_event(greens_functions::GreensFunction1DAbsSinkAbs(D, k, r0, rsink, sigma, a), "GreensFunction1DAbsSinkAbs", randomarray); //drawEventType
+    test_event(greens_functions::GreensFunction1DRadAbs(D, k, r0, sigma, a), "GreensFunction1DRadAbs    ", randomarray); //drawEventType
+    test_event(greens_functions::GreensFunction2DRadAbs(D, k, r0, sigma, a), "GreensFunction2DRadAbs    ", randomarray); //drawEventType, drawTheta
+//    test_event(greens_functions::GreensFunction3DAbs(D, r0, a), "GreensFunction3DAbs", randomarray); //drawEventType drawTheta
+    test_event(greens_functions::GreensFunction3DRadAbs(D, k, r0, sigma, a), "GreensFunction3DRadAbs    ", randomarray); //drawEventType, drawTheta
 /*
     boost::random::mt19937 rng(0);
     boost::random::uniform_real_distribution<Real> rand(0.0, 1.0);

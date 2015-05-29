@@ -1,0 +1,33 @@
+GreensFunction1DAbsAbs     drawtime  10000 times: 292.384 msec
+GreensFunction1DAbsSinkAbs drawtime  10000 times: 1034.19 msec
+GreensFunction1DRadAbs     drawtime  10000 times: 686.164 msec
+GreensFunction2DAbsSym     drawtime  10000 times: 165.899 msec
+GreensFunction2DRadAbs     drawtime  10000 times: 691.769 msec
+GreensFunction3D           drawtime  10000 times: 0.044 msec
+GreensFunction3DAbs        drawtime  10000 times: 28802.7 msec
+GreensFunction3DAbsSym     drawtime  10000 times: 40.633 msec
+GreensFunction3DRadAbs     drawtime  10000 times: 313.461 msec
+GreensFunction3DRadInf     drawtime  10000 times: 0.846 msec
+
+GreensFunction1DAbsAbs     drawR     10000 times: 24.781 msec
+GreensFunction1DAbsSinkAbs drawR     10000 times: 1331.96 msec
+GreensFunction1DRadAbs     drawR     10000 times: 46.878 msec
+GreensFunction2DAbsSym     drawR     10000 times: 939.296 msec
+GreensFunction2DRadAbs     drawR     10000 times: 3204.19 msec
+GreensFunction3D           drawR     10000 times: 21.547 msec
+GreensFunction3DAbs        drawR     10000 times: 396.692 msec
+GreensFunction3DAbsSym     drawR     10000 times: 370.464 msec
+GreensFunction3DRadAbs     drawR     10000 times: 963.195 msec
+GreensFunction3DRadInf     drawR     10000 times: 63.869 msec
+
+GreensFunction2DRadAbs     drawtheta 10000 times: 13378.1msec
+GreensFunction3D           drawtheta 10000 times: 27.906msec
+GreensFunction3DAbs        drawtheta 10000 times: 1295.85msec
+GreensFunction3DRadAbs     drawtheta 10000 times: 1110.62msec
+GreensFunction3DRadInf     drawtheta 10000 times: 1530.02msec
+
+GreensFunction1DAbsAbs     eventType 10000 times: 45.112msec
+GreensFunction1DAbsSinkAbs eventType 10000 times: 199.728msec
+GreensFunction1DRadAbs     eventType 10000 times: 0.299msec
+GreensFunction2DRadAbs     eventType 10000 times: 673.92msec
+GreensFunction3DRadAbs     eventType 10000 times: 153.666msec

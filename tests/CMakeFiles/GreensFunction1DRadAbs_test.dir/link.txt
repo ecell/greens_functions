@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/GreensFunction1DRadAbs_test.dir/GreensFunction1DRadAbs_test.cpp.o  -o GreensFunction1DRadAbs_test -rdynamic ../libgreens_functions.so -lboost_unit_test_framework -lgsl -lgslcblas -Wl,-rpath,/home/niina/greens_functions 

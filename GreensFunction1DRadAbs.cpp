@@ -588,6 +588,11 @@ Real GreensFunction1DRadAbs::drawTime (Real rnd) const
     {
         return 0.0;
     }
+//added.
+    if (r0 == a || a == sigma)
+    {
+        return 0.0;
+    }
 
     /* Find a good interval to determine the first passage time. */
     Real t_guess;
@@ -627,6 +632,10 @@ Real GreensFunction1DRadAbs::drawTime (Real rnd) const
     Real low( t_guess );
     Real high( t_guess );
 
+    /*add_comment*/
+    std::cout << "value: " << value << std::endl;
+    std::cout << "high: " << high << std::endl;
+
     // scale the interval around the guess such that the function straddles
     if( value < 0.0 )
     {
@@ -643,8 +652,10 @@ Real GreensFunction1DRadAbs::drawTime (Real rnd) const
             // function straddles
             high *= 10;
             value = GSL_FN_EVAL( &F, high );
+	    /*add_comment*/
+	    std::cout << "value : " << value << std::endl;
         }
-        while ( value <= 0.0 );
+        while ( value <= 0.0 );// value < 0.0?
     }
     else
     {

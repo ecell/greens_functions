@@ -109,6 +109,34 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/rule:
+	cd /home/niina/greens_functions && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/rule
+.PHONY : tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/rule
+
+# Convenience name for target.
+GreensFunction1DAbsAbs_test: tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/rule
+.PHONY : GreensFunction1DAbsAbs_test
+
+# fast build rule for target.
+GreensFunction1DAbsAbs_test/fast:
+	cd /home/niina/greens_functions && $(MAKE) -f tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/build
+.PHONY : GreensFunction1DAbsAbs_test/fast
+
+# Convenience name for target.
+tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/rule:
+	cd /home/niina/greens_functions && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/rule
+.PHONY : tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/rule
+
+# Convenience name for target.
+GreensFunction1DRadAbs_test: tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/rule
+.PHONY : GreensFunction1DRadAbs_test
+
+# fast build rule for target.
+GreensFunction1DRadAbs_test/fast:
+	cd /home/niina/greens_functions && $(MAKE) -f tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/build
+.PHONY : GreensFunction1DRadAbs_test/fast
+
+# Convenience name for target.
 tests/CMakeFiles/GreensFunction3DSym_test.dir/rule:
 	cd /home/niina/greens_functions && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/GreensFunction3DSym_test.dir/rule
 .PHONY : tests/CMakeFiles/GreensFunction3DSym_test.dir/rule
@@ -121,6 +149,54 @@ GreensFunction3DSym_test: tests/CMakeFiles/GreensFunction3DSym_test.dir/rule
 GreensFunction3DSym_test/fast:
 	cd /home/niina/greens_functions && $(MAKE) -f tests/CMakeFiles/GreensFunction3DSym_test.dir/build.make tests/CMakeFiles/GreensFunction3DSym_test.dir/build
 .PHONY : GreensFunction3DSym_test/fast
+
+GreensFunction1DAbsAbs_test.o: GreensFunction1DAbsAbs_test.cpp.o
+.PHONY : GreensFunction1DAbsAbs_test.o
+
+# target to build an object file
+GreensFunction1DAbsAbs_test.cpp.o:
+	cd /home/niina/greens_functions && $(MAKE) -f tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/GreensFunction1DAbsAbs_test.cpp.o
+.PHONY : GreensFunction1DAbsAbs_test.cpp.o
+
+GreensFunction1DAbsAbs_test.i: GreensFunction1DAbsAbs_test.cpp.i
+.PHONY : GreensFunction1DAbsAbs_test.i
+
+# target to preprocess a source file
+GreensFunction1DAbsAbs_test.cpp.i:
+	cd /home/niina/greens_functions && $(MAKE) -f tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/GreensFunction1DAbsAbs_test.cpp.i
+.PHONY : GreensFunction1DAbsAbs_test.cpp.i
+
+GreensFunction1DAbsAbs_test.s: GreensFunction1DAbsAbs_test.cpp.s
+.PHONY : GreensFunction1DAbsAbs_test.s
+
+# target to generate assembly for a file
+GreensFunction1DAbsAbs_test.cpp.s:
+	cd /home/niina/greens_functions && $(MAKE) -f tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/GreensFunction1DAbsAbs_test.cpp.s
+.PHONY : GreensFunction1DAbsAbs_test.cpp.s
+
+GreensFunction1DRadAbs_test.o: GreensFunction1DRadAbs_test.cpp.o
+.PHONY : GreensFunction1DRadAbs_test.o
+
+# target to build an object file
+GreensFunction1DRadAbs_test.cpp.o:
+	cd /home/niina/greens_functions && $(MAKE) -f tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/GreensFunction1DRadAbs_test.cpp.o
+.PHONY : GreensFunction1DRadAbs_test.cpp.o
+
+GreensFunction1DRadAbs_test.i: GreensFunction1DRadAbs_test.cpp.i
+.PHONY : GreensFunction1DRadAbs_test.i
+
+# target to preprocess a source file
+GreensFunction1DRadAbs_test.cpp.i:
+	cd /home/niina/greens_functions && $(MAKE) -f tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/GreensFunction1DRadAbs_test.cpp.i
+.PHONY : GreensFunction1DRadAbs_test.cpp.i
+
+GreensFunction1DRadAbs_test.s: GreensFunction1DRadAbs_test.cpp.s
+.PHONY : GreensFunction1DRadAbs_test.s
+
+# target to generate assembly for a file
+GreensFunction1DRadAbs_test.cpp.s:
+	cd /home/niina/greens_functions && $(MAKE) -f tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/GreensFunction1DRadAbs_test.cpp.s
+.PHONY : GreensFunction1DRadAbs_test.cpp.s
 
 GreensFunction3DSym_test.o: GreensFunction3DSym_test.cpp.o
 .PHONY : GreensFunction3DSym_test.o
@@ -152,10 +228,18 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... GreensFunction1DAbsAbs_test"
+	@echo "... GreensFunction1DRadAbs_test"
 	@echo "... GreensFunction3DSym_test"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... GreensFunction1DAbsAbs_test.o"
+	@echo "... GreensFunction1DAbsAbs_test.i"
+	@echo "... GreensFunction1DAbsAbs_test.s"
+	@echo "... GreensFunction1DRadAbs_test.o"
+	@echo "... GreensFunction1DRadAbs_test.i"
+	@echo "... GreensFunction1DRadAbs_test.s"
 	@echo "... GreensFunction3DSym_test.o"
 	@echo "... GreensFunction3DSym_test.i"
 	@echo "... GreensFunction3DSym_test.s"

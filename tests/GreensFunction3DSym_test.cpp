@@ -62,27 +62,28 @@ BOOST_AUTO_TEST_CASE(GF3DSym_no_test_ip_r_infinity_is_one)
   ip = gf.ip_r(INFINITY, t);
   BOOST_CHECK((ip == 1.0));
 }
-
 /*
-BOOST_AUTO_TEST_CASE(GF3DSym_test_p_r_is_ip_r)
-{
-  Real D(1e-12);
-  GreensFunction3DSym gf(D);
+def test_int_p_r_is_ip_r(self):
 
-  Real maxr(5e-8), t(1e-5), ip, r;
-  int resolution(20);
+        import scipy.integrate
 
-  ip = gf.ip_r(0.0, t);
+        D = 1e-12
+        t = 1e-5
+        
+        gf = mod.GreensFunction3DSym(D)
 
-  BOOST_CHECK((ip == 0.0));
+        ip = gf.ip_r(0.0, t)
+        self.assertEqual(0.0, ip)
 
-  for(int i = 1; i<resolution; i++)
-  {
-    r = i * maxr / resolution
-    ip = gf.ip_r(r, t);
-    
-  }
+        maxr = 5e-8
 
+        resolution = 20
+        for i in range(1, resolution):
+            r = i * maxr / resolution 
+            ip = gf.ip_r(r, t)
+            result = scipy.integrate.quad(gf.p_r, 0.0, r,
+                                          args=(t, ))
+            np = result[0]
+            self.assertAlmostEqual(0.0, (np-ip)/ip)
+*/
 
-  BOOST_CHECK((ip == 1.0));
-}*/

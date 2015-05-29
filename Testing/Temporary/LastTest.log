@@ -1,10 +1,10 @@
-Start testing: May 22 18:23 JST
+Start testing: May 29 12:54 JST
 ----------------------------------------------------------
-1/1 Testing: GreensFunction3DSym_test
-1/1 Test: GreensFunction3DSym_test
+1/2 Testing: GreensFunction3DSym_test
+1/2 Test: GreensFunction3DSym_test
 Command: "/home/niina/greens_functions/tests/GreensFunction3DSym_test"
 Directory: /home/niina/greens_functions/tests
-"GreensFunction3DSym_test" start time: May 22 18:23 JST
+"GreensFunction3DSym_test" start time: May 29 12:54 JST
 Output:
 ----------------------------------------------------------
 Running 4 test cases...
@@ -14,8 +14,41 @@ Running 4 test cases...
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"GreensFunction3DSym_test" end time: May 22 18:23 JST
+"GreensFunction3DSym_test" end time: May 29 12:54 JST
 "GreensFunction3DSym_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: May 22 18:23 JST
+2/2 Testing: GreensFunction1DAbsAbs_test
+2/2 Test: GreensFunction1DAbsAbs_test
+Command: "/home/niina/greens_functions/tests/GreensFunction1DAbsAbs_test"
+Directory: /home/niina/greens_functions/tests
+"GreensFunction1DAbsAbs_test" start time: May 29 12:54 JST
+Output:
+----------------------------------------------------------
+Running 8 test cases...
+constructed
+
+GreensFunction1DAbsAbs_test : test_DrawTime : t = 1.25e-06
+GreensFunction1DAbsAbs_test : test_DrawTime : t = 1.25e-06
+GreensFunction1DAbsAbs_test : test_DrawTime : t = 1.25e-06
+GreensFunction1DAbsAbs_test : test_DrawTime : t = 1.25e-06
+unknown location(0): fatal error in "GF1DAbsAbs_DrawTime_a_equal_sigma": std::exception: std::exception
+/home/niina/greens_functions/tests/GreensFunction1DAbsAbs_test.cpp(41): last checkpoint
+GreensFunction1DAbsAbs_test : test_DrawTime_a_near_sigma : t = 0
+GreensFunction1DAbsAbs_test : test_DrawTime_r0_equal_a : t = 0
+GreensFunction1DAbsAbs_test : test_DrawTime_r0_equal_sigma : t = 0
+unknown location(0): fatal error in "GF1DAbsAbs_DrawEventType": std::invalid_argument: Check [t > 0.0] failed.
+/home/niina/greens_functions/tests/GreensFunction1DAbsAbs_test.cpp(82): last checkpoint
+unknown location(0): fatal error in "GF1DAbsAbs_DrawEventType_smallt": std::invalid_argument: Check [t > 0.0] failed.
+/home/niina/greens_functions/tests/GreensFunction1DAbsAbs_test.cpp(82): last checkpoint
+
+*** 3 failures detected in test suite "GreensFunction1DAbsAbs_test"
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Failed.
+"GreensFunction1DAbsAbs_test" end time: May 29 12:54 JST
+"GreensFunction1DAbsAbs_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: May 29 12:54 JST

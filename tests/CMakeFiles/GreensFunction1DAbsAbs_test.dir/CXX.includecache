@@ -87,6 +87,8 @@ boost/test/unit_test.hpp
 -
 boost/test/included/unit_test.hpp
 -
+../GreensFunction.hpp
+/home/niina/greens_functions/GreensFunction.hpp
 ../GreensFunction1DAbsAbs.hpp
 /home/niina/greens_functions/GreensFunction1DAbsAbs.hpp
 

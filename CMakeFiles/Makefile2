@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/niina/greens_functions
 CMakeFiles/greens_functions.dir/all:
 	$(MAKE) -f CMakeFiles/greens_functions.dir/build.make CMakeFiles/greens_functions.dir/depend
 	$(MAKE) -f CMakeFiles/greens_functions.dir/build.make CMakeFiles/greens_functions.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/niina/greens_functions/CMakeFiles  2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/niina/greens_functions/CMakeFiles  4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
 	@echo "Built target greens_functions"
 .PHONY : CMakeFiles/greens_functions.dir/all
 
@@ -91,10 +91,14 @@ clean: CMakeFiles/greens_functions.dir/clean
 # Directory level rules for directory tests
 
 # Convenience name for "all" pass in the directory.
+tests/all: tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/all
+tests/all: tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/all
 tests/all: tests/CMakeFiles/GreensFunction3DSym_test.dir/all
 .PHONY : tests/all
 
 # Convenience name for "clean" pass in the directory.
+tests/clean: tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/clean
+tests/clean: tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/clean
 tests/clean: tests/CMakeFiles/GreensFunction3DSym_test.dir/clean
 .PHONY : tests/clean
 
@@ -103,13 +107,83 @@ tests/preinstall:
 .PHONY : tests/preinstall
 
 #=============================================================================
+# Target rules for target tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir
+
+# All Build rule for target.
+tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/all: CMakeFiles/greens_functions.dir/all
+	$(MAKE) -f tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/depend
+	$(MAKE) -f tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/niina/greens_functions/CMakeFiles  1
+	@echo "Built target GreensFunction1DAbsAbs_test"
+.PHONY : tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/all
+
+# Include target in all.
+all: tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/niina/greens_functions/CMakeFiles 17
+	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/niina/greens_functions/CMakeFiles 0
+.PHONY : tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/rule
+
+# Convenience name for target.
+GreensFunction1DAbsAbs_test: tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/rule
+.PHONY : GreensFunction1DAbsAbs_test
+
+# clean rule for target.
+tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/clean:
+	$(MAKE) -f tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/clean
+.PHONY : tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/clean
+
+# clean rule for target.
+clean: tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/clean
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/GreensFunction1DRadAbs_test.dir
+
+# All Build rule for target.
+tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/all: CMakeFiles/greens_functions.dir/all
+	$(MAKE) -f tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/depend
+	$(MAKE) -f tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/niina/greens_functions/CMakeFiles  2
+	@echo "Built target GreensFunction1DRadAbs_test"
+.PHONY : tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/all
+
+# Include target in all.
+all: tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/niina/greens_functions/CMakeFiles 17
+	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/niina/greens_functions/CMakeFiles 0
+.PHONY : tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/rule
+
+# Convenience name for target.
+GreensFunction1DRadAbs_test: tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/rule
+.PHONY : GreensFunction1DRadAbs_test
+
+# clean rule for target.
+tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/clean:
+	$(MAKE) -f tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/build.make tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/clean
+.PHONY : tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/clean
+
+# clean rule for target.
+clean: tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/clean
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target tests/CMakeFiles/GreensFunction3DSym_test.dir
 
 # All Build rule for target.
 tests/CMakeFiles/GreensFunction3DSym_test.dir/all: CMakeFiles/greens_functions.dir/all
 	$(MAKE) -f tests/CMakeFiles/GreensFunction3DSym_test.dir/build.make tests/CMakeFiles/GreensFunction3DSym_test.dir/depend
 	$(MAKE) -f tests/CMakeFiles/GreensFunction3DSym_test.dir/build.make tests/CMakeFiles/GreensFunction3DSym_test.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/niina/greens_functions/CMakeFiles  1
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/niina/greens_functions/CMakeFiles  3
 	@echo "Built target GreensFunction3DSym_test"
 .PHONY : tests/CMakeFiles/GreensFunction3DSym_test.dir/all
 

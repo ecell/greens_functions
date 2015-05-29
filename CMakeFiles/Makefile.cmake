@@ -42,5 +42,7 @@ SET(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 SET(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/greens_functions.dir/DependInfo.cmake"
+  "tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir/DependInfo.cmake"
+  "tests/CMakeFiles/GreensFunction1DRadAbs_test.dir/DependInfo.cmake"
   "tests/CMakeFiles/GreensFunction3DSym_test.dir/DependInfo.cmake"
   )

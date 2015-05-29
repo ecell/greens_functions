@@ -476,6 +476,11 @@ GreensFunction1DAbsAbs::drawTime (Real rnd) const
         return 0.0;
     }
 
+    if (r0 == a || a == sigma)
+    {
+        return 0.0;
+    }
+
     /* Set params structure. */
     RealVector psurvTable;
     struct drawT_params parameters = {this, psurvTable, rnd};
