@@ -8,6 +8,7 @@
 
 #include "Defs.hpp"
 
+namespace greens_functions{
 
 class CylindricalBesselGenerator
 {
@@ -35,7 +36,7 @@ public:
     static CylindricalBesselGenerator const& instance();
 };
 
-
+}
 
 
 #endif /* __CYLINDRICALBESSELGENERATOR_HPP */

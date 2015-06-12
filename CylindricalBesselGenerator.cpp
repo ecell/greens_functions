@@ -8,6 +8,7 @@
 #include "CylindricalBesselTable.hpp"
 #include "CylindricalBesselGenerator.hpp"
 
+namespace greens_functions{
 
 static inline double hermite_interp(double x, 
                                     double x0, double dx, 
@@ -147,3 +148,4 @@ Real CylindricalBesselGenerator::Y(const UnsignedInteger n, const Real z) const
     }
 }
 
+}

@@ -1,7 +1,7 @@
 #ifndef FACTORIAL_HPP
 #define FACTORIAL_HPP
 
-
+namespace greens_functions{
 
 // Table adopted and modified from GNU Scientific Library Version 1.9 
 // (gamma.c).
@@ -440,4 +440,5 @@ inline const double factorial_r( const unsigned int n )
     return factorials_r[n];
 }
 
+}
 #endif /* FACTORIAL_HPP */
