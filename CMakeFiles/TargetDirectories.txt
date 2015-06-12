@@ -1,4 +1,0 @@
-/home/niina/greens_functions/tests/CMakeFiles/GreensFunction1DAbsAbs_test.dir
-/home/niina/greens_functions/tests/CMakeFiles/GreensFunction1DRadAbs_test.dir
-/home/niina/greens_functions/tests/CMakeFiles/GreensFunction3DSym_test.dir
-/home/niina/greens_functions/CMakeFiles/greens_functions.dir

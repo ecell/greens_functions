@@ -1448,8 +1448,7 @@ Real GreensFunction3DRadAbs::drawTime(Real rnd) const
     return t;
 }
 
-GreensFunction3DRadAbs::EventKind
-GreensFunction3DRadAbs::drawEventType(Real rnd, Real t) const
+EventKind GreensFunction3DRadAbs::drawEventType(Real rnd, Real t) const
 {
     const Real D(this->getD());
     const Real sigma(this->getSigma());

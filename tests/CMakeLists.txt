@@ -1,5 +1,5 @@
 set(TEST_NAMES
-    GreensFunction3DSym_test GreensFunction1DAbsAbs_test GreensFunction1DRadAbs_test
+    GreensFunction3D_test GreensFunction3DAbs_test GreensFunction3DAbsSym_test GreensFunction3DRadAbs_test GreensFunction3DRadInf_test GreensFunction3DSym_test GreensFunction1DAbsAbs_test GreensFunction1DRadAbs_test
 )
 
 set(test_library_dependencies)

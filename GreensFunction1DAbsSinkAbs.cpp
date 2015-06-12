@@ -647,7 +647,7 @@ Real GreensFunction1DAbsSinkAbs::flux_sink(Real t) const
 
 /* Determine which event has occured, an escape or a reaction. Based on the
    fluxes through the boundaries and the sink at the given time. */
-GreensFunction1DAbsSinkAbs::EventKind 
+EventKind 
 GreensFunction1DAbsSinkAbs::drawEventType( Real rnd, Real t ) const
 {
     THROW_UNLESS( std::invalid_argument, rnd < 1.0 && rnd >= 0.0 );

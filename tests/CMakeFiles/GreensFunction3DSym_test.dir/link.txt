@@ -1,1 +1,0 @@
-/usr/bin/c++       CMakeFiles/GreensFunction3DSym_test.dir/GreensFunction3DSym_test.cpp.o  -o GreensFunction3DSym_test -rdynamic ../libgreens_functions.so -lboost_unit_test_framework -lgsl -lgslcblas -Wl,-rpath,/home/niina/greens_functions 
