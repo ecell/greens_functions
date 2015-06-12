@@ -14,7 +14,7 @@ using namespace greens_functions;
 
 BOOST_AUTO_TEST_CASE(GF3DAbs_constructor)
 {
-  Real D( 1e-12 ), r0( 5e-8 ), sigma( 1e-8 ), a( 1e-7 );
+  Real D( 1e-12 ), r0( 5e-8 ), a( 1e-7 );
   GreensFunction3DAbs gf( D, r0, a );
 }
 
@@ -200,7 +200,7 @@ BOOST_AUTO_TEST_CASE(GF3DAbs_p_int_r_at_a_is_p_survival)
 
 BOOST_AUTO_TEST_CASE(GF3DAbs_p_int_r_at_zero_is_zero)
 {
-  Real D( 1e-12 ), a( 1e-7 ), r0( 5e-8 ), r( r0 );
+  Real D( 1e-12 ), a( 1e-7 ), r0( 5e-8 );
   GreensFunction3DAbs gf( D, r0, a );
 
   Real t( 1e-3 );

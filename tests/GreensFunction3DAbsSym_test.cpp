@@ -43,13 +43,13 @@ BOOST_AUTO_TEST_CASE(GF3DAbsSym_DrawTime)
   GreensFunction3DAbsSym gf( D, a );
 
   Real t( gf.drawTime( 0.5 ) );
-//  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < INFINITY);
 
   t = gf.drawTime( 0.0 );
-//  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < INFINITY);
 
   t = gf.drawTime( 1.0 - 1e-16 );
-//  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < INFINITY);
 }
 
 BOOST_AUTO_TEST_CASE(GF3DAbsSym_DrawR)

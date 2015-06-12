@@ -17,7 +17,7 @@
 #include "GreensFunction3DRadAbs.hpp"
 #include "GreensFunction3DAbs.hpp"
 
-BOOST_PYTHON_MODULE( greens_functions )
+BOOST_PYTHON_MODULE( lib_greens_functions )
 {
   using namespace boost::python;
   using namespace greens_functions;
