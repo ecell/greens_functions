@@ -1,4 +1,4 @@
-#include "GreensFunction1DAbsAbs.hpp"
+#include "../GreensFunction1DAbsAbs.hpp"
 #include <boost/random.hpp>
 #include <iostream>
 #include <fstream>

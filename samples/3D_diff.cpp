@@ -1,4 +1,4 @@
-#include "GreensFunction3DAbsSym.hpp"
+#include "../GreensFunction3DAbsSym.hpp"
 #include <boost/random.hpp>
 #include <iostream>
 #include <fstream>
