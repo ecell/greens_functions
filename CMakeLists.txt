@@ -46,4 +46,4 @@ target_link_libraries( _greens_functions
     ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES} ${BOOST_PYTHON})
 
 add_subdirectory(tests)
-#add_subdirectory(samples)
+add_subdirectory(samples)

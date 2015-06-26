@@ -8,10 +8,11 @@
 #include <memory>
 #include <cmath>
 #include "../Defs.hpp"
+#include "Vector3.hpp"
 
 using namespace greens_functions;
 
-typedef boost::numeric::ublas::vector<Real> Realvec;
+typedef Vector3<Real> Realvec;
 
 class face_base
 {
@@ -25,22 +26,23 @@ public:
 	     const Realvec& rep )
   {
     THROW_UNLESS( std::invalid_argument,
-		  boost::numeric::ublas::inner_prod(norm, rep) == 0 );
+		  dot_product(norm, rep) == 0 );
+    THROW_UNLESS( std::invalid_argument,
+		  length( norm ) != 0);
+    THROW_UNLESS( std::invalid_argument,
+		  length( rep ) != 0);
+    
     face_id = id;
-    normal = norm;
-    represent = rep;
+    normal = norm / length( norm );
+    represent = rep / length( rep );
   };
 
   virtual Realvec move(Realvec& position,
-		       const Realvec& displacement,
+		       Realvec& displacement,
 		       boost::shared_ptr<face_base>& p)
   {
-    Realvec zero(3);
-      zero[0] = 0e0;
-      zero[1] = 0e0;
-      zero[2] = 0e0;
-
-    std::cout << "face_base->move" << std::endl;
+//     std::cout << "face_base->move" << std::endl;
+    Realvec zero;
     return zero;
   };
 
@@ -51,6 +53,11 @@ public:
   int get_id(){ return face_id; };
   Realvec get_normal_vector(){ return normal; };
   Realvec get_represent_vector(){ return represent; };
+  virtual Realvec get_vertex()
+  {
+    Realvec zero;
+    return zero;
+  };
 };
 
 #endif /*FACE_BASE_HPP*/

@@ -1,6 +1,6 @@
-#include "../GreensFunction2DAbsSym.hpp"
-#include "face_infty.hpp"
-#include "singleton.hpp"
+#include "../../GreensFunction2DAbsSym.hpp"
+#include "../face_SymTry.hpp"
+#include "../singleton.hpp"
 #include <boost/random.hpp>
 #include <iostream>
 #include <fstream>
@@ -11,31 +11,26 @@ using namespace greens_functions;
 
 int main()
 {
-  Realvec norm(3);
-    norm[0] = 0e0;
-    norm[1] = 0e0;
-    norm[2] = 1e0;
-  Realvec rep(3);
-    rep[0] = 1e0;
-    rep[1] = 0e0;
-    rep[2] = 0e0;
+  Realvec v1(1e0, 0e0, 0e0);
+  Realvec v2(0e0, 1e0, 0e0);
+  Realvec v3(0e0, 0e0, 1e0);
+//   Realvec norm( cross_product(v2 - v1, v3 - v1) );
 
-//   face_infty infty_plane(0); // double free or corruption (out))
-//   boost::shared_ptr<face_infty> ptr( &infty_plane ); // but successfully run for program end
-  face_sptr infplane_ptr( new face_infty(0, norm, rep) );
+  face_sptr tryangle_ptr( new face_SymTry(0, v1, v2, v3) );
+//   face_sptr tryangle_ptr( new face_SymTry(0, v1, v2, v3, norm) );
 
-  Realvec position(3);
-    position[0] = 0e0;
-    position[1] = 0e0;
-    position[2] = 0e0;
+  Realvec e12( v2 - v1 );
+  Realvec e13( v3 - v1 );
+  Realvec position( v1 + e12/3e0 + e13/3e0 );
+//   std::cout << position << std::endl;
 
-  particle mol(0, position, infplane_ptr);
+  particle mol(0, position, tryangle_ptr);
 
   boost::random::mt19937 mt(0);
   boost::random::uniform_real_distribution<Real> rand(0.0, 1.0);
 
-  Real a_max, t_end, dt_end;
-  std::cout << "a: ";
+  Real a_max, t_end;
+  std::cout << "a_max: ";
   std::cin >> a_max;
   std::cout << "t_end: ";
   std::cin >> t_end;
@@ -45,7 +40,9 @@ int main()
   std::cin >> filename;
   std::ofstream fout( filename.c_str() );
 
-  Real t(0), dt(0), theta(0), r(0), r_tot(0), a(0);
+  Real t(0), dt(0), theta(0), r(0), a(0);
+
+  fout << mol << " " << t << " " << a << std::endl;
   
   do
   {
@@ -69,7 +66,7 @@ int main()
 
     t += dt;
    
-    fout << mol << t << " " << a << std::endl;
+    fout << mol << " " << t << " " << a << std::endl;
 
   }while(t < t_end);
 

@@ -1,0 +1,3 @@
+add_subdirectory(infinite_plane)
+add_subdirectory(SymTryangle)
+#add_subdirectory(simple_diffusion)
