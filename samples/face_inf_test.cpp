@@ -1,5 +1,6 @@
 #include "../GreensFunction2DAbsSym.hpp"
 #include "face_infty.hpp"
+#include "singleton.hpp"
 #include <boost/random.hpp>
 #include <iostream>
 #include <fstream>
@@ -8,43 +9,20 @@
 
 using namespace greens_functions;
 
-class particle 
-{
-  Realvec position;
-  int particle_id;
-  boost::shared_ptr<face_base> face_ptr;
-public:
-  particle( int id, const Realvec& pos, boost::shared_ptr<face_base> ptr)
-  {
-    particle_id = id;
-    position = pos;
-    face_ptr = ptr;
-  }
-  void move(const Realvec& displacement);
-  friend std::ostream& operator<<(std::ostream& os, const particle& part);
-};
-
-void particle::move( const Realvec& displacement )
-{
-  position = face_ptr->move(position, displacement, face_ptr);
-  return;
-}
-
-std::ostream& operator<<( std::ostream& os, const particle& part)
-{
-//  os << "particle id: " << part.particle_id << std::endl;
-//  os << "position: ";
-  os << part.position[0] << " ";
-  os << part.position[1] << " ";
-  os << part.position[2] << " ";
-  return os;
-}
-
 int main()
 {
+  Realvec norm(3);
+    norm[0] = 0e0;
+    norm[1] = 0e0;
+    norm[2] = 1e0;
+  Realvec rep(3);
+    rep[0] = 1e0;
+    rep[1] = 0e0;
+    rep[2] = 0e0;
+
 //   face_infty infty_plane(0); // double free or corruption (out))
 //   boost::shared_ptr<face_infty> ptr( &infty_plane ); // but successfully run for program end
-  boost::shared_ptr<face_base> infplane_ptr( new face_infty(0) );
+  face_sptr infplane_ptr( new face_infty(0, norm, rep) );
 
   Realvec position(3);
     position[0] = 0e0;
@@ -69,8 +47,6 @@ int main()
 
   Real t(0), dt(0), theta(0), r(0), r_tot(0), a(0);
   
-  Realvec displacement(3);
-
   do
   {
     Real D(1e0);
@@ -89,13 +65,7 @@ int main()
 
     theta = 2 * M_PI * rand(mt);
 
-    displacement[0] = r * cos(theta);
-    displacement[1] = r * sin(theta);
-    displacement[2] = 0;
-
-    fout << "displacement: " << displacement << std::endl;
-
-    mol.move( displacement );
+    mol.move( r, theta );
 
     t += dt;
    
