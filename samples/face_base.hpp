@@ -12,6 +12,8 @@
 
 using namespace greens_functions;
 
+class polygon;
+
 typedef Vector3<Real> Realvec;
 
 class face_base
@@ -31,29 +33,17 @@ public:
 		  length( norm ) != 0);
     THROW_UNLESS( std::invalid_argument,
 		  length( rep ) != 0);
-    
-//     face_id = id;
-//     normal = norm / length( norm );
-//     represent = rep / length( rep );
   };
 
   virtual Realvec move(Realvec& position, Realvec& displacement, boost::shared_ptr<face_base>& p) = 0;
-//   {
-//     Realvec zero;
-//     return zero;
-//   };
 
   virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement ) = 0;
-//   { return false; };
 
+  virtual void set_belonging_polygon( boost::shared_ptr<polygon> p_sptr) = 0;
   int get_id(){ return face_id; };
   Realvec get_normal_vector(){ return normal; };
   Realvec get_represent_vector(){ return represent; };
   virtual Realvec get_vertex() = 0;
-//   {
-//     Realvec zero;
-//     return zero;
-//   };
 };
 
 #endif /*FACE_BASE_HPP*/

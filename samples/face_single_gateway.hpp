@@ -1,18 +1,23 @@
-#ifndef FACE_SYMTRY
-#define FACE_SYMTRY
+#ifndef FACE_SINGLE_GATEWAY
+#define FACE_SINGLE_GATEWAY
 #include <vector>
 #include <cmath>
-#include "face_base.hpp"
+#include "polygon.hpp"
+#include "rotation.hpp"
 
 using namespace greens_functions;
 
-class face_SymTry : public face_base
+class face_single_gateway : public face_base
 {
+private:
   std::vector<Realvec> vertexs;
   std::vector<Realvec> edges;
+  int gateway;// edges.at(gateway) == gateway edge
+  boost::shared_ptr<polygon> belonging_polygon;
+
 public:
-  face_SymTry(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2)
-  : face_base( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 )
+  face_single_gateway(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const int& gate)
+  : face_base( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ), gateway(gate)
   {
     vertexs.push_back( vtx0 );
     vertexs.push_back( vtx1 );
@@ -22,15 +27,15 @@ public:
     edges.push_back( vtx2 - vtx1 );
     edges.push_back( vtx0 - vtx2 );
   }
- 
-  face_SymTry(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const Realvec& norm)
-  : face_base( id, norm, vtx1-vtx0 )
+
+  face_single_gateway(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const Realvec& norm, const int& gate)
+  : face_base( id, norm, vtx1-vtx0 ), gateway(gate)
   {
     bool normal_vec_is_oritented_orthogonally_to_the_edges(
  		 dot_product(norm, vtx1-vtx0) == 0 &&
 		 dot_product(norm, vtx2-vtx1) == 0 );
     THROW_UNLESS(std::invalid_argument, normal_vec_is_oritented_orthogonally_to_the_edges );
-
+  
     vertexs.push_back( vtx0 );
     vertexs.push_back( vtx1 );
     vertexs.push_back( vtx2 );
@@ -38,9 +43,14 @@ public:
     edges.push_back( vtx1 - vtx0 );
     edges.push_back( vtx2 - vtx1 );
     edges.push_back( vtx0 - vtx2 );
-  } 
+  }
 
-  virtual Realvec move(Realvec& position, Realvec& displacement, boost::shared_ptr<face_base>& p)
+  virtual void set_belonging_polygon( boost::shared_ptr<polygon> p_sptr)
+  {
+    belonging_polygon = p_sptr;
+  }
+
+  virtual Realvec move(Realvec& position, Realvec& displacement, boost::shared_ptr<face_base>& ptr)
   {
     Realvec temppos(position);
     Realvec tempdis(displacement);
@@ -58,59 +68,125 @@ public:
 	int size( edges.size() );
 	int on_this_edge(-1);
 
+	//particle is on the edge
 	for(int i(0); i < size; ++i)
 	{
-	  //particle is on the edge
-	  if( is_on_the_edge( temppos, edges.at(i), i ) )
+	  if( i != gateway )
 	  {
-	    on_this_edge = i;
-
-	    int num;
-	    if( i != 0)
+	    if( is_on_the_edge( temppos, edges.at(i), i ) )
 	    {
-	      num = i-1;
-	    }else{
-	      num = 2;
-	    }
+	      on_this_edge = i;
+	      int num;
+	      if( i != 0)
+	      {
+		num = i-1;
+	      }else{
+		num = 2;
+	      }
 
-	    Realvec cross1( cross_product( edges.at(i), ( edges.at(num) * (-1e0) ) ) );
-	    Realvec cross2( cross_product( edges.at(i), ( temppos + tempdis - vertexs.at(i) ) ) );
-	    Real cross_status( dot_product( cross1, cross2 ) );
-	    if(cross_status < 0e0)// disp is out of the face through edge(i)
-	    {
-	      Realvec reverse_disp( reverse( tempdis, edges.at(i) ) );
-	      tempdis = reverse_disp;
-	    }else{
-	      ;//do nothing
+	      Realvec cross1( cross_product( edges.at(i), ( edges.at(num) * (-1e0) ) ) );
+	      Realvec cross2( cross_product( edges.at(i), ( temppos + tempdis - vertexs.at(i) ) ) );
+	      Real cross_status( dot_product( cross1, cross2 ) );
+	      if(cross_status < 0e0)// disp is out of the face through edge(i)
+	      {
+		Realvec reverse_disp( reverse( tempdis, edges.at(i) ) );
+		tempdis = reverse_disp;
+	      }else{
+		;//do nothing
+	      }
+
+	      break;
 	    }
-	    
- 	    break;
+	  }else{
+	    if( is_on_the_edge( temppos, edges.at(i), i ) )
+	    {
+	      int num;
+	      if( i != 0)
+	      {
+		num = i-1;
+	      }else{
+		num = 2;
+	      }
+
+	      Realvec cross1( cross_product( edges.at(i), ( edges.at(num) * (-1e0) ) ) );
+	      Realvec cross2( cross_product( edges.at(i), ( temppos + tempdis - vertexs.at(i) ) ) );
+	      Real cross_status( dot_product( cross1, cross2 ) );
+	      if(cross_status < 0e0)// disp is out of the face through edge(i)
+	      {
+	        ptr = belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway);
+		Realvec neighbor_norm( ptr->get_normal_vector() );
+		Real theta( acos( dot_product(normal, neighbor_norm) ) );
+
+		Realvec rot_disp( rotation( theta, edges.at(gateway), tempdis) );
+	        tempdis = rot_disp;
+	        temppos = ptr->move( temppos, tempdis, ptr );
+
+	        return temppos;
+
+	      }else{
+		on_this_edge = i;
+	      }
+
+	      break;
+	    }
 	  }
 	}
 
+	//particle is not on the edge.
 	for(int i(0); i<size; ++i)
 	{
-	  if(i == on_this_edge) continue;
-	  //particle is not on the edge(but sometimes will be on the edge...)
-	  int cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
-	  if(cross_status == 1)
+	  if( i != gateway )
 	  {
-	    Real ratio( cross_point(temppos, tempdis, edges.at(i), i) );
-	    THROW_UNLESS(std::invalid_argument, 0e0 <= ratio && ratio <= 1e0);
+	    if(i == on_this_edge) continue;
+	    int cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
+	    if(cross_status == 1)
+	    {
+	      Real ratio( cross_point(temppos, tempdis, edges.at(i), i) );
+	      THROW_UNLESS(std::invalid_argument, 0e0 <= ratio && ratio <= 1e0);
 
-	    temppos = temppos + tempdis * ratio;
-	    tempdis = tempdis * (1e0 - ratio);
-	    Realvec reverce_disp( reverse( tempdis, edges.at(i) ) );
-	    tempdis = reverce_disp;
+	      temppos = temppos + tempdis * ratio;
+	      tempdis = tempdis * (1e0 - ratio);
+	      Realvec reverce_disp( reverse( tempdis, edges.at(i) ) );
+	      tempdis = reverce_disp;
 
-	    break;
-	  }else if(cross_status == -1)
-	  {
-	    temppos = temppos + tempdis;
-	    Realvec zero(0e0, 0e0, 0e0);
-	    tempdis = zero;
+	      break;
+	    }else if(cross_status == -1)
+	    {
+	      temppos = temppos + tempdis;
+	      Realvec zero(0e0, 0e0, 0e0);
+	      tempdis = zero;
 
-	    break;
+	      break;
+	    }
+	  }else{
+	    if(i == on_this_edge) continue;
+	    int cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
+	    if(cross_status == 1)
+	    {
+	      ptr = belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway);
+	      Realvec neighbor_norm( ptr->get_normal_vector() );
+	      Real theta( acos( dot_product(normal, neighbor_norm) ) );
+
+	      Real ratio( cross_point(temppos, tempdis, edges.at(i), i) );
+	      THROW_UNLESS(std::invalid_argument, 0e0 <= ratio && ratio <= 1e0);
+
+	      //move to edge
+	      temppos = temppos + tempdis * ratio;
+	      tempdis = tempdis * (1e0 - ratio);
+    
+	      Realvec rot_disp( rotation( theta, edges.at(gateway), tempdis ) );
+	      tempdis = rot_disp;
+	      temppos = ptr->move( temppos, tempdis, ptr );
+	      
+	      return temppos;
+	    }else if(cross_status == -1)
+	    {
+	      temppos = temppos + tempdis;
+	      Realvec zero(0e0, 0e0, 0e0);
+	      tempdis = zero;
+
+	      break;
+	    }
 	  }
 	}
 
@@ -135,7 +211,7 @@ public:
     Real lv1p( length(v1p) );
     Real lv2p( length(v2p) );
 
-    double rot;
+    Real rot;
     rot = acos( dot_product( v0p, v1p ) / lv0p / lv1p );
     rot += acos( dot_product( v1p, v2p ) / lv1p / lv2p );
     rot += acos( dot_product( v2p, v0p ) / lv2p / lv0p );
@@ -150,7 +226,7 @@ public:
   {
   //assuming that position vector is on the face
   //and displacement is also on the same plane
-  //
+  
   //edge line and displacement segment
     Realvec vp( position - vertexs.at(edgebase));
     Realvec vpd( position + displacement - vertexs.at(edgebase));
@@ -211,11 +287,21 @@ public:
     return retvec;
   };
 
+  int get_gateway()
+  {
+    return gateway;
+  };
+
+//   Realvec get_gateway_edge(const int& g)
+//   {
+//     return edges.at(g);
+//   };
+
   virtual Realvec get_vertex()
   {
     return vertexs.at(0); 
   };
 
-  virtual void set_belonging_polygon( boost::shared_ptr<polygon> p_sptr){}; //do_nothing
 };
-#endif /*FACE_SYMTRY*/
+
+#endif /*FACE_SINGLE_GATEWAY*/

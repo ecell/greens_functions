@@ -43,6 +43,7 @@ public:
     Realvec zero;
     return zero;
   };
+  virtual void set_belonging_polygon( boost::shared_ptr<polygon> p_sptr){};//do nothing;
 };
 
 #endif /*FACE_INFTY_HPP*/

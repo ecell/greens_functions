@@ -1,9 +1,6 @@
 #include "face_base.hpp"
-#include <boost/math/quaternion.hpp>
-
+#include "rotation.hpp"
 typedef boost::shared_ptr<face_base> face_sptr;
-typedef boost::math::quaternion<double> Realquat;
-Realvec rotation(const double& angle, const Realvec& axis, const Realvec& target);
 
 class particle 
 {
@@ -40,6 +37,8 @@ void particle::move( const Real& r, const Real& theta )
 
   Realvec displacement( temp * r );
 
+  std::cout << "call face that have this id: " << face_ptr->get_id() << std::endl;
+
   Realvec newpos( face_ptr->move(position, displacement, face_ptr) );
   position = newpos;
   return;
@@ -53,21 +52,3 @@ std::ostream& operator<<( std::ostream& os, const particle& part)
   return os;
 }
 
-Realvec rotation(const double& angle, const Realvec& axis, const Realvec& target)
-{
-  const double cos_t( cos( angle / 2 ) );
-  const double sin_t( sin( angle / 2 ) );
-  const double sin_normalize( sin_t / length(axis) );
- 
-  Realquat Q(cos_t, axis[0] * sin_normalize, 
-                    axis[1] * sin_normalize,
-                    axis[2] * sin_normalize );
-  Realquat P(0e0, target[0], target[1], target[2] );
-  Realquat S( Q * P * conj(Q) );
- 
-  Realvec temp;
-  temp[0] = S.R_component_2();
-  temp[1] = S.R_component_3();
-  temp[2] = S.R_component_4();
-  return temp;
-}
