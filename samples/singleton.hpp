@@ -11,8 +11,7 @@ class particle
   int particle_id;
   face_sptr face_ptr;
 public:
-  particle( int id, const Realvec& pos,
-	    face_sptr ptr )
+  particle( int id, const Realvec& pos, face_sptr ptr )
   {
     //caution: using epsilon for decision of (double) ~= 0
     Realvec vertex( ptr->get_vertex() );

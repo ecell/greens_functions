@@ -22,8 +22,8 @@ protected:
   Realvec represent;
 
 public:
-  face_base( const int& id, const Realvec& norm,
-	     const Realvec& rep )
+  face_base( const int& id, const Realvec& norm, const Realvec& rep )
+  : face_id(id), normal( norm/length(norm) ), represent( rep/length(rep) )
   {
     THROW_UNLESS( std::invalid_argument,
 		  dot_product(norm, rep) == 0 );
@@ -32,32 +32,28 @@ public:
     THROW_UNLESS( std::invalid_argument,
 		  length( rep ) != 0);
     
-    face_id = id;
-    normal = norm / length( norm );
-    represent = rep / length( rep );
+//     face_id = id;
+//     normal = norm / length( norm );
+//     represent = rep / length( rep );
   };
 
-  virtual Realvec move(Realvec& position,
-		       Realvec& displacement,
-		       boost::shared_ptr<face_base>& p)
-  {
-//     std::cout << "face_base->move" << std::endl;
-    Realvec zero;
-    return zero;
-  };
+  virtual Realvec move(Realvec& position, Realvec& displacement, boost::shared_ptr<face_base>& p) = 0;
+//   {
+//     Realvec zero;
+//     return zero;
+//   };
 
-  virtual bool still_in_the_face( const Realvec& position,
-				  const Realvec& displacement )
-  { return false; };
+  virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement ) = 0;
+//   { return false; };
 
   int get_id(){ return face_id; };
   Realvec get_normal_vector(){ return normal; };
   Realvec get_represent_vector(){ return represent; };
-  virtual Realvec get_vertex()
-  {
-    Realvec zero;
-    return zero;
-  };
+  virtual Realvec get_vertex() = 0;
+//   {
+//     Realvec zero;
+//     return zero;
+//   };
 };
 
 #endif /*FACE_BASE_HPP*/
