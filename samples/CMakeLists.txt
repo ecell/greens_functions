@@ -1,3 +1,4 @@
 add_subdirectory(infinite_plane)
 add_subdirectory(SymTryangle)
 add_subdirectory(doubleTryangle)
+add_subdirectory(cube)

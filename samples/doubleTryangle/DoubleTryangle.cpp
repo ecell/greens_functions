@@ -1,7 +1,7 @@
 #include "../../GreensFunction2DAbsSym.hpp"
-#include "../face_single_gateway.hpp"
+#include "../FaceOneGate.hpp"
 #include "../singleton.hpp"
-#include "../polygon.hpp"
+#include "../Polygon.hpp"
 #include <boost/random.hpp>
 #include <iostream>
 #include <fstream>
@@ -21,10 +21,10 @@ int main()
   Realvec v3(0e0, 0e0, 0e0);
   Realvec v4(1e0, 1e0, 0e0);
 
-  face_sptr tryangle1_ptr( new face_single_gateway(0, v1, v2, v3, 1) );
-  face_sptr tryangle2_ptr( new face_single_gateway(1, v4, v3, v2, 1) );
+  face_sptr tryangle1_ptr( new FaceOneGate(0, v1, v2, v3, 1) );
+  face_sptr tryangle2_ptr( new FaceOneGate(1, v4, v3, v2, 1) );
 
-  boost::shared_ptr<polygon> rectangle_ptr( new polygon( tryangle1_ptr ) );
+  boost::shared_ptr<Polygon> rectangle_ptr( new Polygon( tryangle1_ptr ) );
   rectangle_ptr->insert( tryangle2_ptr );
   rectangle_ptr->set_neighbor( 1, tryangle1_ptr, tryangle2_ptr);
   rectangle_ptr->set_neighbor( 1, tryangle2_ptr, tryangle1_ptr);

@@ -1,6 +1,6 @@
-#include "face_base.hpp"
+#include "FaceBase.hpp"
 #include "rotation.hpp"
-typedef boost::shared_ptr<face_base> face_sptr;
+typedef boost::shared_ptr<FaceBase> face_sptr;
 
 class particle 
 {
@@ -37,7 +37,7 @@ void particle::move( const Real& r, const Real& theta )
 
   Realvec displacement( temp * r );
 
-  std::cout << "call face that have this id: " << face_ptr->get_id() << std::endl;
+//   std::cout << "call face that have this id: " << face_ptr->get_id() << std::endl;
 
   Realvec newpos( face_ptr->move(position, displacement, face_ptr) );
   position = newpos;

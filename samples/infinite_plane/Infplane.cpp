@@ -1,5 +1,5 @@
 #include "../../GreensFunction2DAbsSym.hpp"
-#include "../face_infty.hpp"
+#include "../FaceInf.hpp"
 #include "../singleton.hpp"
 #include <boost/random.hpp>
 #include <iostream>
@@ -14,7 +14,7 @@ int main()
   Realvec norm(0e0, 0e0, 1e0);
   Realvec rep(1e0, 0e0, 0e0);
 
-  face_sptr infplane_ptr( new face_infty(0, norm, rep) );
+  face_sptr infplane_ptr( new FaceInf(0, norm, rep) );
 
   Realvec position( 0e0, 0e0, 0e0 );
 

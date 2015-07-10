@@ -1,5 +1,5 @@
 #include "../../GreensFunction2DAbsSym.hpp"
-#include "../face_SymTry.hpp"
+#include "../FaceAllSym.hpp"
 #include "../singleton.hpp"
 #include <boost/random.hpp>
 #include <iostream>
@@ -16,7 +16,7 @@ int main()
   Realvec v3(0e0, 0e0, 1e0);
 //   Realvec norm( cross_product(v2 - v1, v3 - v1) );
 
-  face_sptr tryangle_ptr( new face_SymTry(0, v1, v2, v3) );
+  face_sptr tryangle_ptr( new FaceAllSym(0, v1, v2, v3) );
 //   face_sptr tryangle_ptr( new face_SymTry(0, v1, v2, v3, norm) );
 
   Realvec e12( v2 - v1 );
