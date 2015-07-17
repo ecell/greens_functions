@@ -27,6 +27,7 @@ public:
   friend std::ostream& operator<<(std::ostream& os, const particle& part);
 };
 
+//TODO make it possible that particle move in 2d and 3d using same function
 void particle::move( const Real& r, const Real& theta )
 {
   Realvec axis( face_ptr->get_normal_vector() );
@@ -39,7 +40,7 @@ void particle::move( const Real& r, const Real& theta )
 
 //   std::cout << "call face that have this id: " << face_ptr->get_id() << std::endl;
 
-  Realvec newpos( face_ptr->move(position, displacement, face_ptr) );
+  Realvec newpos( face_ptr->renew_position(position, displacement, face_ptr) );
   position = newpos;
   return;
 }

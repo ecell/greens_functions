@@ -11,13 +11,23 @@ class FaceOneGate : public FaceBase
 {
 private:
   std::vector<Realvec> vertexs;
+  //to get the vertex nearest the particle, lookup in (std::vector vertexs) and this near_vertexs.
+  std::vector<Realvec> near_vertexs;
   std::vector<Realvec> edges;
   int gateway;// edges.at(gateway) == gateway edge
+  std::vector<bool> is_gate;
   boost::shared_ptr<Polygon> belonging_polygon;
+
+  enum CROSS_STATUS{
+    NOT_CROSS,
+    CROSS,
+    ON_THE_EDGE,
+  };
+
 
 public:
   FaceOneGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const int& gate)
-  : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ), gateway(gate)
+  : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ), gateway(gate), is_gate(3)
   {
     vertexs.push_back( vtx0 );
     vertexs.push_back( vtx1 );
@@ -26,14 +36,24 @@ public:
     edges.push_back( vtx1 - vtx0 );
     edges.push_back( vtx2 - vtx1 );
     edges.push_back( vtx0 - vtx2 );
+
+    for(int i(0); i<3; ++i)
+    {
+      if(i != gate)
+      {
+	is_gate.at(i) = false;
+      }else
+      {
+	is_gate.at(i) = true;
+      }
+    }
+
   }
 
   FaceOneGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const Realvec& norm, const int& gate)
-  : FaceBase( id, norm, vtx1-vtx0 ), gateway(gate)
+  : FaceBase( id, norm, vtx1-vtx0 ), gateway(gate), is_gate(3)
   {
-    bool normal_vec_is_oritented_orthogonally_to_the_edges(
- 		 dot_product(norm, vtx1-vtx0) == 0 &&
-		 dot_product(norm, vtx2-vtx1) == 0 );
+    bool normal_vec_is_oritented_orthogonally_to_the_edges( dot_product(norm, vtx1-vtx0) == 0 && dot_product(norm, vtx2-vtx1) == 0 );
     THROW_UNLESS(std::invalid_argument, normal_vec_is_oritented_orthogonally_to_the_edges );
   
     vertexs.push_back( vtx0 );
@@ -43,6 +63,17 @@ public:
     edges.push_back( vtx1 - vtx0 );
     edges.push_back( vtx2 - vtx1 );
     edges.push_back( vtx0 - vtx2 );
+
+    for(int i(0); i<3; ++i)
+    {
+      if(i != gate)
+      {
+	is_gate.at(i) = false;
+      }else
+      {
+	is_gate.at(i) = true;
+      }
+    }
   }
 
   virtual void set_belonging_polygon( boost::shared_ptr<Polygon> p_sptr)
@@ -50,7 +81,9 @@ public:
     belonging_polygon = p_sptr;
   };
 
-  virtual Realvec move(Realvec& position, Realvec& displacement, boost::shared_ptr<FaceBase>& ptr);
+  virtual void set_near_vertexs();
+
+  virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& ptr);
 
   virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement );
 
@@ -59,15 +92,26 @@ public:
     return vertexs.at(0); 
   };
 
+  virtual Realvec get_another_vertex(const Realvec& edge);
+
+//   bool is_gateway_edge( int i )
+//   {
+//     return is_gate.at(i);
+//   }
+
 private:
 
-  int is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase );
+  CROSS_STATUS is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase );
 
   bool is_on_the_edge( const Realvec& position, const Realvec& edge, const int& edgebase );
 
   Real cross_point( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase );
   
   Realvec reverse( const Realvec& target, const Realvec& edge );
+
+  Realvec renew_position_on_nongate_edge(const int i, const Realvec& pos, const Realvec& dis);//returns new displacement
+
+  Realvec renew_position_goes_another_face_from_on_edge(const Realvec& pos, const Realvec& dis, boost::shared_ptr<FaceBase>& ptr);//returns new position and renew the FaceBase ptr
 
   int get_gateway()
   {
@@ -77,8 +121,8 @@ private:
 };
 
 
-
-Realvec FaceOneGate::move(Realvec& position, Realvec& displacement, boost::shared_ptr<FaceBase>& ptr)
+Realvec FaceOneGate::renew_position
+  (const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& ptr)
 {
   Realvec temppos(position);
   Realvec tempdis(displacement);
@@ -101,57 +145,29 @@ Realvec FaceOneGate::move(Realvec& position, Realvec& displacement, boost::share
       {
 	if( !is_on_the_edge( temppos, edges.at(i), i ) ) continue;
 
-	if( i != gateway )
+	if( !is_gate.at(i) )
 	{
-
 	  on_this_edge = i;
-	  int num;
-	  if( i != 0)
-	  {
-	    num = i-1;
-	  }else{
-	    num = 2;
-	  }
-
-	  Realvec cross1( cross_product( edges.at(i), ( edges.at(num) * (-1e0) ) ) );
-	  Realvec cross2( cross_product( edges.at(i), ( temppos + tempdis - vertexs.at(i) ) ) );
-	  Real cross_status( dot_product( cross1, cross2 ) );
-	  if(cross_status < 0e0)// disp is out of the face through edge(i)
-	  {
-	    Realvec reverse_disp( reverse( tempdis, edges.at(i) ) );
-	    tempdis = reverse_disp;
-	  }else{
-	    ;//do nothing
-	  }
-
+	  tempdis = renew_position_on_nongate_edge(i, temppos, tempdis);
 	  break;
 	}
 	else
 	{
-	  int num;
-	  if( i != 0)
-	  {
-	    num = i-1;
-	  }else{
-	    num = 2;
-	  }
+	  int num( (i+2) % 3 );
 
 	  Realvec cross1( cross_product( edges.at(i), ( edges.at(num) * (-1e0) ) ) );
 	  Realvec cross2( cross_product( edges.at(i), ( temppos + tempdis - vertexs.at(i) ) ) );
 	  Real cross_status( dot_product( cross1, cross2 ) );
-	  if(cross_status < 0e0)// disp is out of the face through edge(i)
-	  {
-	    ptr = belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway);
-	    Realvec neighbor_norm( ptr->get_normal_vector() );
-	    Real theta( acos( dot_product(normal, neighbor_norm) ) );
 
-	    Realvec rot_disp( rotation( theta, edges.at(gateway), tempdis) );
-	    tempdis = rot_disp;
-	    temppos = ptr->move( temppos, tempdis, ptr );
+	  if(cross_status < 0e0)
+	  {
+	    //out of the face ( renew position and ptr )
+	    temppos = renew_position_goes_another_face_from_on_edge( temppos, tempdis, ptr );
 
 	    return temppos;
 
 	  }else{
+	    //still in the face
 	    on_this_edge = i;
 	  }
 
@@ -159,17 +175,15 @@ Realvec FaceOneGate::move(Realvec& position, Realvec& displacement, boost::share
 	}
       }
 
-      //particle is not on the edge.
       for(int i(0); i<size; ++i)
       {
-	if( i != gateway )
+	if( !is_gate.at(i) )
 	{
 	  if(i == on_this_edge) continue;
-	  int cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
-	  if(cross_status == 1)
+	  CROSS_STATUS cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
+	  if(cross_status == CROSS)
 	  {
 	    Real ratio( cross_point(temppos, tempdis, edges.at(i), i) );
-	    THROW_UNLESS(std::invalid_argument, 0e0 <= ratio && ratio <= 1e0);
 
 	    temppos = temppos + tempdis * ratio;
 	    tempdis = tempdis * (1e0 - ratio);
@@ -177,7 +191,7 @@ Realvec FaceOneGate::move(Realvec& position, Realvec& displacement, boost::share
 	    tempdis = reverce_disp;
 
 	    break;
-	  }else if(cross_status == -1)
+	  }else if(cross_status == ON_THE_EDGE)
 	  {
 	    temppos = temppos + tempdis;
 	    Realvec zero(0e0, 0e0, 0e0);
@@ -187,32 +201,35 @@ Realvec FaceOneGate::move(Realvec& position, Realvec& displacement, boost::share
 	  }
 	}else{
 	  if(i == on_this_edge) continue;
-	  int cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
-	  if(cross_status == 1)
+
+	  CROSS_STATUS cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
+	  if(cross_status == CROSS)
 	  {
 	    ptr = belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway);
 	    Realvec neighbor_norm( ptr->get_normal_vector() );
 	    Real theta( acos( dot_product(normal, neighbor_norm) ) );
 
 	    Real ratio( cross_point(temppos, tempdis, edges.at(i), i) );
-	    THROW_UNLESS(std::invalid_argument, 0e0 <= ratio && ratio <= 1e0);
 
-	    //move to edge
+	    //put particle on the edge
 	    temppos = temppos + tempdis * ratio;
 	    tempdis = tempdis * (1e0 - ratio);
   
 	    Realvec rot_disp( rotation( theta, edges.at(gateway), tempdis ) );
 	    tempdis = rot_disp;
-	    temppos = ptr->move( temppos, tempdis, ptr );
+	    temppos = ptr->renew_position( temppos, tempdis, ptr );
 	    
 	    return temppos;
-	  }else if(cross_status == -1)
+	  }else if(cross_status == ON_THE_EDGE)
 	  {
 	    temppos = temppos + tempdis;
 	    Realvec zero(0e0, 0e0, 0e0);
 	    tempdis = zero;
 
 	    break;
+	  }else
+	  {
+	    ;//do nothing: particle will go out of the face but doesnot pass through this edge.
 	  }
 	}
       }
@@ -220,7 +237,45 @@ Realvec FaceOneGate::move(Realvec& position, Realvec& displacement, boost::share
     }while( !still_in_the_face(temppos, tempdis) );
   }
   return temppos + tempdis; 
-};
+}
+
+Realvec FaceOneGate::renew_position_on_nongate_edge(const int i, const Realvec& pos, const Realvec& dis)
+{
+  Realvec temppos(pos), tempdis(dis);
+
+  int num( (i + 2) % 3 );// (i-1) mod 3
+  Realvec cross1( cross_product( edges.at(i), ( edges.at(num) * (-1e0) ) ) );
+  Realvec cross2( cross_product( edges.at(i), ( temppos + tempdis - vertexs.at(i) ) ) );
+  Real cross_status( dot_product( cross1, cross2 ) );
+
+  if( cross_status < 0e0 )
+  {
+    //out of the face ( renew displacement )
+    Realvec reverse_disp( reverse( tempdis, edges.at(i) ) );
+    tempdis = reverse_disp;
+    return tempdis;
+  }else{
+    //in the face ( do nothing. then renew position normally )
+    return tempdis;
+  }
+}
+
+Realvec FaceOneGate::renew_position_goes_another_face_from_on_edge
+  (const Realvec& pos, const Realvec& dis, boost::shared_ptr<FaceBase>& ptr)
+{
+  Realvec temppos(pos), tempdis(dis);
+
+  ptr = belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway);
+  Realvec neighbor_norm( ptr->get_normal_vector() );
+  Real theta( acos( dot_product(normal, neighbor_norm) ) );
+
+  //particle is on an edge and 
+  //the neighbor face also have the same edge as a member
+  Realvec rot_disp( rotation( theta, edges.at(gateway), tempdis) );
+  Realvec retvec ( ptr->renew_position( temppos, rot_disp, ptr ) );
+
+  return retvec;
+}
 
 bool FaceOneGate::still_in_the_face( const Realvec& position, const Realvec& displacement )
 {
@@ -229,7 +284,7 @@ bool FaceOneGate::still_in_the_face( const Realvec& position, const Realvec& dis
   //         to treat this, use epsilon
   //
   //         if particle is on the edge, this func returns true.
-  Real epsilon(1e-12);
+  Real epsilon(1e-8);
   Realvec temppos(position + displacement);
   Realvec v0p( vertexs.at(0) - temppos );
   Realvec v1p( vertexs.at(1) - temppos );
@@ -244,12 +299,12 @@ bool FaceOneGate::still_in_the_face( const Realvec& position, const Realvec& dis
   rot += acos( dot_product( v2p, v0p ) / lv2p / lv0p );
 
   return (rot >= 2 * M_PI - epsilon);
-};
+}
 
 // 0: not cross
 // 1: cross
 // -1 on the edge
-int FaceOneGate::is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase )
+FaceOneGate::CROSS_STATUS FaceOneGate::is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase )
 {
 //assuming that position vector is on the face
 //and displacement is also on the same plane
@@ -270,16 +325,16 @@ int FaceOneGate::is_cross( const Realvec& position, const Realvec& displacement,
 
   if( cross_stat1 < 0 && cross_stat2 < 0 )
   {
-    return 1;
+    return CROSS;
   }else if( cross_stat1 > 0 || cross_stat2 > 0 ){
-    return 0;
+    return NOT_CROSS;
   }else if( cross_stat1 == 0 && cross_stat2 < 0){
-    return -1;
+    return ON_THE_EDGE;
   }else{
     std::cout << "caution: through the vertex" << std::endl;
-    return -1;
+    return ON_THE_EDGE;
   }
-};
+}
 
 bool FaceOneGate::is_on_the_edge( const Realvec& position, const Realvec& edge, const int& edgebase )
 {
@@ -288,7 +343,7 @@ bool FaceOneGate::is_on_the_edge( const Realvec& position, const Realvec& edge, 
   Real cross( length( cross_product(vp, edge) ) );
 
   return ( cross < epsilon );
-};
+}
 
 Real FaceOneGate::cross_point( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase )
 {
@@ -300,6 +355,7 @@ Real FaceOneGate::cross_point( const Realvec& position, const Realvec& displacem
   Real d2( length( cross_product(edge, v1pd)) / length(edge) );
   Real ratio( d1 / (d1 + d2) );
 
+  THROW_UNLESS(std::invalid_argument, 0e0 <= ratio && ratio <= 1e0);
   return ratio;
 }
 
@@ -311,7 +367,49 @@ Realvec FaceOneGate::reverse( const Realvec& target, const Realvec& edge )
   Realvec retvec( edge_n * d - target );
 
   return retvec;
-};
+}
 
+void FaceOneGate::set_near_vertexs()
+{
+  for(int i(0); i<3; ++i)
+  {
+    if( !is_gate.at(i) ) continue;
+
+    Realvec midpoint( ( vertexs.at(i) + vertexs.at( (i+1)%3 ) ) / 2e0 );
+    Real r( length( edges.at(i) ) / 2e0 );
+
+    //edge(i) is gateway so i is gateway-id
+    boost::shared_ptr<FaceBase> ptr( belonging_polygon->get_neighbor_ptr_from_gateway(face_id, i) );
+    Realvec near_vertex( ptr->get_another_vertex(edges.at(i)) );
+    
+    Real l( length( near_vertex - midpoint ) );
+
+    if(l <= r)
+    {
+      near_vertexs.push_back( near_vertex );
+    }
+
+  }
+}
+
+Realvec FaceOneGate::get_another_vertex(const Realvec& edge)
+{
+  for(int i(0); i<3; ++i)
+  {
+    if( edges.at(i)[0] == edge[0] &&
+	edges.at(i)[1] == edge[1] &&
+	edges.at(i)[2] == edge[2])
+    {
+      int vertex_id( (i+2) % 3 );
+      return vertexs.at( vertex_id );
+    }
+  }
+
+  bool get_another_vertex_have_invalid_edge_input(false);
+  THROW_UNLESS( std::invalid_argument, get_another_vertex_have_invalid_edge_input );
+
+  Realvec zero;
+  return zero;
+}
 
 #endif /*FACE_ONE_GATE*/

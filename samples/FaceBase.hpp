@@ -30,15 +30,18 @@ public:
 		  length( rep ) != 0);
   };
 
-  virtual Realvec move(Realvec& position, Realvec& displacement, boost::shared_ptr<FaceBase>& p) = 0;
+  virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p) = 0;
 
   virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement ) = 0;
 
-  virtual void set_belonging_polygon( boost::shared_ptr<Polygon> p_sptr) = 0;
+  virtual void set_belonging_polygon( boost::shared_ptr<Polygon> p_sptr ) = 0;
+
   int get_id(){ return face_id; };
   Realvec get_normal_vector(){ return normal; };
   Realvec get_represent_vector(){ return represent; };
   virtual Realvec get_vertex() = 0;
+  virtual void set_near_vertexs() = 0;
+  virtual Realvec get_another_vertex(const Realvec& edge) = 0;
 };
 
 #endif /*FACE_BASE_HPP*/

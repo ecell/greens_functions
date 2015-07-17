@@ -10,6 +10,12 @@ class FaceAllSym : public FaceBase
 {
   std::vector<Realvec> vertexs;
   std::vector<Realvec> edges;
+  enum CROSS_STATUS{
+    NOT_CROSS,
+    CROSS,
+    ON_THE_EDGE,
+  };
+
 public:
   FaceAllSym(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2)
   : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 )
@@ -40,14 +46,15 @@ public:
     edges.push_back( vtx0 - vtx2 );
   } 
 
-  virtual Realvec move(Realvec& position, Realvec& displacement, boost::shared_ptr<FaceBase>& p);
+  virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p);
 
   virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement );
 
+private:
   // 0: not cross
   // 1: cross
   // -1 on the edge
-  int is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase );
+  CROSS_STATUS is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase );
 
   bool is_on_the_edge( const Realvec& position, const Realvec& edge, const int& edgebase );
 
@@ -58,9 +65,15 @@ public:
   virtual Realvec get_vertex();
 
   virtual void set_belonging_polygon( boost::shared_ptr<Polygon> p_sptr){}; //do_nothing
+
+  virtual void set_near_vertexs(){};//do nothing
+
+  virtual Realvec get_another_vertex(const Realvec& edge);
+  
 };
 
-Realvec FaceAllSym::move(Realvec& position, Realvec& displacement, boost::shared_ptr<FaceBase>& p)
+Realvec FaceAllSym::renew_position
+  (const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p)
 {
   Realvec temppos(position);
   Realvec tempdis(displacement);
@@ -85,17 +98,12 @@ Realvec FaceAllSym::move(Realvec& position, Realvec& displacement, boost::shared
 	{
 	  on_this_edge = i;
 
-	  int num;
-	  if( i != 0)
-	  {
-	    num = i-1;
-	  }else{
-	    num = 2;
-	  }
+	  int num( (i+2)%3 );
 
 	  Realvec cross1( cross_product( edges.at(i), ( edges.at(num) * (-1e0) ) ) );
 	  Realvec cross2( cross_product( edges.at(i), ( temppos + tempdis - vertexs.at(i) ) ) );
 	  Real cross_status( dot_product( cross1, cross2 ) );
+
 	  if(cross_status < 0e0)// disp is out of the face through edge(i)
 	  {
 	    Realvec reverse_disp( reverse( tempdis, edges.at(i) ) );
@@ -111,9 +119,9 @@ Realvec FaceAllSym::move(Realvec& position, Realvec& displacement, boost::shared
       for(int i(0); i<size; ++i)
       {
 	if(i == on_this_edge) continue;
-	//particle is not on the edge(but sometimes will be on the edge...)
+
 	int cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
-	if(cross_status == 1)
+	if(cross_status == CROSS)
 	{
 	  Real ratio( cross_point(temppos, tempdis, edges.at(i), i) );
 	  THROW_UNLESS(std::invalid_argument, 0e0 <= ratio && ratio <= 1e0);
@@ -124,7 +132,7 @@ Realvec FaceAllSym::move(Realvec& position, Realvec& displacement, boost::shared
 	  tempdis = reverce_disp;
 
 	  break;
-	}else if(cross_status == -1)
+	}else if(cross_status == ON_THE_EDGE)
 	{
 	  temppos = temppos + tempdis;
 	  Realvec zero(0e0, 0e0, 0e0);
@@ -142,7 +150,7 @@ Realvec FaceAllSym::move(Realvec& position, Realvec& displacement, boost::shared
 bool FaceAllSym::still_in_the_face( const Realvec& position, const Realvec& displacement )
 {
   // if particle is on the edge, this func returns true.
-  Real epsilon(1e-12);
+  Real epsilon(1e-8);
   Realvec temppos(position + displacement);
   Realvec v0p( vertexs.at(0) - temppos );
   Realvec v1p( vertexs.at(1) - temppos );
@@ -159,7 +167,7 @@ bool FaceAllSym::still_in_the_face( const Realvec& position, const Realvec& disp
   return (rot >= 2 * M_PI - epsilon);
 };
 
-int FaceAllSym::is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase )
+FaceAllSym::CROSS_STATUS FaceAllSym::is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase )
 {
 //assuming that position vector is on the face
 //and displacement is also on the same plane
@@ -180,14 +188,14 @@ int FaceAllSym::is_cross( const Realvec& position, const Realvec& displacement, 
 
   if( cross_stat1 < 0 && cross_stat2 < 0 )
   {
-    return 1;
+    return CROSS;
   }else if( cross_stat1 > 0 || cross_stat2 > 0 ){
-    return 0;
+    return NOT_CROSS;
   }else if( cross_stat1 == 0 && cross_stat2 < 0){
-    return -1;
+    return ON_THE_EDGE;
   }else{
     std::cout << "caution: through the vertex" << std::endl;
-    return -1;
+    return ON_THE_EDGE;
   }
 
 }
@@ -228,5 +236,25 @@ Realvec FaceAllSym::get_vertex()
 {
   return vertexs.at(0); 
 };
+
+Realvec FaceAllSym::get_another_vertex(const Realvec& edge)
+{
+  for(int i(0); i<3; ++i)
+  {
+    if( edges.at(i)[0] == edge[0] &&
+	edges.at(i)[1] == edge[1] &&
+	edges.at(i)[2] == edge[2])
+    {
+      int vertex_id( (i+2) % 3 );
+      return vertexs.at( vertex_id );
+    }
+  }
+
+  bool get_another_vertex_have_invalid_edge_input(false);
+  THROW_UNLESS( std::invalid_argument, get_another_vertex_have_invalid_edge_input== true );
+
+  Realvec zero;
+  return zero;
+}
 
 #endif /*FACE_AllSYM*/

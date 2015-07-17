@@ -16,16 +16,22 @@ public:
 
   ~FaceInf(){ };
 
-  virtual Realvec move(Realvec& position, Realvec& displacement, boost::shared_ptr<FaceBase>& p);
+  virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p);
 
   virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement );
 
   virtual Realvec get_vertex();
 
   virtual void set_belonging_polygon( boost::shared_ptr<Polygon> p_sptr){};//do nothing;
+  virtual void set_near_vertexs(){};
+  virtual Realvec get_another_vertex(const Realvec& edge){
+    Realvec zero(0e0, 0e0, 0e0);
+    return zero;
+  };
 };
 
-Realvec FaceInf::move(Realvec& position, Realvec& displacement, boost::shared_ptr<FaceBase>& p)
+Realvec FaceInf::renew_position
+  (const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p)
 {
     bool in_the_infty_plane;
     in_the_infty_plane = still_in_the_face(position, displacement);
