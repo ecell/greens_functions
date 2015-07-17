@@ -214,8 +214,12 @@ Realvec FaceOneGate::renew_position
 	    //put particle on the edge
 	    temppos = temppos + tempdis * ratio;
 	    tempdis = tempdis * (1e0 - ratio);
-  
-	    Realvec rot_disp( rotation( theta, edges.at(gateway), tempdis ) );
+
+  	    Realvec norm1( cross_product(normal, neighbor_norm) );
+	    if( length(norm1) == 0 ) norm1 = edges.at(gateway);
+	    Realvec axis( norm1 / length(norm1) );
+
+	    Realvec rot_disp( rotation( theta, axis, tempdis ) );
 	    tempdis = rot_disp;
 	    temppos = ptr->renew_position( temppos, tempdis, ptr );
 	    
@@ -271,7 +275,11 @@ Realvec FaceOneGate::renew_position_goes_another_face_from_on_edge
 
   //particle is on an edge and 
   //the neighbor face also have the same edge as a member
-  Realvec rot_disp( rotation( theta, edges.at(gateway), tempdis) );
+  Realvec norm1( cross_product(normal, neighbor_norm) );
+  if( length(norm1) == 0 ) norm1 = edges.at(gateway);
+  Realvec axis( norm1 / length(norm1) );
+  
+  Realvec rot_disp( rotation( theta, axis, tempdis) );
   Realvec retvec ( ptr->renew_position( temppos, rot_disp, ptr ) );
 
   return retvec;

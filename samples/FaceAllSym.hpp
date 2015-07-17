@@ -18,32 +18,32 @@ class FaceAllSym : public FaceBase
 
 public:
   FaceAllSym(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2)
-  : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 )
+  : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ), vertexs(3), edges(3)
   {
-    vertexs.push_back( vtx0 );
-    vertexs.push_back( vtx1 );
-    vertexs.push_back( vtx2 );
+    vertexs.at(0) = vtx0;
+    vertexs.at(1) = vtx1;
+    vertexs.at(2) = vtx2;
 
-    edges.push_back( vtx1 - vtx0 );
-    edges.push_back( vtx2 - vtx1 );
-    edges.push_back( vtx0 - vtx2 );
+    edges.at(0) = vtx1 - vtx0;
+    edges.at(1) = vtx2 - vtx1;
+    edges.at(2) = vtx0 - vtx2;
   }
  
   FaceAllSym(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const Realvec& norm)
-  : FaceBase( id, norm, vtx1-vtx0 )
+  : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3)
   {
     bool normal_vec_is_oritented_orthogonally_to_the_edges(
 		   dot_product(norm, vtx1-vtx0) == 0 &&
 		   dot_product(norm, vtx2-vtx1) == 0 );
     THROW_UNLESS(std::invalid_argument, normal_vec_is_oritented_orthogonally_to_the_edges );
 
-    vertexs.push_back( vtx0 );
-    vertexs.push_back( vtx1 );
-    vertexs.push_back( vtx2 );
+    vertexs.at(0) = vtx0;
+    vertexs.at(1) = vtx1;
+    vertexs.at(2) = vtx2;
 
-    edges.push_back( vtx1 - vtx0 );
-    edges.push_back( vtx2 - vtx1 );
-    edges.push_back( vtx0 - vtx2 );
+    edges.at(0) = vtx1 - vtx0;
+    edges.at(1) = vtx2 - vtx1;
+    edges.at(2) = vtx0 - vtx2;
   } 
 
   virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p);
@@ -51,9 +51,7 @@ public:
   virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement );
 
 private:
-  // 0: not cross
-  // 1: cross
-  // -1 on the edge
+
   CROSS_STATUS is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase );
 
   bool is_on_the_edge( const Realvec& position, const Realvec& edge, const int& edgebase );
@@ -64,12 +62,8 @@ private:
 
   virtual Realvec get_vertex();
 
-  virtual void set_belonging_polygon( boost::shared_ptr<Polygon> p_sptr){}; //do_nothing
-
-  virtual void set_near_vertexs(){};//do nothing
-
   virtual Realvec get_another_vertex(const Realvec& edge);
-  
+
 };
 
 Realvec FaceAllSym::renew_position
@@ -120,7 +114,7 @@ Realvec FaceAllSym::renew_position
       {
 	if(i == on_this_edge) continue;
 
-	int cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
+	CROSS_STATUS cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
 	if(cross_status == CROSS)
 	{
 	  Real ratio( cross_point(temppos, tempdis, edges.at(i), i) );
@@ -149,7 +143,6 @@ Realvec FaceAllSym::renew_position
 
 bool FaceAllSym::still_in_the_face( const Realvec& position, const Realvec& displacement )
 {
-  // if particle is on the edge, this func returns true.
   Real epsilon(1e-8);
   Realvec temppos(position + displacement);
   Realvec v0p( vertexs.at(0) - temppos );

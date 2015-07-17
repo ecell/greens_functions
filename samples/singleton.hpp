@@ -6,7 +6,7 @@ class particle
 {
   Realvec position;
   int particle_id;
-  face_sptr face_ptr;
+  boost::shared_ptr<FaceBase> face_ptr;
 public:
   particle( int id, const Realvec& pos, face_sptr ptr )
   {
@@ -22,7 +22,11 @@ public:
 
   void move( const Real& r, const Real& theta );
 
+  Real get_max_a();
+
   int get_id(){ return particle_id; };
+
+  boost::shared_ptr<FaceBase> get_face_sptr();
 
   friend std::ostream& operator<<(std::ostream& os, const particle& part);
 };
@@ -44,6 +48,14 @@ void particle::move( const Real& r, const Real& theta )
   position = newpos;
   return;
 }
+
+Real particle::get_max_a()
+{
+  Real retval( face_ptr->get_max_a(position) );
+  return retval;
+}
+
+boost::shared_ptr<FaceBase> particle::get_face_sptr(){ return face_ptr; };
 
 std::ostream& operator<<( std::ostream& os, const particle& part)
 {

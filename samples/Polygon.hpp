@@ -47,7 +47,7 @@ public:
   void set_neighbor( const int& gate, const boost::shared_ptr<FaceBase>& ptr0, const boost::shared_ptr<FaceBase>& ptr1 );
 
 // use this function after all faces are inserted and all gateway edges are connected
-//   void set_near_vertex();
+  void set_near_vertex();
  
   boost::shared_ptr<FaceBase> get_ptr_from_id(int id);
 
@@ -83,22 +83,13 @@ void Polygon::set_neighbor( const int& gate, const boost::shared_ptr<FaceBase>& 
   return;
 };
 
-// void Polygon::set_near_vertex()
-// {
-//   for(std::map< int, boost::shared_ptr<FaceBase> >::iterator itr( face_map.begin() ); itr != face_map.end(); ++itr)
-//   {
-//     for(int i(0); i<3; ++i)
-//     {
-//       int id(itr->first);
-//       boost::shared_ptr<FaceBase> fb_sptr;
-//
-//       if( is_gateway_edge( i ) )
-//       {
-// 	int id( itr->first );
-//       }
-//     }
-//   }
-// }
+void Polygon::set_near_vertex()
+{
+  for(std::map< int, boost::shared_ptr<FaceBase> >::iterator itr( face_map.begin() ); itr != face_map.end(); ++itr)
+  {
+    itr->second->set_near_vertexs();
+  }
+}
 
 boost::shared_ptr<FaceBase> Polygon::get_ptr_from_id( int id )
 {

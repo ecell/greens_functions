@@ -31,7 +31,8 @@ public:
     vertexs.push_back( vtx1 );
     vertexs.push_back( vtx2 );
 
-    edges.push_back( vtx1 - vtx0 );//edges.at(i): vertexs.at(i) -> vertexs.at(i+1)
+    //edges.at(i): vertexs.at(i) -> vertexs.at(i+1)
+    edges.push_back( vtx1 - vtx0 );
     edges.push_back( vtx2 - vtx1 );
     edges.push_back( vtx0 - vtx2 );
   
@@ -93,6 +94,7 @@ public:
   virtual void set_near_vertexs();
   virtual Realvec get_another_vertex(const Realvec& edge);
   virtual Realvec get_vertex(){ return vertexs.at(0); };
+  virtual Real get_max_a(const Realvec& position);
 
 private:
 
@@ -187,7 +189,11 @@ Realvec FaceTwoGate::renew_position(const Realvec& position, const Realvec& disp
 	    Realvec neighbor_norm( ptr->get_normal_vector() );
 	    Real theta( acos( dot_product(normal, neighbor_norm) ) );
 
-	    Realvec rot_disp( rotation( theta, edges.at(gateway.at(gatenum)), tempdis) );
+	    Realvec norm1( cross_product(normal, neighbor_norm) );
+	    if( length(norm1) == 0 ) norm1 = edges.at(gateway.at(gatenum));
+	    Realvec axis( norm1 / length(norm1) );
+
+	    Realvec rot_disp( rotation( theta, axis, tempdis) );
 	    tempdis = rot_disp;
 	    temppos = ptr->renew_position( temppos, tempdis, ptr );
 
@@ -262,8 +268,15 @@ Realvec FaceTwoGate::renew_position(const Realvec& position, const Realvec& disp
 	    //put particle on the edge
 	    temppos = temppos + tempdis * ratio;
 	    tempdis = tempdis * (1e0 - ratio);
-  
-	    Realvec rot_disp( rotation( theta, edges.at(gateway.at(gatenum)), tempdis ) );
+
+	    Realvec norm1( cross_product(normal, neighbor_norm) );
+	    if( length(norm1) == 0 ) norm1 = edges.at(gateway.at(gatenum));
+
+	    Realvec axis( norm1 / length(norm1) );
+//  	    std::cout << "norm1 " << norm1 << " ";
+// 	    std::cout << "axis  " << axis << " ";
+
+	    Realvec rot_disp( rotation( theta, axis, tempdis ) );
 	    tempdis = rot_disp;
 	    temppos = ptr->renew_position( temppos, tempdis, ptr );
 	    
@@ -298,7 +311,7 @@ bool FaceTwoGate::still_in_the_face( const Realvec& position, const Realvec& dis
   //         (typically in order of 1e-15 ), in that case this func returns 0
   //         to treat this, use epsilon
   //
-  //         when distance between position + displacement and edge < 1e-5,
+  //         for example, when distance between position + displacement and edge < 1e-5,
   //         2pi - angle can be laeger than 1e-12 even pos+dis is in the face...
   for(int i(0); i<3; ++i)
   {
@@ -412,16 +425,24 @@ void FaceTwoGate::set_near_vertexs()
 
 Realvec FaceTwoGate::get_another_vertex(const Realvec& edge)
 {
+  Realvec tempedge( edge * (-1e0) );
+
   for(int i(0); i<3; ++i)
   {
-    if( edges.at(i)[0] == edge[0] &&
-	edges.at(i)[1] == edge[1] &&
-	edges.at(i)[2] == edge[2])
+    if( edges.at(i)[0] == tempedge[0] &&
+	edges.at(i)[1] == tempedge[1] &&
+	edges.at(i)[2] == tempedge[2])
     {
       int vertex_id( (i+2) % 3 );
       return vertexs.at( vertex_id );
     }
   }
+
+//   std::cout << "face id:" << face_id << std::endl;
+//   std::cout << tempedge << std::endl;
+//   std::cout << edges.at(0) << " ";
+//   std::cout << edges.at(1) << " ";
+//   std::cout << edges.at(2) << std::endl;
 
   bool get_another_vertex_have_invalid_edge_input(false);
   THROW_UNLESS( std::invalid_argument, get_another_vertex_have_invalid_edge_input );
@@ -430,6 +451,33 @@ Realvec FaceTwoGate::get_another_vertex(const Realvec& edge)
   return zero;
 }
 
+Real FaceTwoGate::get_max_a(const Realvec& position)
+{
+  Real size( vertexs.size() );
 
+  Realvec vertvec( vertexs.at(0) - position );
+  Real min_distance( length(vertvec) );
+
+  for(int i(1); i<size; ++i)
+  {
+    vertvec = vertexs.at(i) - position;
+    if( min_distance > length( vertvec ) ) min_distance = length( vertvec );
+  }
+  
+  if( !near_vertexs.empty() )
+  {
+    size = near_vertexs.size();
+    for(int i(0); i<size; ++i)
+    {
+      vertvec = near_vertexs.at(i) - position;
+      // length(vertvec) is distance of the straight line between particle position and near vertex
+      // but it is lesser equal to distance along the surface
+      if( min_distance > length( vertvec ) ) min_distance = length( vertvec );
+    }
+  }
+  if(min_distance < 1e-4) min_distance = 1e-1;
+
+  return min_distance;
+}
 
 #endif /*FACE_TWO_GATE*/
