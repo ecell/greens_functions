@@ -8,6 +8,7 @@
 #include <cmath>
 
 using namespace greens_functions;
+typedef boost::shared_ptr<FaceBase> face_sptr;
 
 int main()
 {

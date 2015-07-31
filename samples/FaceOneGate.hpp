@@ -309,10 +309,8 @@ bool FaceOneGate::still_in_the_face( const Realvec& position, const Realvec& dis
   return (rot >= 2 * M_PI - epsilon);
 }
 
-// 0: not cross
-// 1: cross
-// -1 on the edge
-FaceOneGate::CROSS_STATUS FaceOneGate::is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase )
+FaceOneGate::CROSS_STATUS
+FaceOneGate::is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase )
 {
 //assuming that position vector is on the face
 //and displacement is also on the same plane

@@ -1,14 +1,18 @@
+#ifndef SINGLETON_HPP
+#define SINGLETON_HPP
+
 #include "FaceBase.hpp"
 #include "rotation.hpp"
-typedef boost::shared_ptr<FaceBase> face_sptr;
+// typedef boost::shared_ptr<FaceBase> face_sptr;
 
 class particle 
 {
   Realvec position;
   int particle_id;
   boost::shared_ptr<FaceBase> face_ptr;
+  bool shell_involves_vertex;
 public:
-  particle( int id, const Realvec& pos, face_sptr ptr )
+  particle( int id, const Realvec& pos, boost::shared_ptr<FaceBase> ptr )
   {
     //caution: using epsilon for decision of (double) ~= 0
     Realvec vertex( ptr->get_vertex() );
@@ -26,6 +30,10 @@ public:
 
   int get_id(){ return particle_id; };
 
+  int get_face_id();
+
+  bool involve_vertex(){ return shell_involves_vertex; };
+
   boost::shared_ptr<FaceBase> get_face_sptr();
 
   friend std::ostream& operator<<(std::ostream& os, const particle& part);
@@ -34,24 +42,44 @@ public:
 //TODO make it possible that particle move in 2d and 3d using same function
 void particle::move( const Real& r, const Real& theta )
 {
-  Realvec axis( face_ptr->get_normal_vector() );
-  Realvec target( face_ptr->get_represent_vector() );
 
-  Realvec temp;
-  temp = rotation(theta, axis, target);
+  if(shell_involves_vertex)
+  {
+    //TODO
+    //theta?
+    Realvec axis( face_ptr->get_normal_vector() );
+    Realvec target( face_ptr->get_represent_vector() );
 
-  Realvec displacement( temp * r );
+    Realvec temp;
+    temp = rotation(theta, axis, target);
 
-//   std::cout << "call face that have this id: " << face_ptr->get_id() << std::endl;
+    Realvec displacement( temp * r );
 
-  Realvec newpos( face_ptr->renew_position(position, displacement, face_ptr) );
-  position = newpos;
-  return;
+    Realvec newpos( face_ptr->renew_position(position, displacement, face_ptr) );
+    position = newpos;
+    return;
+
+  }else{
+    Realvec axis( face_ptr->get_normal_vector() );
+    Realvec target( face_ptr->get_represent_vector() );
+
+    Realvec temp;
+    temp = rotation(theta, axis, target);
+
+    Realvec displacement( temp * r );
+
+  //   std::cout << "call face that have this id: " << face_ptr->get_id() << std::endl;
+
+    Realvec newpos( face_ptr->renew_position(position, displacement, face_ptr) );
+    position = newpos;
+    return;
+  }
+
 }
 
 Real particle::get_max_a()
 {
-  Real retval( face_ptr->get_max_a(position) );
+  Real retval( face_ptr->get_max_a(position, shell_involves_vertex) );
   return retval;
 }
 
@@ -65,3 +93,10 @@ std::ostream& operator<<( std::ostream& os, const particle& part)
   return os;
 }
 
+int particle::get_face_id()
+{
+  int retid(face_ptr->get_id());
+  return retid;
+}
+
+#endif /*SINGLETON_HPP*/

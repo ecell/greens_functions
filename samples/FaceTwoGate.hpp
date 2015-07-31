@@ -14,6 +14,7 @@ private:
   //to get the vertex nearest the particle, lookup in (std::vector vertexs) and this near_vertexs.
   std::vector<Realvec> near_vertexs;
   std::vector<Realvec> edges;
+  std::vector<Real> angles;
   std::vector<int> gateway;// edges.at(gateway.at(i)) == gateway edge
   std::vector<bool> is_gate;
   boost::shared_ptr<Polygon> belonging_polygon;
@@ -25,16 +26,16 @@ private:
 
 public:
   FaceTwoGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const int& gate0, const int& gate1)
-  : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ), gateway(2), is_gate(3)
+  : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ), vertexs(3), edges(3), angles(3), gateway(2), is_gate(3)
   {
-    vertexs.push_back( vtx0 );
-    vertexs.push_back( vtx1 );
-    vertexs.push_back( vtx2 );
+    vertexs.at(0) = vtx0;
+    vertexs.at(1) = vtx1;
+    vertexs.at(2) = vtx2;
 
     //edges.at(i): vertexs.at(i) -> vertexs.at(i+1)
-    edges.push_back( vtx1 - vtx0 );
-    edges.push_back( vtx2 - vtx1 );
-    edges.push_back( vtx0 - vtx2 );
+    edges.at(0) = vtx1 - vtx0;
+    edges.at(1) = vtx2 - vtx1;
+    edges.at(2) = vtx0 - vtx2;
   
     gateway.at(0) = gate0;
     gateway.at(1) = gate1;
@@ -49,23 +50,29 @@ public:
 	is_gate.at(i) = true;
       }
     }
+  
+    angles.at(0) = smaller_angle( edges.at(0), edges.at(2)*(-1e0) );
+    angles.at(1) = smaller_angle( edges.at(1), edges.at(0)*(-1e0) );
+    angles.at(2) = smaller_angle( edges.at(2), edges.at(1)*(-1e0) );
+
   }
 
   FaceTwoGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const Realvec& norm, const int& gate0, const int& gate1)
-  : FaceBase( id, norm, vtx1-vtx0 ), gateway(2)
+  : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3), angles(3), gateway(2), is_gate(3)
   {
     bool normal_vec_is_oritented_orthogonally_to_the_edges(
  		 dot_product(norm, vtx1-vtx0) == 0 &&
 		 dot_product(norm, vtx2-vtx1) == 0 );
     THROW_UNLESS(std::invalid_argument, normal_vec_is_oritented_orthogonally_to_the_edges );
   
-    vertexs.push_back( vtx0 );
-    vertexs.push_back( vtx1 );
-    vertexs.push_back( vtx2 );
+    vertexs.at(0) = vtx0;
+    vertexs.at(1) = vtx1;
+    vertexs.at(2) = vtx2;
 
-    edges.push_back( vtx1 - vtx0 );
-    edges.push_back( vtx2 - vtx1 );
-    edges.push_back( vtx0 - vtx2 );
+    //edges.at(i): vertexs.at(i) -> vertexs.at(i+1)
+    edges.at(0) = vtx1 - vtx0;
+    edges.at(1) = vtx2 - vtx1;
+    edges.at(2) = vtx0 - vtx2;
 
     gateway.at(0) = gate0;
     gateway.at(1) = gate1;
@@ -80,6 +87,11 @@ public:
 	is_gate.at(i) = true;
       }
     }
+    
+    angles.at(0) = smaller_angle( edges.at(0), edges.at(2)*(-1e0) );
+    angles.at(1) = smaller_angle( edges.at(1), edges.at(0)*(-1e0) );
+    angles.at(2) = smaller_angle( edges.at(2), edges.at(1)*(-1e0) );
+
   }
 
   virtual void set_belonging_polygon( boost::shared_ptr<Polygon> p_sptr)
@@ -94,7 +106,7 @@ public:
   virtual void set_near_vertexs();
   virtual Realvec get_another_vertex(const Realvec& edge);
   virtual Realvec get_vertex(){ return vertexs.at(0); };
-  virtual Real get_max_a(const Realvec& position);
+  virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag);
 
 private:
 
@@ -125,8 +137,8 @@ Realvec FaceTwoGate::renew_position(const Realvec& position, const Realvec& disp
   Realvec temppos(position);
   Realvec tempdis(displacement);
   //debug
-  std::cout << temppos[0] << " " << temppos[1] << " " << temppos[2] << " ";
-  std::cout << tempdis[0] << " " << tempdis[1] << " " << tempdis[2] << std::endl;
+//   std::cout << temppos[0] << " " << temppos[1] << " " << temppos[2] << " ";
+//   std::cout << tempdis[0] << " " << tempdis[1] << " " << tempdis[2] << std::endl;
   
   bool in_the_face( still_in_the_face(temppos, tempdis) );
   if(in_the_face)
@@ -451,17 +463,27 @@ Realvec FaceTwoGate::get_another_vertex(const Realvec& edge)
   return zero;
 }
 
-Real FaceTwoGate::get_max_a(const Realvec& position)
+Real FaceTwoGate::get_max_a(const Realvec& position, bool& vertex_involve_flag)
 {
-  Real size( vertexs.size() );
+  vertex_involve_flag = false;
+  int nearest_face_vertex(-1);
+  int nearest_neighbor_vertex(-1);
+
+  int size( vertexs.size() );
 
   Realvec vertvec( vertexs.at(0) - position );
+  nearest_face_vertex = 0;
+
   Real min_distance( length(vertvec) );
 
   for(int i(1); i<size; ++i)
   {
     vertvec = vertexs.at(i) - position;
-    if( min_distance > length( vertvec ) ) min_distance = length( vertvec );
+    if( min_distance > length( vertvec ) )
+    {
+      min_distance = length( vertvec );
+      nearest_face_vertex = i;
+    }
   }
   
   if( !near_vertexs.empty() )
@@ -472,10 +494,50 @@ Real FaceTwoGate::get_max_a(const Realvec& position)
       vertvec = near_vertexs.at(i) - position;
       // length(vertvec) is distance of the straight line between particle position and near vertex
       // but it is lesser equal to distance along the surface
-      if( min_distance > length( vertvec ) ) min_distance = length( vertvec );
+      if( min_distance > length( vertvec ) )
+      {
+	min_distance = length( vertvec );
+	nearest_neighbor_vertex = i;
+      }
     }
   }
-  if(min_distance < 1e-4) min_distance = 1e-1;
+
+  // if minimal distance from particle to vertex is smaller than this threshold
+  // this allows the shell to involve only one vertex.
+  if(min_distance < 1e-4)
+  {
+    vertex_involve_flag = true;
+    Real second_distance;
+    size = vertexs.size();
+
+    for(int i(0); i < size; ++i)
+    {
+      if(i == nearest_face_vertex) continue;
+      vertvec = vertexs.at(i) - position;
+      second_distance = length(vertvec);
+    }
+
+    for(int i(0); i < size; ++i)
+    {
+      if(i == nearest_face_vertex) continue;
+      vertvec = vertexs.at(i) - position;
+      if(second_distance < length(vertvec)) second_distance = length(vertvec);
+    }
+
+    if(near_vertexs.empty()) return second_distance;
+
+    size = near_vertexs.size();
+    for(int i(0); i < size; ++i)
+    {
+      if(i == nearest_neighbor_vertex) continue;
+      vertvec = vertexs.at(i) - position;
+      if(second_distance < length(vertvec)) second_distance = length(vertvec);
+    }
+
+    THROW_UNLESS(std::invalid_argument, second_distance > 1e-4);
+  
+    return second_distance;
+  }
 
   return min_distance;
 }

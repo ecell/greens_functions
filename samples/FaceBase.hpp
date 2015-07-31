@@ -44,15 +44,33 @@ public:
     return zero;
   };
 
-  virtual Real get_max_a(const Realvec& position)
+  virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag)
   {
     throw std::invalid_argument( "this face has no vertex" );
+    return 0e0;
+  };
+
+  virtual Real get_minimum_height(const Realvec& neighbors_edge)
+  {
+    throw std::invalid_argument( "this face subclass has no neighbor or still not overloaded" );
     return 0e0;
   };
 
   int get_id(){ return face_id; };
   Realvec get_normal_vector(){ return normal; };
   Realvec get_represent_vector(){ return represent; };
+
+  Real smaller_angle(const Realvec& v1, const Realvec& v2);
 };
+
+Real FaceBase::smaller_angle(const Realvec& v1, const Realvec& v2)
+{
+  Real len1( length(v1) );
+  Real len2( length(v2) );
+  Real inner( dot_product( v1, v2 ) );
+
+  Real angle( acos( inner / len1 / len2 ) );
+  return angle;
+}
 
 #endif /*FACE_BASE_HPP*/
