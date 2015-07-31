@@ -56,6 +56,18 @@ public:
     return 0e0;
   };
 
+  virtual Real get_left_angle( const Realvec& neighbors_edge )
+  {
+    throw std::invalid_argument( "this face subclass has no angle or still not overloaded" );
+    return 0e0;
+  }
+
+  virtual Real get_right_angle( const Realvec& neighbors_edge )
+  {
+    throw std::invalid_argument( "this face subclass has no angle or still not overloaded" );
+    return 0e0;
+  }
+
   int get_id(){ return face_id; };
   Realvec get_normal_vector(){ return normal; };
   Realvec get_represent_vector(){ return represent; };

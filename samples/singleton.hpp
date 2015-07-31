@@ -14,11 +14,15 @@ class particle
 public:
   particle( int id, const Realvec& pos, boost::shared_ptr<FaceBase> ptr )
   {
-    //caution: using epsilon for decision of (double) ~= 0
+    //ASSERT: normal vector MUST cross perpendicularly (position - vertex) vector.
+    //	      because particle belings on the face.
+    //TODO  : seek which face do particle belongs automatically.
+
     Realvec vertex( ptr->get_vertex() );
     Real epsilon(1e-10);
     THROW_UNLESS( std::invalid_argument,
 		  fabs( dot_product(pos-vertex, ptr->get_normal_vector() ) ) < epsilon );
+    
     particle_id = id;
     position = pos;
     face_ptr = ptr;
@@ -60,21 +64,25 @@ void particle::move( const Real& r, const Real& theta )
     return;
 
   }else{
+  // generate displacement vector from length (r) and angle (theta)
     Realvec axis( face_ptr->get_normal_vector() );
     Realvec target( face_ptr->get_represent_vector() );
-
-    Realvec temp;
-    temp = rotation(theta, axis, target);
-
-    Realvec displacement( temp * r );
-
-  //   std::cout << "call face that have this id: " << face_ptr->get_id() << std::endl;
+    Realvec disp_direction( rotation(theta, axis, target) );
+    Realvec displacement( disp_direction * r );
+    if( fabs(length(displacement) - r) > 1e-12 )
+    {
+      std::cerr << "r: " << std::setprecision(16) << r << std::endl;
+      std::cerr << "disp_direction length: " << std::setprecision(16) << length(disp_direction) << std::endl;
+      std::cerr << "displacement length: " << std::setprecision(16) << length(displacement) << std::endl;
+      std::cerr << "fabs(length(displacement) - r)" << std::setprecision(16) << fabs(length(displacement) - r) << std::endl;
+      throw std::invalid_argument("displacement length is not equal to shell size.");
+    }
+//   std::cout << "call face that have this id: " << face_ptr->get_id() << std::endl;
 
     Realvec newpos( face_ptr->renew_position(position, displacement, face_ptr) );
     position = newpos;
     return;
   }
-
 }
 
 Real particle::get_max_a()
@@ -83,7 +91,16 @@ Real particle::get_max_a()
   return retval;
 }
 
-boost::shared_ptr<FaceBase> particle::get_face_sptr(){ return face_ptr; };
+boost::shared_ptr<FaceBase> particle::get_face_sptr()
+{
+  return face_ptr;
+};
+
+int particle::get_face_id()
+{
+  int ret_id(face_ptr->get_id());
+  return ret_id;
+}
 
 std::ostream& operator<<( std::ostream& os, const particle& part)
 {
@@ -91,12 +108,6 @@ std::ostream& operator<<( std::ostream& os, const particle& part)
   os << part.position[1] << " ";
   os << part.position[2];
   return os;
-}
-
-int particle::get_face_id()
-{
-  int retid(face_ptr->get_id());
-  return retid;
 }
 
 #endif /*SINGLETON_HPP*/
