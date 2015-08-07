@@ -218,7 +218,10 @@ FaceAllGate::in_this_face(const Real& alpha, const Real& beta)
   bool just_on_vertex( (alpha== 0e0 || alpha == 1e0) &&
 		       (beta == 0e0 ||  beta == 1e0) );
   if(just_on_vertex)
-    throw std::invalid_argument("in_this_face : particle is just on a bertex");
+  {
+    std::cout << "alpha: " << std::setprecision(16) << alpha << ", beta: " << beta << std::endl;
+    throw std::invalid_argument("in_this_face : particle is just on a vertex");
+  }
   bool alpha_in_range( 0e0 <= alpha && alpha <= 1e0 );
   bool beta_in_range( 0e0 <= beta  && beta  <= 1e0 );
   bool sum_in_range( 0e0 < alpha+beta && alpha+beta <= 1e0 );
@@ -334,7 +337,7 @@ FaceAllGate::intersection_ratio( const Real& pos_alpha, const Real& pos_beta,
   switch(edge_num)
   {
   case 0:
-    if( pos_beta == 0e0 )
+    if( dis_beta == 0e0 )
       throw std::invalid_argument("cannot intersect this edge");
     ratio = - pos_beta / dis_beta;
     break;
@@ -344,7 +347,7 @@ FaceAllGate::intersection_ratio( const Real& pos_alpha, const Real& pos_beta,
     ratio = ( 1e0 - pos_alpha - pos_beta ) / ( dis_alpha + dis_beta );
     break;
   case 2:
-    if( pos_alpha == 0e0 )
+    if( dis_alpha == 0e0 )
       throw std::invalid_argument("cannot intersect this edge");
     ratio = - pos_alpha / dis_alpha;
     break;
@@ -473,19 +476,9 @@ void FaceAllGate::set_near_vertexs()
 {
   for(int i(0); i<3; ++i)
   {
-// all edges are gate.
-//     if( !is_gate.at(i) )
-//       continue;
     boost::shared_ptr<FaceBase> ptr(belonging_polygon->get_neighbor_ptr_from_gateway(face_id, i));
     near_vert_height.push_back( ptr->get_minimum_height( edges.at(i) ) );
   }
-
-  std::cout << "face id: " << face_id <<" completed set_near_vert_height."<< std::endl;
-  for(int i(0); i<3; ++i)
-  {
-    std::cout << "height.at(" << i <<")" << near_vert_height.at(i) << std::endl;
-  }
-  std::cout << std::endl;
 }
 
 /*    <- return this vertex

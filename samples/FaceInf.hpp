@@ -22,7 +22,7 @@ public:
 
   virtual Realvec get_vertex();
   
-  virtual void print_class_name()
+  virtual void print_class_name();
 };
 
 Realvec FaceInf::renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p)
