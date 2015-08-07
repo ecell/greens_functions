@@ -103,6 +103,7 @@ public:
   virtual Real get_left_angle( const Realvec& neighbors_edge );
 
   virtual void print_class_name();
+
 private:
   //return whether the position represented parameter a&b is in this face.
   bool in_this_face(const Real& alpha, const Real& beta);
@@ -169,13 +170,13 @@ FaceAllGate::renew_position(const Realvec& position, const Realvec& displacement
 
   Real dis_alpha(0e0), dis_beta(0e0);
   to_parametric(tempdis, dis_alpha, dis_beta);
-  //dis_alpha( newpos_alpha - pos_alpha ), dis_beta( newpos_beta - pos_beta )
+  //dis_alpha( newpos_alpha - pos_alpha ), dis_beta( newpos_beta - pos_beta ) ?
 
   int gate( through_edge(pos_alpha, pos_beta, newpos_alpha, newpos_beta) );
 
   ptr = belonging_polygon->get_neighbor_ptr_from_gateway( face_id, gate );
   
-  Real ratio( intersection_ratio( pos_alpha, pos_beta, dis_alpha, dis_beta, gate ) );
+  const Real ratio( intersection_ratio( pos_alpha, pos_beta, dis_alpha, dis_beta, gate ) );
   temppos = represent_vertex 
 	  + to_absolute( pos_alpha + ratio*dis_alpha, pos_beta + ratio*dis_beta );
   tempdis = to_absolute( (1e0 - ratio) * dis_alpha, (1e0 - ratio) * dis_beta );
@@ -222,6 +223,7 @@ FaceAllGate::in_this_face(const Real& alpha, const Real& beta)
     std::cout << "alpha: " << std::setprecision(16) << alpha << ", beta: " << beta << std::endl;
     throw std::invalid_argument("in_this_face : particle is just on a vertex");
   }
+
   bool alpha_in_range( 0e0 <= alpha && alpha <= 1e0 );
   bool beta_in_range( 0e0 <= beta  && beta  <= 1e0 );
   bool sum_in_range( 0e0 < alpha+beta && alpha+beta <= 1e0 );

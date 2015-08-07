@@ -11,18 +11,18 @@ class FaceTwoGate : public FaceBase
 {
 private:
   std::vector<Realvec> vertexs;
-  //to get the vertex nearest the particle, lookup in (std::vector vertexs) and this near_vertexs.
   std::vector<Realvec> near_vertexs;
   std::vector<Realvec> edges;
   std::vector<Real> angles;
   std::vector<int> gateway;// edges.at(gateway.at(i)) == gateway edge
   std::vector<bool> is_gate;
   boost::shared_ptr<Polygon> belonging_polygon;
-  enum CROSS_STATUS{
-    NOT_CROSS,
-    CROSS,
-    ON_THE_EDGE,
-  };
+
+//parametric
+  Realvec represent_vertex;
+  Realvec a_vec;
+  Realvec b_vec;
+
 
 public:
   FaceTwoGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const int& gate0, const int& gate1)
@@ -55,6 +55,9 @@ public:
     angles.at(1) = smaller_angle( edges.at(1), edges.at(0)*(-1e0) );
     angles.at(2) = smaller_angle( edges.at(2), edges.at(1)*(-1e0) );
 
+    represent_vertex = vertexs.at(0);
+    a_vec = edges.at(0);
+    b_vec = edges.at(2) * (-1e0);
   }
 
   FaceTwoGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const Realvec& norm, const int& gate0, const int& gate1)
@@ -92,6 +95,10 @@ public:
     angles.at(1) = smaller_angle( edges.at(1), edges.at(0)*(-1e0) );
     angles.at(2) = smaller_angle( edges.at(2), edges.at(1)*(-1e0) );
 
+    represent_vertex = vertexs.at(0);
+    a_vec = edges.at(0);
+    b_vec = edges.at(2) * (-1e0);
+
   }
 
   virtual void set_belonging_polygon( boost::shared_ptr<Polygon> p_sptr)
@@ -111,24 +118,13 @@ public:
 
 private:
 
-  CROSS_STATUS is_cross( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase );
-
-  bool is_on_the_edge( const Realvec& position, const Realvec& edge, const int& edgebase );
-
-  Real cross_point( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase );
-  
-  Realvec reverse( const Realvec& target, const Realvec& edge );
-
-//   int get_gateway( const int& num)
-//   {
-//     return gateway.at(num);
-//   };
-
-//   Realvec get_gateway_edge(const int& g)
-//   {
-//     return edges.at(g);
-//   };
-
+  bool in_this_face(const Real& alpha, const Real& beta);
+  int through_edge( const Real& pos_alpha, const Real& pos_beta,const Real& newpos_alpha, const Real& newpos_beta);
+  Real intersection_ratio( const Real& pos_alpha, const Real& pos_beta, const Real& dis_alpha, const Real& dis_beta, const int& edge_num );
+  bool on_edge(const Real& alpha, const Real& beta, int& edge_num);
+  void reverse( Real& dis_alpha, Real& dis_beta, const int edge_num );
+  Realvec to_absolute( const Real& alpha, const Real& beta );
+  void to_parametric( const Realvec& pos, Real& alpha, Real& beta );
 };
 
 
@@ -140,278 +136,377 @@ Realvec FaceTwoGate::renew_position(const Realvec& position, const Realvec& disp
   //debug
 //   std::cout << temppos[0] << " " << temppos[1] << " " << temppos[2] << " ";
 //   std::cout << tempdis[0] << " " << tempdis[1] << " " << tempdis[2] << std::endl;
-  
-  bool in_the_face( still_in_the_face(temppos, tempdis) );
-  if(in_the_face)
+
+  THROW_UNLESS(std::invalid_argument, fabs(dot_product(position-represent_vertex, normal))<1e-12);
+
+  Real newpos_alpha(0e0), newpos_beta(0e0);
+  to_parametric(temppos + tempdis - represent_vertex, newpos_alpha, newpos_beta);
+
+  if( in_this_face( newpos_alpha, newpos_beta ) )
+    return represent_vertex + to_absolute(newpos_alpha, newpos_beta);
+
+  Real pos_alpha(0e0), pos_beta(0e0);
+  to_parametric(temppos - represent_vertex, pos_alpha, pos_beta);
+
+  Real dis_alpha(0e0), dis_beta(0e0);
+  to_parametric(tempdis, dis_alpha, dis_beta);
+  //dis_alpha( newpos_alpha - pos_alpha ), dis_beta( newpos_beta - pos_beta ) ?
+
+  int crossing_edge( through_edge(pos_alpha, pos_beta, newpos_alpha, newpos_beta) );
+
+  if( is_gate.at(crossing_edge) )
   {
-    return temppos + tempdis;
+    ptr = belonging_polygon->get_neighbor_ptr_from_gateway( face_id, crossing_edge );
+    
+    const Real ratio( intersection_ratio( pos_alpha, pos_beta, dis_alpha, dis_beta, crossing_edge ) );
+    temppos = represent_vertex 
+	    + to_absolute( pos_alpha + ratio*dis_alpha, pos_beta + ratio*dis_beta );
+    tempdis = to_absolute( (1e0 - ratio) * dis_alpha, (1e0 - ratio) * dis_beta );
+
+    Realvec neighbor_norm( ptr->get_normal_vector() );
+
+    Real rot_angle( acos( dot_product(normal, neighbor_norm) ) );
+
+    Realvec axis( cross_product(normal, neighbor_norm) );
+    Real axis_length( length( axis ) );
+    if( axis_length == 0e0 )
+    {
+      axis = edges.at(crossing_edge) / length( edges.at(crossing_edge) );
+    }
+    else
+    {
+      axis = axis / axis_length;
+    }
+
+    Realvec new_disp( rotation( rot_angle, axis, tempdis ) );
+
+    if( length(new_disp) >= length(displacement) + 1e-12 )
+    {
+      std::cout << "ratio: " << ratio << std::endl;
+      std::cout << "displacement: " << displacement << " length: " << length(displacement) << std::endl;
+      std::cout << "new_disp: " << new_disp << " length: " << length(new_disp) << std::endl;
+      throw std::invalid_argument("new displacement is not less than first displacement");
+    }
+    
+  //   if( length(new_disp) < 1e-16*length(temppos) )
+  //     return temppos;
+
+    temppos = ptr->renew_position( temppos, new_disp, ptr );
+    return temppos;
   }
   else
-  { //particle will go out of the face
-    int size( edges.size() );
-    do
+  {
+      Real ratio( intersection_ratio( pos_alpha, pos_beta, dis_alpha, dis_beta, crossing_edge ) );
+
+      Real newdis_alpha( (1e0 - ratio) * dis_alpha ), newdis_beta( (1e0 - ratio) * dis_beta  );
+      Real newpos_alpha( pos_alpha + ratio * dis_alpha ), newpos_beta( pos_beta + ratio * dis_beta );
+
+      reverse( newdis_alpha, newdis_beta, crossing_edge );
+
+      if( in_this_face( newpos_alpha + newdis_alpha, newpos_beta + newdis_beta ) )
+      {
+	return to_absolute(newpos_alpha + newdis_alpha, newpos_beta + newdis_beta) + represent_vertex;
+      }
+      else
+      {
+	temppos = to_absolute(newpos_alpha, newpos_beta) + represent_vertex;
+	tempdis = to_absolute(newdis_alpha, newdis_beta);
+	temppos = renew_position( temppos, tempdis, ptr );
+	return temppos;
+      }
+  }
+
+  throw std::invalid_argument("renew: all if block does not return");
+  Realvec zero;
+  return zero;
+};
+
+bool
+FaceTwoGate::in_this_face(const Real& alpha, const Real& beta)
+{
+  bool just_on_vertex( (alpha== 0e0 || alpha == 1e0) &&
+		       (beta == 0e0 ||  beta == 1e0) );
+  if(just_on_vertex)
+  {
+    std::cout << "alpha: " << std::setprecision(16) << alpha << ", beta: " << beta << std::endl;
+    throw std::invalid_argument("in_this_face : particle is just on a vertex");
+  }
+
+  bool alpha_in_range( 0e0 <= alpha && alpha <= 1e0 );
+  bool beta_in_range( 0e0 <= beta  && beta  <= 1e0 );
+  bool sum_in_range( 0e0 < alpha+beta && alpha+beta <= 1e0 );
+
+  return ( (alpha_in_range && beta_in_range) && sum_in_range);
+}
+
+int
+FaceTwoGate::through_edge( const Real& pos_alpha, const Real& pos_beta,
+			   const Real& newpos_alpha, const Real& newpos_beta)
+{
+  //case::first position is on the edge
+  int edge_num(-1);
+  if( on_edge( pos_alpha, pos_beta, edge_num ) )
+  {
+    switch(edge_num)
     {
-      int on_this_edge(-1);
-
-      for(int i(0); i < size; ++i)
-      {
-	if( !is_on_the_edge( temppos, edges.at(i), i ) ) continue;
-
-	if( !is_gate.at(i) )
-	{
-	  on_this_edge = i;
-
-	  int num( (i+2) % 3 );
-	  
-	  Realvec cross1( cross_product( edges.at(i), ( edges.at(num) * (-1e0) ) ) );
-	  Realvec cross2( cross_product( edges.at(i), ( temppos + tempdis - vertexs.at(i) ) ) );
-	  Real cross_status( dot_product( cross1, cross2 ) );
-
-	  if(cross_status < 0e0)
-	  {
-	    Realvec reverse_disp( reverse( tempdis, edges.at(i) ) );
-	    tempdis = reverse_disp;
-	  }else{
-	    ;//do nothing
-	  }
-
-	  break;
-
-	}else{
-
-	  int gatenum;
-	  if(i == gateway.at(0))
-	  {
-	    gatenum = 0;
-	  }else{
-	    THROW_UNLESS(std::invalid_argument, i==gateway.at(1));
-	    gatenum = 1;
-	  }
-
-	  int num( (i+2) % 3 );
-
-	  Realvec cross1( cross_product( edges.at(i), ( edges.at(num) * (-1e0) ) ) );
-	  Realvec cross2( cross_product( edges.at(i), ( temppos + tempdis - vertexs.at(i) ) ) );
-	  Real cross_status( dot_product( cross1, cross2 ) );
-
-	  // position + displacement is out of the face through edges.at(i)
-	  // and the edge is gateway to another face
-	  if(cross_status < 0e0)
-	  {
-	    ptr = belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway.at(gatenum));
-	    Realvec neighbor_norm( ptr->get_normal_vector() );
-	    Real theta( acos( dot_product(normal, neighbor_norm) ) );
-
-	    Realvec norm1( cross_product(normal, neighbor_norm) );
-	    if( length(norm1) == 0 ) norm1 = edges.at(gateway.at(gatenum));
-	    Realvec axis( norm1 / length(norm1) );
-
-	    Realvec rot_disp( rotation( theta, axis, tempdis) );
-	    tempdis = rot_disp;
-	    temppos = ptr->renew_position( temppos, tempdis, ptr );
-
-	    return temppos;
-
-	  }else{
-	    on_this_edge = i;
-	  }
-
-	  break;
-	}
-      }
-
-      for(int i(0); i<size; ++i)
-      {
-	if( !is_gate.at(i) )
-	{
-	  if( i == on_this_edge ) continue;
-
-	  CROSS_STATUS cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
-	  if(cross_status == CROSS)
-	  {
-	    Real ratio( cross_point(temppos, tempdis, edges.at(i), i) );
-	    THROW_UNLESS(std::invalid_argument, 0e0 <= ratio && ratio <= 1e0);
-
-	    temppos = temppos + tempdis * ratio;
-	    tempdis = tempdis * (1e0 - ratio);
-	    Realvec reverce_disp( reverse( tempdis, edges.at(i) ) );
-	    tempdis = reverce_disp;
-
-	    break;
-	  }else if(cross_status == ON_THE_EDGE)
-	  {
-	    temppos = temppos + tempdis;
-	    Realvec zero(0e0, 0e0, 0e0);
-	    tempdis = zero;
-
-	    break;
-	  }else if(cross_status == NOT_CROSS)
-	  {
-// 	    std::cout << "NOT_CROSS: non-gateway edge " << i << std::endl;//do nothing
-	  }else{
-	    throw std::invalid_argument("invalid cross_status");
-	  }
-
-	}else{//the case of gateway edge
-	  if(i == on_this_edge) continue;
-	  //when particle is on the edge and go out of the face, it has been treated above
-	  //so when particle is on the edge, displacement directs inner region of the face
-
-	  int gatenum;
-	  if(i == gateway.at(0))
-	  {
-	    gatenum = 0;
-	  }else{
-	    THROW_UNLESS(std::invalid_argument, i==gateway.at(1));
-	    gatenum = 1;
-	  }
-
-	  CROSS_STATUS cross_status( is_cross(temppos, tempdis, edges.at(i), i) );
-	  //std::cout << cross_status << std::endl; 
-	  //TODO particle is just on the edge, NOT_CROSS and enter infinit loop
-	  if(cross_status == CROSS)
-	  {
-	    ptr = belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway.at(gatenum));
-	    Realvec neighbor_norm( ptr->get_normal_vector() );
-	    Real theta( acos( dot_product(normal, neighbor_norm) ) );
-
-	    Real ratio( cross_point(temppos, tempdis, edges.at(i), i) );
-	    THROW_UNLESS(std::invalid_argument, 0e0 <= ratio && ratio <= 1e0);
-
-	    //put particle on the edge
-	    temppos = temppos + tempdis * ratio;
-	    tempdis = tempdis * (1e0 - ratio);
-
-	    Realvec norm1( cross_product(normal, neighbor_norm) );
-	    if( length(norm1) == 0 ) norm1 = edges.at(gateway.at(gatenum));
-
-	    Realvec axis( norm1 / length(norm1) );
-//  	    std::cout << "norm1 " << norm1 << " ";
-// 	    std::cout << "axis  " << axis << " ";
-
-	    Realvec rot_disp( rotation( theta, axis, tempdis ) );
-	    tempdis = rot_disp;
-	    temppos = ptr->renew_position( temppos, tempdis, ptr );
-	    
-	    return temppos;
-	  }else if(cross_status == ON_THE_EDGE)
-	  {
-	    temppos = temppos + tempdis;
-	    Realvec zero(0e0, 0e0, 0e0);
-	    tempdis = zero;
-
-	    break;
-	  }else if( cross_status == NOT_CROSS )
-	  {
-//  	    std::cout << "NOT_CROSS: gateway edge " << i << std::endl;
-// 	    std::cout << temppos << " " << tempdis << " " << temppos + tempdis << std::endl;
-//  	    std::cout << still_in_the_face(temppos, tempdis) << std::endl;
-// 	    std::cout << i << std::endl;
-// 	    std::cout << temppos[0] << " " << temppos[1] << " " << temppos[2] << " ";
-// 	    std::cout << tempdis[0] << " " << tempdis[1] << " " << tempdis[2] << " " << "NOT_CROSS" << std::endl;
-	  }
-	}
-      }
-
-    }while( !still_in_the_face(temppos, tempdis) );
+      //edges.at(0) <=> beta==0
+      case 0:
+	if(newpos_beta < 0e0)
+	  return 0;
+	break;
+      case 1:
+	if(newpos_alpha + newpos_beta > 1e0)
+	  return 1;
+	break;
+      case 2:
+	if(newpos_alpha < 0e0)
+	  return 2;
+	break;
+      default:
+	throw std::invalid_argument("on_edge returns invalid edge number");
+	break;
+    }
   }
-  return temppos + tempdis; 
-};
+/* case
+//    \ 5/
+//     \/
+//   2 /\ 1
+//____/__\___
+// 3 / 0  \ 4
+//  /      \
+*/
+  //through one edge: case {0,1,2}
+  if( 0e0 <= newpos_alpha && newpos_beta < 0e0 && newpos_alpha + newpos_beta<=1e0 )
+    return 0;
+  if( 0e0 < newpos_alpha && 0e0 < newpos_beta && 1e0 < newpos_alpha + newpos_beta )
+    return 1;
+  if( 0e0 <= newpos_beta && newpos_alpha < 0e0 && newpos_alpha + newpos_beta <= 1e0 )
+    return 2;
 
-bool FaceTwoGate::still_in_the_face( const Realvec& position, const Realvec& displacement )
-{
-  //caution: sometimes rotation andle is nearly equal and smaller than 2pi
-  //         (typically in order of 1e-15 ), in that case this func returns 0
-  //         to treat this, use epsilon
-  //
-  //         for example, when distance between position + displacement and edge < 1e-5,
-  //         2pi - angle can be laeger than 1e-12 even pos+dis is in the face...
-  for(int i(0); i<3; ++i)
+  Real dis_alpha(newpos_alpha - pos_alpha);
+  Real dis_beta(newpos_beta - pos_beta);
+  //through two edge: case {3,4,5}
+  if( newpos_alpha < 0e0 && newpos_beta < 0e0 )
   {
-    if( is_on_the_edge( position+displacement, edges.at(i), i) ) return true;
+  // case 3
+  //throwgh edges.at(0) and at(2)
+    Real ratio0( intersection_ratio(pos_alpha, pos_beta, dis_alpha, dis_beta, 0) );
+    Real ratio2( intersection_ratio(pos_alpha, pos_beta, dis_alpha, dis_beta, 2) );
+    if( ratio0 < ratio2 )
+    {
+      return 0;
+    }else if(ratio0 > ratio2)
+    {
+      return 2;
+    }else{
+      throw std::invalid_argument( "particle goes through vertex!" );
+    }
   }
-
-  Real epsilon(1e-8);
-  Realvec temppos( position + displacement );
-  Realvec v0p( vertexs.at(0) - temppos );
-  Realvec v1p( vertexs.at(1) - temppos );
-  Realvec v2p( vertexs.at(2) - temppos );
-  Real lv0p( length(v0p) );
-  Real lv1p( length(v1p) );
-  Real lv2p( length(v2p) );
-
-  Real angle;
-  angle = acos( dot_product( v0p, v1p ) / lv0p / lv1p );
-  angle += acos( dot_product( v1p, v2p ) / lv1p / lv2p );
-  angle += acos( dot_product( v2p, v0p ) / lv2p / lv0p );
-
-  return (angle > 2 * M_PI - epsilon);
-};
-
-FaceTwoGate::CROSS_STATUS FaceTwoGate::is_cross
-  ( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase )
-{
-  //assuming that position vector is on the face
-  //and displacement is also on the same plane
-
-  //edge line and displacement segment
-  Realvec vp( position - vertexs.at(edgebase));
-  Realvec vpd( position + displacement - vertexs.at(edgebase));
-  Realvec cross1( cross_product(edge, vp) );
-  Realvec cross2( cross_product(edge, vpd) );
-  Real cross_stat1( dot_product(cross1, cross2) );
-
-//displacement line and edge segment
-  Realvec pv( vertexs.at(edgebase) - position );
-  Realvec pve( vertexs.at(edgebase) + edge - position );
-  Realvec cross3( cross_product(displacement, pv) );
-  Realvec cross4( cross_product(displacement, pve) );
-  Real cross_stat2( dot_product(cross3, cross4) );
-
-  if( cross_stat1 < 0 && cross_stat2 < 0 )
+  else if( newpos_alpha > 0e0 && newpos_beta < 0e0 && newpos_alpha + newpos_beta > 1e0)
   {
-    return CROSS;
-  }else if( cross_stat1 > 0 || cross_stat2 > 0 ){
-    return NOT_CROSS;
-  }else if( cross_stat1 == 0 && cross_stat2 < 0){
-    return ON_THE_EDGE;
-  }else{
-    std::cout << "caution: through the vertex" << std::endl;
-    return ON_THE_EDGE;
+  // case 4
+  //throwgh edges.at(0) and at(1)
+    Real ratio0( intersection_ratio(pos_alpha, pos_beta, dis_alpha, dis_beta, 0) );
+    Real ratio1( intersection_ratio(pos_alpha, pos_beta, dis_alpha, dis_beta, 1) );
+    if( ratio0 < ratio1 )
+    {
+      return 0;
+    }else if(ratio0 > ratio1)
+    {
+      return 1;
+    }else{
+      throw std::invalid_argument( "particle goes through vertex!" );
+    }
   }
-};
+  else if( newpos_alpha < 0e0 && newpos_beta > 0e0 && newpos_alpha + newpos_beta > 1e0)
+  {
+  // case 5
+  //throwgh edges.at(1) and at(2)
+    Real ratio1( intersection_ratio(pos_alpha, pos_beta, dis_alpha, dis_beta, 1) );
+    Real ratio2( intersection_ratio(pos_alpha, pos_beta, dis_alpha, dis_beta, 2) );
+    if( ratio1 < ratio2 )
+    {
+      return 1;
+    }else if(ratio1 > ratio2)
+    {
+      return 2;
+    }else{
+      throw std::invalid_argument( "particle goes through vertex!" );
+    }
+  }
+  throw std::invalid_argument("through_edge::particle does not go out of this face");
+  return -1;
+}
 
-bool FaceTwoGate::is_on_the_edge( const Realvec& position, const Realvec& edge, const int& edgebase )
+Real
+FaceTwoGate::intersection_ratio( const Real& pos_alpha, const Real& pos_beta,
+				 const Real& dis_alpha, const Real& dis_beta,
+				 const int& edge_num )
 {
-  Real epsilon(1e-12);
-  Realvec vp( position - vertexs.at(edgebase) );
-  Real cross( length( cross_product(vp, edge) ) );
-
-  return ( cross < epsilon );
-};
-
-Real FaceTwoGate::cross_point( const Realvec& position, const Realvec& displacement, const Realvec& edge, const int& edgebase )
-{
-//displacement and the edge must cross each other
-//use is_cross() for assure
-  Realvec v1p( position - vertexs.at(edgebase));
-  Realvec v1pd( position + displacement - vertexs.at(edgebase));
-  Real d1( length( cross_product(edge, v1p) ) / length(edge) );
-  Real d2( length( cross_product(edge, v1pd)) / length(edge) );
-  Real ratio( d1 / (d1 + d2) );
-
+  Real ratio;
+  switch(edge_num)
+  {
+  case 0:
+    if( dis_beta == 0e0 )
+      throw std::invalid_argument("cannot intersect this edge");
+    ratio = - pos_beta / dis_beta;
+    break;
+  case 1:
+    if( dis_alpha + dis_beta == 0e0 )
+      throw std::invalid_argument("cannot intersect this edge");
+    ratio = ( 1e0 - pos_alpha - pos_beta ) / ( dis_alpha + dis_beta );
+    break;
+  case 2:
+    if( dis_alpha == 0e0 )
+      throw std::invalid_argument("cannot intersect this edge");
+    ratio = - pos_alpha / dis_alpha;
+    break;
+  default:
+    throw std::invalid_argument("invalid edge_num");
+    ratio = -1e0;
+  }
   return ratio;
 }
 
-Realvec FaceTwoGate::reverse( const Realvec& target, const Realvec& edge )
+/*     2
+//    /\
+// b /  \
+// ^/____\
+// 0 ->a  1
+*/
+bool
+FaceTwoGate::on_edge(const Real& alpha, const Real& beta,
+		     int& edge_num)
 {
-  Realvec edge_n( edge / length( edge ) );
+  Real eps(1e-10);
 
-  Real d( 2e0 * dot_product( target, edge_n ) );
-  Realvec retvec( edge_n * d - target );
+  if( alpha == 0e0 && (0e0 <= beta && beta <= 1e0) )
+  {
+    edge_num = 2;
+    return true;
+  }
+  else if( beta == 0e0 && ( 0e0 <= alpha && alpha <= 1e0 ) )
+  {
+    edge_num = 0;
+    return true;
+  }
+  else if( (1e0-eps < alpha+beta && alpha+beta < 1e0+eps) &&
+	   (0e0 < alpha && 0e0 < beta) )
+  {
+    edge_num = 1;
+    return true;
+  }else
+  {
+    edge_num = -1;
+    return false;
+  }
+}
 
-  return retvec;
+//legacy?
+bool FaceTwoGate::still_in_the_face( const Realvec& position, const Realvec& displacement )
+{
+  Real alpha(0e0), beta(0e0);
+  to_parametric( position+displacement, alpha, beta );
+
+  bool just_on_vertex( (alpha == 0e0 || alpha == 1e0) &&
+		     ( beta == 0e0 ||  beta == 1e0) );
+  if( just_on_vertex )
+    throw std::invalid_argument( "still_in_the_face : particle is just on a vertex." );
+
+  bool alpha_in_the_range( 0e0 <= alpha && alpha <= 1e0 );
+  bool  beta_in_the_range( 0e0 <= beta  && beta  <= 1e0 );
+  bool sum_in_the_range( 0e0 < alpha + beta && alpha + beta <= 1e0 );
+
+  return (alpha_in_the_range && beta_in_the_range) && sum_in_the_range;
 };
+
+
+void FaceTwoGate::reverse( Real& dis_alpha, Real& dis_beta, const int edge_num )
+{
+  switch(edge_num)
+  {
+    case 0:
+      dis_beta = -dis_beta;
+      break;
+    case 1:
+    {
+      Real buf(dis_alpha);
+      dis_alpha = -dis_beta;
+      dis_beta = -buf; 
+    }
+      break;
+    case 2:
+      dis_alpha = -dis_alpha;
+      break;
+    default:
+      throw std::invalid_argument("reverse: invalid edge_num");
+      break;
+  }
+  return;
+};
+
+void FaceTwoGate::to_parametric( const Realvec& pos, Real& alpha, Real& beta )
+{
+  Realvec parametric_pos( pos );
+
+  if( (a_vec[0]*b_vec[1] - b_vec[0]*a_vec[1]) != 0e0 )
+  {
+  // matrix( a0 b0 ) inverse( b1 -b0 ) pos( pos0 )
+  //       ( a1 b1 )        ( -a1 a0 )    ( pos1 )
+    alpha = ( b_vec[1] * parametric_pos[0] - b_vec[0] * parametric_pos[1] )
+	    / (a_vec[0]*b_vec[1] - b_vec[0]*a_vec[1]);
+
+     beta = ( a_vec[0] * parametric_pos[1] - a_vec[1] * parametric_pos[0] )
+	    / (a_vec[0]*b_vec[1] - b_vec[0]*a_vec[1]);
+ 
+    //confirm (alpha beta) * (a2 b2) = (pos2)
+    if( fabs(alpha * a_vec[2] + beta * b_vec[2] - parametric_pos[2]) > 1e-12 ) 
+      throw std::invalid_argument( "function to_parametric: invalid solution" );
+
+  }else if( (a_vec[1]*b_vec[2] - b_vec[1]*a_vec[2]) != 0e0 )
+  {
+  // matrix( a1 b1 ) inverse( b2 -b1 ) pos( pos1 )
+  //       ( a2 b2 )        ( -a2 a1 )    ( pos2 )
+    alpha = ( b_vec[2] * parametric_pos[1] - b_vec[1] * parametric_pos[2] )
+	    / (a_vec[1]*b_vec[2] - b_vec[1]*a_vec[2]);
+
+     beta = ( a_vec[1] * parametric_pos[2] - a_vec[2] * parametric_pos[1] )
+	    / (a_vec[1]*b_vec[2] - b_vec[1]*a_vec[2]);
+ 
+    //confirm (alpha beta) * (a0 b0) = (pos0)
+    if( fabs(alpha * a_vec[0] + beta * b_vec[0] - parametric_pos[0]) > 1e-12 )
+      throw std::invalid_argument( "function to_parametric: invalid solution" );
+
+  }else if( (a_vec[2]*b_vec[0] - b_vec[2]*a_vec[0]) != 0e0 )
+  {
+  // matrix( a2 b2 ) inverse( b0 -b2 ) pos( pos2 )
+  //       ( a0 b0 )        ( -a0 a2 )    ( pos0 )
+    alpha = ( b_vec[0] * parametric_pos[2] - b_vec[2] * parametric_pos[0] )
+	    / (a_vec[2]*b_vec[0] - b_vec[2]*a_vec[0]);
+
+     beta = ( a_vec[2] * parametric_pos[0] - a_vec[0] * parametric_pos[2] )
+	    / (a_vec[2]*b_vec[0] - b_vec[2]*a_vec[0]);
+ 
+    //confirm (alpha beta) * (a1 b1) = (pos1)
+    if( fabs(alpha * a_vec[1] + beta * b_vec[1] - parametric_pos[1]) > 1e-12 ) 
+      throw std::invalid_argument( "function to_parametric: invalid solution" ); 
+
+  }else{
+    throw std::invalid_argument( "function to_parametric: could not parametrise input position" );
+  }
+
+  return;
+}
+
+Realvec FaceTwoGate::to_absolute( const Real& alpha, const Real& beta )
+{
+  Realvec absolute_pos( a_vec * alpha + b_vec * beta );
+  return absolute_pos;
+}
+
+/************ renew_position *************/
+
+
 
 void FaceTwoGate::set_near_vertexs()
 {
