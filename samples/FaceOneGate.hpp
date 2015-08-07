@@ -93,6 +93,7 @@ public:
   };
 
   virtual Realvec get_another_vertex(const Realvec& edge);
+  virtual void print_class_name();
 
 //   bool is_gateway_edge( int i )
 //   {
@@ -416,6 +417,12 @@ Realvec FaceOneGate::get_another_vertex(const Realvec& edge)
 
   Realvec zero;
   return zero;
+}
+
+void FaceOneGate::print_class_name()
+{
+  std::cout << "class: FaceOneGate" << std::endl;
+  return;
 }
 
 #endif /*FACE_ONE_GATE*/

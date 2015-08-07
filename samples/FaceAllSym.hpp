@@ -64,6 +64,8 @@ private:
 
   virtual Realvec get_another_vertex(const Realvec& edge);
 
+  virtual void print_class_name();
+
 };
 
 Realvec FaceAllSym::renew_position
@@ -248,6 +250,11 @@ Realvec FaceAllSym::get_another_vertex(const Realvec& edge)
 
   Realvec zero;
   return zero;
+}
+
+void FaceAllSym::print_class_name()
+{
+  std::cout << "class: FaceAllSym" << std::endl;
 }
 
 #endif /*FACE_AllSYM*/

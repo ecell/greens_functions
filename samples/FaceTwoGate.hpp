@@ -107,6 +107,7 @@ public:
   virtual Realvec get_another_vertex(const Realvec& edge);
   virtual Realvec get_vertex(){ return vertexs.at(0); };
   virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag);
+  virtual void print_class_name();
 
 private:
 
@@ -540,6 +541,11 @@ Real FaceTwoGate::get_max_a(const Realvec& position, bool& vertex_involve_flag)
   }
 
   return min_distance;
+}
+
+void FaceTwoGate::print_class_name()
+{
+  std::cout << "class: FaceTwoGate" << std::endl;
 }
 
 #endif /*FACE_TWO_GATE*/

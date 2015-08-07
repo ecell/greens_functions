@@ -21,7 +21,8 @@ public:
   virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement );
 
   virtual Realvec get_vertex();
-
+  
+  virtual void print_class_name()
 };
 
 Realvec FaceInf::renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p)
@@ -53,6 +54,9 @@ Realvec FaceInf::get_vertex()
   return zero;
 };
 
-
+void FaceInf::print_class_name()
+{
+  std::cout << "class: FaceInf" << std::endl;
+}
 
 #endif /*FACE_INF_HPP*/

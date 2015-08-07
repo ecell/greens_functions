@@ -39,6 +39,7 @@ public:
 
   virtual Realvec get_another_vertex( const Realvec& edge )
   {
+    print_class_name();
     throw std::invalid_argument( "this face must have no neighbor" );
     Realvec zero;
     return zero;
@@ -46,26 +47,36 @@ public:
 
   virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag)
   {
+    print_class_name();
     throw std::invalid_argument( "this face has no vertex" );
     return 0e0;
   };
 
   virtual Real get_minimum_height(const Realvec& neighbors_edge)
   {
+    print_class_name();
     throw std::invalid_argument( "this face subclass has no neighbor or still not overloaded" );
     return 0e0;
   };
 
   virtual Real get_left_angle( const Realvec& neighbors_edge )
   {
+    print_class_name();
     throw std::invalid_argument( "this face subclass has no angle or still not overloaded" );
     return 0e0;
   }
 
   virtual Real get_right_angle( const Realvec& neighbors_edge )
   {
+    print_class_name();
     throw std::invalid_argument( "this face subclass has no angle or still not overloaded" );
     return 0e0;
+  }
+
+  virtual void print_class_name()
+  {
+    std::cout << "class: FaceBase" << std::endl;
+    return;
   }
 
   int get_id(){ return face_id; };

@@ -11,11 +11,12 @@ class FaceAllGate : public FaceBase
 {
 private:
   std::vector<Realvec> vertexs;
-  std::vector<Real> near_vert_height;
   std::vector<Realvec> edges;
   std::vector<bool> is_gate;
   std::vector<Real> angles;
+  
   boost::shared_ptr<Polygon> belonging_polygon;
+  std::vector<Real> near_vert_height;
   //parametric
   Realvec represent_vertex;
   Realvec a_vec;
@@ -77,30 +78,50 @@ public:
     belonging_polygon = p_sptr;
   };
 
+  //set near_vert_height.
+  virtual void set_near_vertexs();
+
   virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& ptr);
 
+  //though input is absolute vector representation, using parametric representation.
   virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement );//legacy
 
-  virtual void set_near_vertexs();
+  //return the vertex such that input edge does not include.
   virtual Realvec get_another_vertex(const Realvec& edge);
+
+  //return represent_vertex.
   virtual Realvec get_vertex(){ return vertexs.at(0); };
+
+  //find max shell size (for greens function)
   virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag);
+  
+  //call this func from neighbor face
   virtual Real get_minimum_height( const Realvec& neighbors_edge );
+
+  //return own angle.
   virtual Real get_right_angle( const Realvec& neighbors_edge );
   virtual Real get_left_angle( const Realvec& neighbors_edge );
 
+  virtual void print_class_name();
 private:
-
+  //return whether the position represented parameter a&b is in this face.
   bool in_this_face(const Real& alpha, const Real& beta);
+
+  //return whitch edge the displacement(newpos-pos) goes through.
   int through_edge(const Real& pos_alpha, const Real& pos_beta, const Real& newpos_alpha, const Real& newpos_beta);
+
+  //return the ratio(0~1) of a displacement segment not cross the edge.
   Real intersection_ratio(const Real& pos_alpha, const Real& pos_beta, const Real& dis_alpha, const Real& dis_beta, const int& edge_num );
+
+  //return whether the place is on the edge and rewrite edge_num to the edge.
+  //  if false, edge_num = -1.
   bool on_edge(const Real& alpha, const Real& beta, int& edge_num);
 
-  // rewrite alpha and beta as parameters of parametric expression of pos.
-  // use this with pos = position - represent_vertex.
+  // rewrite alpha and beta as parameters of parametric expression of vector pos.
+  // this doesnt subtract represent_vertex from pos automatically.
   void to_parametric( const Realvec& pos, Real& alpha, Real& beta );
  
-  // return absolute expression translated from parametric expression using alpha & beta.
+  // return absolute expression translated from parametric expression.
   Realvec to_absolute( const Real& alpha, const Real& beta );
 
   //return vertex id that is not on the edge. 
@@ -108,21 +129,19 @@ private:
   //  this func return the vertex that is not shared with the neighbor.
   int get_another_vertex_id(const Realvec& edge);
 
-  Realvec get_another_vertex_right( const Realvec& edge);
+  //return neighbor's non-shared vertex vector
+  Realvec get_another_vertex_right( const Realvec& neighbors_edge);
+  Realvec get_another_vertex_left( const Realvec& neighbors_edge);
 
-  Realvec get_another_vertex_left( const Realvec& edge);
+  //return own edge id
+  int get_another_edge_id_right( const Realvec& neighbors_edge);
+  int get_another_edge_id_left( const Realvec& neighbors_edge);
 
-  int get_another_edge_id_right( const Realvec& edge);
-
-  int get_another_edge_id_left( const Realvec& edge);
-
-  Real get_neighbor_right_angle( const Realvec& this_edge );
-
-  Real get_neighbor_left_angle( const Realvec& this_edge );
+  // return neighbor's right angle from pointer pulled from polygon class.
+  Real pull_neighbors_right_angle( const Realvec& neighbors_edge );
+  Real pull_neighbors_left_angle( const Realvec& neighbors_edge );
 
 };
-
-
 
 Realvec
 FaceAllGate::renew_position(const Realvec& position, const Realvec& displacement,
@@ -140,6 +159,7 @@ FaceAllGate::renew_position(const Realvec& position, const Realvec& displacement
   Real newpos_alpha(0e0), newpos_beta(0e0);
   to_parametric(temppos + tempdis - represent_vertex, newpos_alpha, newpos_beta);
 
+  //after move, particle is in this face
   if( in_this_face( newpos_alpha, newpos_beta ) )
     return represent_vertex + to_absolute(newpos_alpha, newpos_beta);
 
@@ -447,38 +467,34 @@ bool FaceAllGate::still_in_the_face( const Realvec& position, const Realvec& dis
   return (alpha_in_the_range && beta_in_the_range) && sum_in_the_range;
 };
 
+/**************************************** renew position ***************************************/
 
 void FaceAllGate::set_near_vertexs()
 {
   for(int i(0); i<3; ++i)
   {
-    if( !is_gate.at(i) )
-      continue;
-    boost::shared_ptr<FaceBase> 
-      ptr( belonging_polygon->get_neighbor_ptr_from_gateway(face_id, i) );
+// all edges are gate.
+//     if( !is_gate.at(i) )
+//       continue;
+    boost::shared_ptr<FaceBase> ptr(belonging_polygon->get_neighbor_ptr_from_gateway(face_id, i));
     near_vert_height.push_back( ptr->get_minimum_height( edges.at(i) ) );
-
-//     Realvec midpoint( ( vertexs.at(i) + vertexs.at( (i+1)%3 ) ) / 2e0 );
-//     Real r( length( edges.at(i) ) / 2e0 );
-//
-//     //edge(i) is gateway so i is gateway-id
-//     boost::shared_ptr<FaceBase> ptr( belonging_polygon->get_neighbor_ptr_from_gateway(face_id, i) );
-//     Realvec near_vertex( ptr->get_another_vertex(edges.at(i)) );
-//
-//     Real l( length( near_vertex - midpoint ) );
-//
-//     if(l <= r)
-//     {
-//       near_vertexs.push_back( near_vertex );
-//     }
-//
-//       Realvec vi_p( position - vertexs.at(i) );
-//       area = length( cross_product( vi_p, edges.at(i) ) );
-//       edge_distance = area / length( edges.at(i) );
-//
   }
+
+  std::cout << "face id: " << face_id <<" completed set_near_vert_height."<< std::endl;
+  for(int i(0); i<3; ++i)
+  {
+    std::cout << "height.at(" << i <<")" << near_vert_height.at(i) << std::endl;
+  }
+  std::cout << std::endl;
 }
 
+/*    <- return this vertex
+ *  /\
+ * /->\
+ * ---- <-input edge(neighbors). so reversed.
+ * \<-/
+ *  \/ <-call this func using ptr
+*/
 Realvec FaceAllGate::get_another_vertex(const Realvec& edge)
 {
   Realvec tempedge( edge * (-1e0) );
@@ -493,19 +509,13 @@ Realvec FaceAllGate::get_another_vertex(const Realvec& edge)
       return vertexs.at( vertex_id );
     }
   }
-
-//   std::cout << tempedge << std::endl;       
-//   std::cout << edges.at(0) << " ";      
-//   std::cout << edges.at(1) << " ";      
-//   std::cout << edges.at(2) << std::endl;
-   
-  bool get_another_vertex_have_invalid_edge_input(false);
-  THROW_UNLESS( std::invalid_argument, get_another_vertex_have_invalid_edge_input );
+  throw std::invalid_argument("get_another_vertex: cannot find edge shared by neighboring face");
 
   Realvec zero;
   return zero;
 }
 
+//may redundant.
 int FaceAllGate::get_another_vertex_id(const Realvec& edge)
 {
   Realvec tempedge( edge * (-1e0) );
@@ -519,15 +529,20 @@ int FaceAllGate::get_another_vertex_id(const Realvec& edge)
       return (i+2) % 3;
     }
   }
-  throw std::invalid_argument( "get_another_vertex_id has invalid input");
-
-  return 3;
+  throw std::invalid_argument("get_another_vertex_id: cant find edge shared by neighboring face");
+  return -1;
 }
 
-
-int FaceAllGate::get_another_edge_id_right(const Realvec& edge)
+/*    
+ *  /\ <- return this edge id
+ * /->\
+ * ---- <-input edge(neighbors). so reversed.
+ * \<-/
+ *  \/ <-neighboring face call this func using ptr
+*/
+int FaceAllGate::get_another_edge_id_right(const Realvec& neighbors_edge)
 {
-  Realvec tempedge( edge * (-1e0) );
+  Realvec tempedge( neighbors_edge * (-1e0) );
 
   for(int i(0); i<3; ++i)
   {
@@ -538,14 +553,13 @@ int FaceAllGate::get_another_edge_id_right(const Realvec& edge)
       return ( (i+1) % 3 );
     }
   }
-  throw std::invalid_argument( "get_another_edge_right has invalid input edge." );
-  
-  return 3;
+  throw std::invalid_argument( "get_another_edge_right: cant find edge shared by neighboring face." );
+  return -1;
 }
 
-int FaceAllGate::get_another_edge_id_left(const Realvec& edge)
+int FaceAllGate::get_another_edge_id_left(const Realvec& neighbors_edge)
 {
-  Realvec tempedge( edge * (-1e0) );
+  Realvec tempedge( neighbors_edge * (-1e0) );
 
   for(int i(0); i<3; ++i)
   {
@@ -553,28 +567,25 @@ int FaceAllGate::get_another_edge_id_left(const Realvec& edge)
 	edges.at(i)[1] == tempedge[1] &&
 	edges.at(i)[2] == tempedge[2])
     {
-      return (i+2) % 3;
+      return ((i+2) % 3);
     }
   }
-  throw std::invalid_argument( "get_another_edge_left has invalid input edge." );
-
-  return 3;
+  throw std::invalid_argument( "get_another_edge_left: cant find edge shared by neighboring face." );
+  return -1;
 }
 
-Realvec FaceAllGate::get_another_vertex_right( const Realvec& neighbor_edge )
+Realvec FaceAllGate::get_another_vertex_right( const Realvec& neighbors_edge )
 {
-  int gateway_id( get_another_edge_id_right(neighbor_edge) );
-  boost::shared_ptr<FaceBase>
-    ptr( belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
+  int gateway_id( get_another_edge_id_right(neighbors_edge) );
+  boost::shared_ptr<FaceBase> ptr( belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
   Realvec ret_vertex( ptr->get_another_vertex( edges.at(gateway_id) ) );
   return ret_vertex;
 }
 
-Realvec FaceAllGate::get_another_vertex_left( const Realvec& neighbor_edge )
+Realvec FaceAllGate::get_another_vertex_left( const Realvec& neighbors_edge )
 {
-  int gateway_id( get_another_edge_id_left(neighbor_edge) );
-  boost::shared_ptr<FaceBase>
-    ptr( belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
+  int gateway_id( get_another_edge_id_left(neighbors_edge) );
+  boost::shared_ptr<FaceBase> ptr( belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
   Realvec ret_vertex( ptr->get_another_vertex( edges.at(gateway_id) ) );
   return ret_vertex;
 }
@@ -604,6 +615,7 @@ Real FaceAllGate::get_max_a(const Realvec& position, bool& vertex_involve_flag)
     }
   }
 
+  //TODO
   // if minimal distance from particle to vertex is smaller than this threshold
   // this allows the shell to involve only one vertex.
 //   if(min_distance < 1e-4)
@@ -680,61 +692,69 @@ Real FaceAllGate::get_right_angle( const Realvec& neighbors_edge )
   return 0e0;
 }
 
-Real FaceAllGate::get_neighbor_left_angle( const Realvec& this_edge )
+Real FaceAllGate::pull_neighbors_left_angle( const Realvec& neighbors_edge )
 {
-  int gateway_id( get_another_edge_id_left(this_edge) );
-  boost::shared_ptr<FaceBase>
-    ptr( belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
+  int gateway_id( get_another_edge_id_left(neighbors_edge) );
+  boost::shared_ptr<FaceBase> ptr( belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
   Real neighbor_left_angle( ptr->get_left_angle( edges.at(gateway_id) ) );
   return neighbor_left_angle;
 }
 
-Real FaceAllGate::get_neighbor_right_angle( const Realvec& this_edge )
+Real FaceAllGate::pull_neighbors_right_angle( const Realvec& neighbors_edge )
 {
-  int gateway_id( get_another_edge_id_right(this_edge) );
-  boost::shared_ptr<FaceBase>
-    ptr( belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
+  int gateway_id( get_another_edge_id_right(neighbors_edge) );
+  boost::shared_ptr<FaceBase> ptr( belonging_polygon->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
   Real neighbor_right_angle( ptr->get_right_angle( edges.at(gateway_id) ) );
   return neighbor_right_angle;
 }
 
-Real FaceAllGate::get_minimum_height( const Realvec& neighbors_edge)
+Real FaceAllGate::get_minimum_height( const Realvec& neighbors_edge )
 {
-//   Real perpendicular(M_PI * 0.5);
-//   Real left_angle( get_left_angle( neighbors_edge ) );
-//   Real right_angle( get_right_angle( neighbors_edge ) );
+  Real perpendicular(M_PI * 0.5);
+  Real min_height(-1e0);
+  //own angle
+  Real left_angle( get_left_angle( neighbors_edge ) );
+  Real right_angle( get_right_angle( neighbors_edge ) );
 
   int another_vertex_id( get_another_vertex_id(neighbors_edge) );
-//  if(left_angle < perpendicular && right_angle < perpendicular)
-//  {
-    Real area( length(cross_product(neighbors_edge, edges.at(another_vertex_id)) ) );
-    Real min_height( area / length(neighbors_edge) );
-//  }
+  if(left_angle < perpendicular && right_angle < perpendicular)
+  {
+    Real area( length(cross_product(neighbors_edge, edges.at(another_vertex_id) ) ) );
+    min_height =  area / length(neighbors_edge);
+  }
+  
+   left_angle += pull_neighbors_left_angle( neighbors_edge );
+  right_angle += pull_neighbors_right_angle( neighbors_edge );
 
-//    left_angle += get_neighbor_left_angle( neighbors_edge * (-1e0) );
-//   right_angle += get_neighbor_right_angle( neighbors_edge * (-1e0) );
+  if(left_angle < perpendicular)
+  {
+     Realvec left_neighbor_vertex( get_another_vertex_left(neighbors_edge) );
+     Realvec edge_leftvert( left_neighbor_vertex - vertexs.at( (another_vertex_id + 2) % 3 ) );
+     Real left_length( length( edge_leftvert ) );
+     Real left_height( left_length * sin(left_angle) );
+     if( min_height > left_height || min_height < 0e0 )
+       min_height = left_height;
+  }
 
-//   if(left_angle < perpendicular)
-//   {
-    Realvec left_neighbor_vertex( get_another_vertex_left(neighbors_edge) );
-    Realvec edge_leftvert( left_neighbor_vertex - vertexs.at( (another_vertex_id + 2) % 3 ) );
-    Real left_area( length(cross_product(neighbors_edge, edge_leftvert ) ) );
-    Real left_height( left_area / length(neighbors_edge) );
-    if( min_height > left_height )
-      min_height = left_height;
-//   }
-
-//   if(right_angle < perpendicular )
-//   {
+  if(right_angle < perpendicular )
+  {
     Realvec right_neighbor_vertex( get_another_vertex_right(neighbors_edge) );
     Realvec edge_rightvert( right_neighbor_vertex - vertexs.at( (another_vertex_id + 2) % 3 ) );
-    Real right_area( length(cross_product(neighbors_edge, edge_rightvert ) ) );
-    Real right_height( right_area / length(neighbors_edge) );
-    if( min_height > right_height )
+    Real right_length( length( edge_rightvert ) );
+    Real right_height( right_length * sin(right_angle) );
+    if( min_height > right_height || min_height < 0e0 )
       min_height = right_height;
-//   }
+  }
+
+  if(min_height == -1e0)
+    min_height = length(neighbors_edge) * 0.5;
 
   return min_height;
+}
+
+void FaceAllGate::print_class_name()
+{
+  std::cout << "class: FaceAllGate" << std::endl;
 }
 
 #endif /*FACE_TWO_GATE*/

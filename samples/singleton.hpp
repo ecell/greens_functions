@@ -104,9 +104,9 @@ int particle::get_face_id()
 
 std::ostream& operator<<( std::ostream& os, const particle& part)
 {
-  os << std::setprecision(16) << std::setw(20) << part.position[0] << " ";
-  os << std::setprecision(16) << std::setw(20) << part.position[1] << " ";
-  os << std::setprecision(16) << std::setw(20) << part.position[2];
+  os << std::setprecision(16) << std::setw(25) << part.position[0] << " ";
+  os << std::setprecision(16) << std::setw(25) << part.position[1] << " ";
+  os << std::setprecision(16) << std::setw(25) << part.position[2];
   return os;
 }
 

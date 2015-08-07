@@ -136,7 +136,7 @@ int main()
 
   Real t(0), dt(0), theta(0), r(0), a(0);
 
-  fout << mol << " " << std::setw(20) << t << " " << std::setw(20) << a << std::endl;
+  fout << mol << " " << std::setw(25) << t << " " << std::setw(25) << a << std::endl;
 
 //   prof << mol.get_face_id() << " ";
 //   prof << t << std::endl;
@@ -183,7 +183,7 @@ int main()
 //       prof << mol.get_face_id() << " ";
 //       prof << t << std::endl;
      
-      fout << mol << " " << std::setw(20) << t << " " << std::setw(20) << a << std::endl;
+      fout << mol << " " << std::setw(25) << t << " " << std::setw(25) << a << std::endl;
 
     }while(t < t_end);
 
