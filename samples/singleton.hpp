@@ -3,7 +3,6 @@
 
 #include "FaceBase.hpp"
 #include "rotation.hpp"
-// typedef boost::shared_ptr<FaceBase> face_sptr;
 
 class particle 
 {
@@ -14,15 +13,10 @@ class particle
 public:
   particle( int id, const Realvec& pos, boost::shared_ptr<FaceBase> ptr )
   {
-    //ASSERT: normal vector MUST cross perpendicularly (position - vertex) vector.
-    //	      because particle belings on the face.
-    //TODO  : seek which face do particle belongs automatically.
+    if( fabs(dot_product(pos - ptr->get_vertex(), ptr->get_normal_vector() ) ) < 1e-12 )
+      throw std::invalid_argument("particle is not on the plane");
+    //TODO if !in_this_face( pos, face_ptr ) then throw invalid_argument
 
-    Realvec vertex( ptr->get_vertex() );
-    Real epsilon(1e-10);
-    THROW_UNLESS( std::invalid_argument,
-		  fabs( dot_product(pos-vertex, ptr->get_normal_vector() ) ) < epsilon );
-    
     particle_id = id;
     position = pos;
     face_ptr = ptr;
@@ -64,25 +58,34 @@ void particle::move( const Real& r, const Real& theta )
     return;
 
   }else{
-  // generate displacement vector from length (r) and angle (theta)
+
     Realvec axis( face_ptr->get_normal_vector() );
     Realvec target( face_ptr->get_represent_vector() );
     Realvec disp_direction( rotation(theta, axis, target) );
     Realvec displacement( disp_direction * r );
+
     if( fabs(length(displacement) - r) > 1e-12 )
     {
       std::cerr << "r: " << std::setprecision(16) << r << std::endl;
-      std::cerr << "disp_direction length: " << std::setprecision(16) << length(disp_direction) << std::endl;
-      std::cerr << "displacement length: " << std::setprecision(16) << length(displacement) << std::endl;
-      std::cerr << "fabs(length(displacement) - r)" << std::setprecision(16) << fabs(length(displacement) - r) << std::endl;
+      std::cerr << "disp_direction length: " << std::setprecision(16)
+		<< length(disp_direction) << std::endl;
+      std::cerr << "displacement length: " << std::setprecision(16)
+		<< length(displacement) << std::endl;
+      std::cerr << "fabs(length(displacement) - r)" << std::setprecision(16) 
+		<< fabs(length(displacement) - r) << std::endl;
       throw std::invalid_argument("displacement length is not equal to shell size.");
     }
-//   std::cout << "call face that have this id: " << face_ptr->get_id() << std::endl;
+
+//     std::pair<Realvec, boost::shared_ptr<FaceBase> > 
+//       pos_ptr( face_ptr->renew_position position, displacement, face_ptr );
+//     newpos = pos_ptr.first;
+//     face_ptr = pos_ptr.second;
 
     Realvec newpos( face_ptr->renew_position(position, displacement, face_ptr) );
     position = newpos;
     return;
   }
+
 }
 
 Real particle::get_max_a()

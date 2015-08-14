@@ -1,6 +1,7 @@
 #ifndef FACE_ALL_GATE
 #define FACE_ALL_GATE
 #include <vector>
+#include <utility>
 #include <cmath>
 #include "Polygon.hpp"
 #include "rotation.hpp"
@@ -12,20 +13,31 @@ class FaceAllGate : public FaceBase
 private:
   std::vector<Realvec> vertexs;
   std::vector<Realvec> edges;
-  std::vector<bool> is_gate;
   std::vector<Real> angles;
   
   boost::shared_ptr<Polygon> belonging_polygon;
   std::vector<Real> near_vert_height;
+
   //parametric
-  Realvec represent_vertex;
-  Realvec a_vec;
-  Realvec b_vec;
+  Realvec para_origin;
+  Realvec para_a;
+  Realvec para_b;
+  // neighbors
+  // para_a = para_a_neighbor.first * neighbor->para_a + para_a_neighbor.second * neighbor->para_b;
+  // para_b = para_b_neighbor.first * neighbor->para_a + para_b_neighbor.second * neighbor->para_b;
+  // p(a, b) -> p'( a*para_a_neighbor.first + b*para_b_neighbor.first,
+  // 		    a*para_a_neighbor.second + b*para_b_neighbor.second)
+  std::vector< std::pair<Real, Real> > para_a_neighbor;
+  std::vector< std::pair<Real, Real> > para_b_neighbor;
+  // para_origin = rep_vec_neighbor.first * neighbor->para_a + 
+  // 			rep_vec_neighbor.second * neighbor->para_b;
+  std::vector< std::pair<Real, Real> > rep_vec_neighbor;
+
 
 public:
   FaceAllGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2)
   : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ),
-    vertexs(3), edges(3), is_gate(3,true), angles(3)
+    vertexs(3), edges(3), angles(3), para_a_neighbor(3), para_b_neighbor(3), rep_vec_neighbor(3)
   {
     vertexs.at(0) = vtx0;
     vertexs.at(1) = vtx1;
@@ -41,13 +53,14 @@ public:
     angles.at(2) = smaller_angle( edges.at(2), edges.at(1)*(-1e0) );
 
     // define parametric expression
-    represent_vertex = vertexs.at(0);
-    a_vec = edges.at(0);
-    b_vec = edges.at(2) * (-1e0);
+    para_origin = vertexs.at(0);
+    para_a = edges.at(0);
+    para_b = edges.at(2) * (-1e0);
   }
 
-  FaceAllGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const Realvec& norm)
-  : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3), is_gate(3,true), angles(3)
+  FaceAllGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2,
+	      const Realvec& norm)
+  : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3), angles(3)
   {
     bool normal_vec_is_oritented_orthogonally_to_the_edges(
  		 dot_product(norm, vtx1-vtx0) == 0 &&
@@ -67,9 +80,9 @@ public:
     angles.at(2) = smaller_angle( edges.at(2), edges.at(1)*(-1e0) );
 
     // define parametric expression
-    represent_vertex = vertexs.at(0);
-    a_vec = edges.at(0);
-    b_vec = edges.at(2) * (-1e0);
+    para_origin = vertexs.at(0);
+    para_a = edges.at(0);
+    para_b = edges.at(2) * (-1e0);
 
   }
 
@@ -81,16 +94,20 @@ public:
   //set near_vert_height.
   virtual void set_near_vertexs();
 
-  virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& ptr);
+  virtual Realvec renew_position( const Realvec& position, const Realvec& displacement,
+				  boost::shared_ptr<FaceBase>& ptr);
+  virtual Realvec renew_position( const Real& pos_alpha, const Real& pos_beta,
+				  const Real& dis_alpha, const Real& dis_beta,
+				  boost::shared_ptr<FaceBase>& ptr);
 
   //though input is absolute vector representation, using parametric representation.
-  virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement );//legacy
+  virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement );
 
   //return the vertex such that input edge does not include.
   virtual Realvec get_another_vertex(const Realvec& edge);
 
-  //return represent_vertex.
-  virtual Realvec get_vertex(){ return vertexs.at(0); };
+  //return para_origin.
+  virtual Realvec get_vertex(){ return para_origin; };
 
   //find max shell size (for greens function)
   virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag);
@@ -102,6 +119,9 @@ public:
   virtual Real get_right_angle( const Realvec& neighbors_edge );
   virtual Real get_left_angle( const Realvec& neighbors_edge );
 
+  virtual Realvec get_para_a(){ return para_a; }
+  virtual Realvec get_para_b(){ return para_b; }
+
   virtual void print_class_name();
 
 private:
@@ -109,21 +129,27 @@ private:
   bool in_this_face(const Real& alpha, const Real& beta);
 
   //return whitch edge the displacement(newpos-pos) goes through.
-  int through_edge(const Real& pos_alpha, const Real& pos_beta, const Real& newpos_alpha, const Real& newpos_beta);
+  int through_edge(const Real& pos_alpha, const Real& pos_beta, const Real& newpos_alpha,
+		   const Real& newpos_beta);
 
   //return the ratio(0~1) of a displacement segment not cross the edge.
-  Real intersection_ratio(const Real& pos_alpha, const Real& pos_beta, const Real& dis_alpha, const Real& dis_beta, const int& edge_num );
+  Real intersection_ratio(const Real& pos_alpha, const Real& pos_beta,
+			  const Real& dis_alpha, const Real& dis_beta, const int& edge_num );
 
   //return whether the place is on the edge and rewrite edge_num to the edge.
   //  if false, edge_num = -1.
   bool on_edge(const Real& alpha, const Real& beta, int& edge_num);
 
   // rewrite alpha and beta as parameters of parametric expression of vector pos.
-  // this doesnt subtract represent_vertex from pos automatically.
+  // this doesnt subtract para_origin from pos automatically.
   void to_parametric( const Realvec& pos, Real& alpha, Real& beta );
  
   // return absolute expression translated from parametric expression.
   Realvec to_absolute( const Real& alpha, const Real& beta );
+
+  // parametrize para_a & para_b using neighbor's apara_b
+  void set_neighbors_edge();
+  void set_neighbors_rep_vtx();
 
   //return vertex id that is not on the edge. 
   //  when neighboring face execute this function through ptr, 
@@ -144,29 +170,28 @@ private:
 
 };
 
-Realvec
-FaceAllGate::renew_position(const Realvec& position, const Realvec& displacement,
-			    boost::shared_ptr<FaceBase>& ptr)
+Realvec FaceAllGate::renew_position(const Realvec& position, const Realvec& displacement,
+		  		    boost::shared_ptr<FaceBase>& ptr)
 {
+  Realvec zero(0e0, 0e0, 0e0);
   Realvec temppos(position);
   Realvec tempdis(displacement);
 // debug
-//   std::cout << temppos[0] << " " << temppos[1] << " " << temppos[2] << " ";
-//   std::cout << tempdis[0] << " " << tempdis[1] << " " << tempdis[2] << std::endl;
+  std::cout << temppos[0] << " " << temppos[1] << " " << temppos[2] << " ";
+  std::cout << tempdis[0] << " " << tempdis[1] << " " << tempdis[2] << std::endl;
  
-  THROW_UNLESS(std::invalid_argument,fabs(dot_product(position-represent_vertex, normal) )<1e-12);
+  THROW_UNLESS(std::invalid_argument,
+	       fabs( dot_product( position - para_origin, normal ) ) < 1e-12 );
 
-  //parametric
   Real newpos_alpha(0e0), newpos_beta(0e0);
-  to_parametric(temppos + tempdis - represent_vertex, newpos_alpha, newpos_beta);
+  to_parametric(temppos + tempdis - para_origin, newpos_alpha, newpos_beta);
 
-  //after move, particle is in this face
   if( in_this_face( newpos_alpha, newpos_beta ) )
-    return represent_vertex + to_absolute(newpos_alpha, newpos_beta);
-
-  //find polygon particle gone
+    return para_origin + to_absolute(newpos_alpha, newpos_beta);
+//   do
+//   {
   Real pos_alpha(0e0), pos_beta(0e0);
-  to_parametric(temppos - represent_vertex, pos_alpha, pos_beta);
+  to_parametric(temppos - para_origin, pos_alpha, pos_beta);
 
   Real dis_alpha(0e0), dis_beta(0e0);
   to_parametric(tempdis, dis_alpha, dis_beta);
@@ -176,42 +201,109 @@ FaceAllGate::renew_position(const Realvec& position, const Realvec& displacement
 
   ptr = belonging_polygon->get_neighbor_ptr_from_gateway( face_id, gate );
   
-  const Real ratio( intersection_ratio( pos_alpha, pos_beta, dis_alpha, dis_beta, gate ) );
-  temppos = represent_vertex 
-	  + to_absolute( pos_alpha + ratio*dis_alpha, pos_beta + ratio*dis_beta );
-  tempdis = to_absolute( (1e0 - ratio) * dis_alpha, (1e0 - ratio) * dis_beta );
+  const Real ratio(intersection_ratio(pos_alpha, pos_beta, dis_alpha, dis_beta, gate) );
+  Real temppos_a( pos_alpha + ratio * dis_alpha );
+  Real temppos_b( pos_beta + ratio * dis_beta );
+  Real tempdis_a( (1e0 - ratio) * dis_alpha );
+  Real tempdis_b( (1e0 - ratio) * dis_beta );
 
-  Realvec neighbor_norm( ptr->get_normal_vector() );
+  Real nbr_pos_a( temppos_a * para_a_neighbor.at(gate).first 
+		+ temppos_b * para_b_neighbor.at(gate).first + rep_vec_neighbor.at(gate).first );
+  Real nbr_pos_b( temppos_a * para_a_neighbor.at(gate).second
+		+ temppos_b * para_b_neighbor.at(gate).second + rep_vec_neighbor.at(gate).second);
 
-  Real rot_angle( acos( dot_product(normal, neighbor_norm) ) );
+  Real nbr_dis_a( tempdis_a * para_a_neighbor.at(gate).first
+		+ tempdis_b * para_b_neighbor.at(gate).first );
+  Real nbr_dis_b( tempdis_a * para_a_neighbor.at(gate).second
+		+ tempdis_b * para_b_neighbor.at(gate).second);
 
-  Realvec axis( cross_product(normal, neighbor_norm) );
-  Real axis_length( length( axis ) );
-  if( axis_length == 0e0 )
+  temppos = ptr->renew_position( nbr_pos_a, nbr_pos_b, nbr_dis_a, nbr_dis_b, ptr );
+//   }while( ptr->still_in_the_face(temppos, zero) );
+  return temppos;
+}
+
+
+/*
+pairof(position_type, face) apply_displacement(position_type p0, position_type d, face f0)
+{
+    position_type p1 = p0 + d
+    parametric_type q0 <- p0, dq0 <- d0
+    for (num_it < 100)
+    {
+        q1 = q0 + dq0
+        if (q1 in f0)
+            return pairof(position(q1, f0), f0)
+
+        s, f1 <- q0, dq0, f0
+        q1 = q0 + s * dq0
+	dq1 = (1 - s) * dq0
+	(q0, dq0) <- project(q1, dq1, f1)
+	f0 = f1
+    }
+    assert(false);
+}
+*/
+
+
+//parametric
+Realvec FaceAllGate::renew_position(const Real& pos_alpha, const Real& pos_beta,
+				    const Real& dis_alpha, const Real& dis_beta,
+		  		    boost::shared_ptr<FaceBase>& ptr)
+{
+  Realvec temppos( para_origin + to_absolute(pos_alpha, pos_beta));
+  Realvec tempdis( to_absolute(dis_alpha, dis_beta) );
+  std::cout << temppos[0] << " " << temppos[1] << " " << temppos[2] << " ";
+  std::cout << tempdis[0] << " " << tempdis[1] << " " << tempdis[2] << std::endl;
+
+  // this function should be called by neighbor face when particle comes through an edge
+  // so position must be on the edge
+  if( fabs(pos_alpha) > 1e-12 && fabs(pos_beta) > 1e-12 && fabs(pos_alpha + pos_beta - 1e0) > 1e-12 )
   {
-    axis = edges.at(gate) / length( edges.at(gate) );
-  }
-  else
-  {
-    axis = axis / axis_length;
+    std::cout << "pos_alpha: " << pos_alpha << " pos_beta: " << pos_beta << " ";
+    std::cout << "dis_alpha: " << dis_alpha << " dis_beta: " << dis_beta << " ";
+    throw std::invalid_argument("renew_parametric: first position is no on an edge");
   }
 
-  Realvec new_disp( rotation( rot_angle, axis, tempdis ) );
+  Real newpos_alpha(pos_alpha + dis_alpha), newpos_beta(pos_beta + dis_beta);
+  if( in_this_face( newpos_alpha, newpos_beta ) )
+    return para_origin + to_absolute(newpos_alpha, newpos_beta);
 
-  if( length(new_disp) > length(displacement) )
-  {
-    std::cout << "ratio: " << ratio << " 1-ratio: " << 1e0-ratio << std::endl;
-    std::cout << "new_disp: (" << new_disp[0] << ", " << new_disp[1] << ", " << new_disp[2] << ")" << std::endl;
-    std::cout << "displacement: (" << displacement[0] << ", " << displacement[1] << ", " << displacement[2] << ")" << std::endl;
-    throw std::invalid_argument("new displacement is not less than first displacement");
-  }
+  int gate( through_edge(pos_alpha, pos_beta, newpos_alpha, newpos_beta) );
+
+  ptr = belonging_polygon->get_neighbor_ptr_from_gateway( face_id, gate );
+  
+  Real ratio(intersection_ratio(pos_alpha, pos_beta, dis_alpha, dis_beta, gate) );
+  Real temppos_a( pos_alpha + ratio * dis_alpha );
+  Real temppos_b( pos_beta + ratio * dis_beta );
+  Real tempdis_a( ( 1e0 - ratio ) * dis_alpha );
+  Real tempdis_b( ( 1e0 - ratio ) * dis_beta );
+
+  Real nbr_pos_a( temppos_a * para_a_neighbor.at(gate).first 
+		+ temppos_b * para_b_neighbor.at(gate).first + rep_vec_neighbor.at(gate).first );
+  Real nbr_pos_b( temppos_a * para_a_neighbor.at(gate).second
+		+ temppos_b * para_b_neighbor.at(gate).second + rep_vec_neighbor.at(gate).second);
+
+  Real nbr_dis_a( tempdis_a * para_a_neighbor.at(gate).first
+		+ tempdis_b * para_b_neighbor.at(gate).first );
+  Real nbr_dis_b( tempdis_a * para_a_neighbor.at(gate).second
+		+ tempdis_b * para_b_neighbor.at(gate).second );
+
+//   if( length(new_disp) > length(displacement) )
+//   {
+//     std::cout << "ratio: " << ratio << " 1-ratio: " << 1e0-ratio << std::endl;
+//     std::cout << "new_disp: (" << new_disp[0] << ", " << new_disp[1] << ", " << new_disp[2] << ")" << std::endl;
+//     std::cout << "displacement: (" << displacement[0] << ", " << displacement[1] << ", " << displacement[2] << ")" << std::endl;
+//     throw std::invalid_argument( "new displacement is not less than first displacement" );
+//   }
   
 //   if( length(new_disp) < 1e-16*length(temppos) )
 //     return temppos;
 
-  temppos = ptr->renew_position( temppos, new_disp, ptr );
-  return temppos;
+  Realvec newpos( ptr->renew_position( nbr_pos_a, nbr_pos_b, nbr_dis_a, nbr_dis_b, ptr ) );
+  return newpos;
 }
+
+
 
 bool
 FaceAllGate::in_this_face(const Real& alpha, const Real& beta)
@@ -335,6 +427,9 @@ FaceAllGate::intersection_ratio( const Real& pos_alpha, const Real& pos_beta,
 				 const Real& dis_alpha, const Real& dis_beta,
 				 const int& edge_num )
 {
+  if( dis_alpha == 0e0 && dis_beta == 0e0 )
+    throw std::invalid_argument("ratio: displacement is zero vector");
+
   Real ratio;
   switch(edge_num)
   {
@@ -357,6 +452,10 @@ FaceAllGate::intersection_ratio( const Real& pos_alpha, const Real& pos_beta,
     throw std::invalid_argument("invalid edge_num");
     ratio = 0e0;
   }
+
+  if(ratio < 0e0 || 1e0 < ratio)
+    throw std::invalid_argument("ratio: out of range");
+
   return ratio;
 }
 
@@ -399,46 +498,46 @@ void FaceAllGate::to_parametric( const Realvec& pos, Real& alpha, Real& beta )
 {
   Realvec parametric_pos( pos );
 
-  if( (a_vec[0]*b_vec[1] - b_vec[0]*a_vec[1]) != 0e0 )
+  if( (para_a[0]*para_b[1] - para_b[0]*para_a[1]) != 0e0 )
   {
   // matrix( a0 b0 ) inverse( b1 -b0 ) pos( pos0 )
   //       ( a1 b1 )        ( -a1 a0 )    ( pos1 )
-    alpha = ( b_vec[1] * parametric_pos[0] - b_vec[0] * parametric_pos[1] )
-	    / (a_vec[0]*b_vec[1] - b_vec[0]*a_vec[1]);
+    alpha = ( para_b[1] * parametric_pos[0] - para_b[0] * parametric_pos[1] )
+	    / (para_a[0]*para_b[1] - para_b[0]*para_a[1]);
 
-     beta = ( a_vec[0] * parametric_pos[1] - a_vec[1] * parametric_pos[0] )
-	    / (a_vec[0]*b_vec[1] - b_vec[0]*a_vec[1]);
+     beta = ( para_a[0] * parametric_pos[1] - para_a[1] * parametric_pos[0] )
+	    / (para_a[0]*para_b[1] - para_b[0]*para_a[1]);
  
     //confirm (alpha beta) * (a2 b2) = (pos2)
-    if( fabs(alpha * a_vec[2] + beta * b_vec[2] - parametric_pos[2]) > 1e-12 ) 
+    if( fabs(alpha * para_a[2] + beta * para_b[2] - parametric_pos[2]) > 1e-12 ) 
       throw std::invalid_argument( "function to_parametric: invalid solution" );
 
-  }else if( (a_vec[1]*b_vec[2] - b_vec[1]*a_vec[2]) != 0e0 )
+  }else if( (para_a[1]*para_b[2] - para_b[1]*para_a[2]) != 0e0 )
   {
   // matrix( a1 b1 ) inverse( b2 -b1 ) pos( pos1 )
   //       ( a2 b2 )        ( -a2 a1 )    ( pos2 )
-    alpha = ( b_vec[2] * parametric_pos[1] - b_vec[1] * parametric_pos[2] )
-	    / (a_vec[1]*b_vec[2] - b_vec[1]*a_vec[2]);
+    alpha = ( para_b[2] * parametric_pos[1] - para_b[1] * parametric_pos[2] )
+	    / (para_a[1]*para_b[2] - para_b[1]*para_a[2]);
 
-     beta = ( a_vec[1] * parametric_pos[2] - a_vec[2] * parametric_pos[1] )
-	    / (a_vec[1]*b_vec[2] - b_vec[1]*a_vec[2]);
+     beta = ( para_a[1] * parametric_pos[2] - para_a[2] * parametric_pos[1] )
+	    / (para_a[1]*para_b[2] - para_b[1]*para_a[2]);
  
     //confirm (alpha beta) * (a0 b0) = (pos0)
-    if( fabs(alpha * a_vec[0] + beta * b_vec[0] - parametric_pos[0]) > 1e-12 )
+    if( fabs(alpha * para_a[0] + beta * para_b[0] - parametric_pos[0]) > 1e-12 )
       throw std::invalid_argument( "function to_parametric: invalid solution" );
 
-  }else if( (a_vec[2]*b_vec[0] - b_vec[2]*a_vec[0]) != 0e0 )
+  }else if( (para_a[2]*para_b[0] - para_b[2]*para_a[0]) != 0e0 )
   {
   // matrix( a2 b2 ) inverse( b0 -b2 ) pos( pos2 )
   //       ( a0 b0 )        ( -a0 a2 )    ( pos0 )
-    alpha = ( b_vec[0] * parametric_pos[2] - b_vec[2] * parametric_pos[0] )
-	    / (a_vec[2]*b_vec[0] - b_vec[2]*a_vec[0]);
+    alpha = ( para_b[0] * parametric_pos[2] - para_b[2] * parametric_pos[0] )
+	    / (para_a[2]*para_b[0] - para_b[2]*para_a[0]);
 
-     beta = ( a_vec[2] * parametric_pos[0] - a_vec[0] * parametric_pos[2] )
-	    / (a_vec[2]*b_vec[0] - b_vec[2]*a_vec[0]);
+     beta = ( para_a[2] * parametric_pos[0] - para_a[0] * parametric_pos[2] )
+	    / (para_a[2]*para_b[0] - para_b[2]*para_a[0]);
  
     //confirm (alpha beta) * (a1 b1) = (pos1)
-    if( fabs(alpha * a_vec[1] + beta * b_vec[1] - parametric_pos[1]) > 1e-12 ) 
+    if( fabs(alpha * para_a[1] + beta * para_b[1] - parametric_pos[1]) > 1e-12 ) 
       throw std::invalid_argument( "function to_parametric: invalid solution" ); 
 
   }else{
@@ -450,7 +549,7 @@ void FaceAllGate::to_parametric( const Realvec& pos, Real& alpha, Real& beta )
 
 Realvec FaceAllGate::to_absolute( const Real& alpha, const Real& beta )
 {
-  Realvec absolute_pos( a_vec * alpha + b_vec * beta );
+  Realvec absolute_pos( para_a * alpha + para_b * beta );
   return absolute_pos;
 }
 
@@ -470,7 +569,7 @@ bool FaceAllGate::still_in_the_face( const Realvec& position, const Realvec& dis
   bool sum_in_the_range( 0e0 < alpha + beta && alpha + beta <= 1e0 );
 
   return (alpha_in_the_range && beta_in_the_range) && sum_in_the_range;
-};
+}
 
 /**************************************** renew position ***************************************/
 
@@ -481,12 +580,98 @@ void FaceAllGate::set_near_vertexs()
     boost::shared_ptr<FaceBase> ptr(belonging_polygon->get_neighbor_ptr_from_gateway(face_id, i));
     near_vert_height.push_back( ptr->get_minimum_height( edges.at(i) ) );
   }
+  set_neighbors_edge();
+  set_neighbors_rep_vtx();
+  return;
 }
+
+
+void FaceAllGate::set_neighbors_edge()
+{
+  for(int i(0); i<3; ++i)
+  {
+    boost::shared_ptr<FaceBase> ptr(belonging_polygon->get_neighbor_ptr_from_gateway(face_id, i));
+
+    Realvec nbr_para_a( ptr->get_para_a() );
+    Realvec nbr_para_b( ptr->get_para_b() );
+
+    Realvec neighbor_normal( ptr->get_normal_vector() );
+    Real rot_angle( (-1e0) * acos( dot_product(normal, neighbor_normal) ) );
+
+    Realvec axis( cross_product(normal, neighbor_normal) );
+    if( length(axis) == 0e0 )
+    {
+      //do nothing
+    }
+    else
+    {
+      nbr_para_a = rotation( rot_angle, axis/length(axis), nbr_para_a );
+      nbr_para_b = rotation( rot_angle, axis/length(axis), nbr_para_b );
+    }
+
+    if( fabs( dot_product(nbr_para_a, normal) ) > 1e-12 )
+      throw std::invalid_argument("rotated neighbor edge but it is not on this face");
+    if( fabs( dot_product(nbr_para_b, normal) ) > 1e-12 )
+      throw std::invalid_argument("rotated neighbor edge but it is not on this face");
+
+    Real nbr_a_alpha, nbr_a_beta, nbr_b_alpha, nbr_b_beta;
+    to_parametric( nbr_para_a, nbr_a_alpha, nbr_a_beta );
+    to_parametric( nbr_para_b, nbr_b_alpha, nbr_b_beta );
+
+    Real determinant( nbr_a_alpha * nbr_b_beta - nbr_a_beta * nbr_b_alpha );
+    if(determinant == 0e0)
+      throw std::invalid_argument("set_neighbors_edge: determinant is zero");
+
+    std::pair<Real, Real> nbr_a( nbr_b_beta / determinant, -1e0 * nbr_a_beta / determinant );
+    std::pair<Real, Real> nbr_b( -1e0 * nbr_b_alpha / determinant, nbr_a_alpha / determinant );
+
+    para_a_neighbor.at(i) = nbr_a;
+    para_b_neighbor.at(i) = nbr_b;
+  }
+  return;
+}
+
+void FaceAllGate::set_neighbors_rep_vtx()
+{
+  for(int i(0); i<3; ++i)
+  {
+    boost::shared_ptr<FaceBase> ptr(belonging_polygon->get_neighbor_ptr_from_gateway(face_id, i));
+    Realvec vi_nbr_rep( ptr->get_vertex() - vertexs.at(i) );
+
+    Realvec neighbor_normal( ptr->get_normal_vector() );
+    Real rot_angle( (-1e0) * acos( dot_product(normal, neighbor_normal) ) );
+
+    Realvec axis( cross_product(normal, neighbor_normal) );
+    if( length(axis) == 0e0 )
+    {
+      //do nothing
+    }
+    else
+    {
+      vi_nbr_rep = rotation( rot_angle, axis/length(axis), vi_nbr_rep );
+    }
+
+    Realvec nbrrep_rep( para_origin - vertexs.at(i) - vi_nbr_rep );
+    Real nbrrep_rep_alpha, nbrrep_rep_beta;
+    to_parametric( nbrrep_rep, nbrrep_rep_alpha, nbrrep_rep_beta );
+
+    Real nbr_alpha( nbrrep_rep_alpha * para_a_neighbor.at(i).first 
+		  + nbrrep_rep_beta * para_b_neighbor.at(i).first );
+    Real nbr_beta( nbrrep_rep_alpha * para_a_neighbor.at(i).second
+		  + nbrrep_rep_beta * para_b_neighbor.at(i).second );
+    std::pair<Real, Real> rep( nbr_alpha, nbr_beta );
+
+    rep_vec_neighbor.at(i) = rep;
+  }
+  return;
+}
+
+
 
 /*    <- return this vertex
  *  /\
  * /->\
- * ---- <-input edge(neighbors). so reversed.
+ * ---- <-input edge(neighbors).
  * \<-/
  *  \/ <-call this func using ptr
 */

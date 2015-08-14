@@ -28,6 +28,15 @@ public:
   };
 
   virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p) = 0;
+  virtual Realvec renew_position( const Real& pos_alpha, const Real& pos_beta,
+				  const Real& dis_alpha, const Real& dis_beta, boost::shared_ptr<FaceBase>& p)
+  {
+    print_class_name();
+    throw std::invalid_argument("this class doesnt have this function or still not overloaded");
+    Realvec zero;
+    return zero;
+   
+  }
 
   virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement ) = 0;
 
@@ -35,12 +44,22 @@ public:
 
   virtual void set_belonging_polygon( boost::shared_ptr<Polygon> p_sptr ){};//do nothing
 
-  virtual void set_near_vertexs(){};//do_nothing
+  virtual void set_near_vertexs()
+  {
+    print_class_name();
+    throw std::invalid_argument( "this class has no neighbor or still not overloaded" );
+  }
+
+//   virtual void set_neighbors_edge(){};
+//   {
+//     print_class_name();
+//     throw std::invalid_argument( "this class has no neighbor or still not overloaded" )
+//   }
 
   virtual Realvec get_another_vertex( const Realvec& edge )
   {
     print_class_name();
-    throw std::invalid_argument( "this face must have no neighbor" );
+    throw std::invalid_argument( "this class has no neighbor or still not overloaded" );
     Realvec zero;
     return zero;
   };
@@ -48,30 +67,46 @@ public:
   virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag)
   {
     print_class_name();
-    throw std::invalid_argument( "this face has no vertex" );
+    throw std::invalid_argument( "this class has no neighbor or still not overloaded" );
     return 0e0;
   };
 
   virtual Real get_minimum_height(const Realvec& neighbors_edge)
   {
     print_class_name();
-    throw std::invalid_argument( "this face subclass has no neighbor or still not overloaded" );
+    throw std::invalid_argument( "this class has no neighbor or still not overloaded" );
     return 0e0;
   };
 
   virtual Real get_left_angle( const Realvec& neighbors_edge )
   {
     print_class_name();
-    throw std::invalid_argument( "this face subclass has no angle or still not overloaded" );
+    throw std::invalid_argument( "this class has no angle or still not overloaded" );
     return 0e0;
   }
 
   virtual Real get_right_angle( const Realvec& neighbors_edge )
   {
     print_class_name();
-    throw std::invalid_argument( "this face subclass has no angle or still not overloaded" );
+    throw std::invalid_argument( "this class has no angle or still not overloaded" );
     return 0e0;
   }
+
+  virtual Realvec get_para_a()
+  {
+    print_class_name();
+    throw std::invalid_argument( "this class has no neighbor or still not overloaded" );
+    Realvec zero;
+    return zero;
+  };
+
+  virtual Realvec get_para_b()
+  {
+    print_class_name();
+    throw std::invalid_argument( "this class has no neighbor or still not overloaded" );
+    Realvec zero;
+    return zero;
+  };
 
   virtual void print_class_name()
   {
