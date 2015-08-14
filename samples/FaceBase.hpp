@@ -3,6 +3,7 @@
 #include <boost/shared_ptr.hpp>
 #include <iostream>
 #include <vector>
+#include <utility>
 #include <cmath>
 #include "../Defs.hpp"
 #include "Vector3.hpp"
@@ -27,7 +28,8 @@ public:
     THROW_UNLESS( std::invalid_argument, length( rep ) != 0 );
   };
 
-  virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p) = 0;
+ virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p) = 0;
+
   virtual Realvec renew_position( const Real& pos_alpha, const Real& pos_beta,
 				  const Real& dis_alpha, const Real& dis_beta, boost::shared_ptr<FaceBase>& p)
   {
@@ -35,8 +37,30 @@ public:
     throw std::invalid_argument("this class doesnt have this function or still not overloaded");
     Realvec zero;
     return zero;
-   
   }
+
+//TODO
+//   virtual std::pair<Realvec, boost::shared_ptr<FaceBase> >
+//   renew_position( const Realvec& position, const Realvec& displacement, const boost::shared_ptr<FaceBase>& p) = 0;
+ 
+//   virtual std::pair<Realvec, boost::shared_ptr<FaceBase> >
+//   renew_position( const std::pair<Real, Real>& position, const std::pair<Real, Real>& displacement, boost::shared_ptr<FaceBase>& p )
+//   {
+//
+//   }
+
+
+
+  virtual Realvec renew_position( const std::pair<Real, Real>& position,
+				  const std::pair<Real, Real>& displacement,
+				  boost::shared_ptr<FaceBase>& p)
+  {
+    print_class_name();
+    throw std::invalid_argument("this class doesnt have this function or still not overloaded");
+    Realvec zero;
+    return zero;
+  }
+
 
   virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement ) = 0;
 
@@ -129,6 +153,30 @@ Real FaceBase::smaller_angle(const Realvec& v1, const Realvec& v2)
 
   Real angle( acos( inner / len1 / len2 ) );
   return angle;
+}
+
+std::pair<Real, Real> sum( const std::pair<Real, Real>& lhs, const std::pair<Real, Real> rhs )
+{
+  std::pair<Real, Real> retpair( lhs.first + rhs.first, lhs.second + rhs.second );
+  return retpair;
+}
+
+std::pair<Real, Real> subtract(const std::pair<Real, Real>& lhs, const std::pair<Real, Real> rhs)
+{
+  std::pair<Real, Real> retpair( lhs.first - rhs.first, lhs.second - rhs.second );
+  return retpair;
+}
+
+std::pair<Real, Real> multiple( const Real& lhs, const std::pair<Real, Real>& rhs )
+{
+  std::pair<Real, Real> retpair( lhs * rhs.first, lhs * rhs.second );
+  return retpair;
+}
+
+std::pair<Real, Real> multiple( const std::pair<Real, Real>& lhs, const Real& rhs )
+{
+  std::pair<Real, Real> retpair( rhs * lhs.first, rhs * lhs.second );
+  return retpair;
 }
 
 #endif /*FACE_BASE_HPP*/

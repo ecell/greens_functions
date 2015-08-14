@@ -13,9 +13,12 @@ class particle
 public:
   particle( int id, const Realvec& pos, boost::shared_ptr<FaceBase> ptr )
   {
-    if( fabs(dot_product(pos - ptr->get_vertex(), ptr->get_normal_vector() ) ) < 1e-12 )
+    if( fabs( dot_product( pos - ptr->get_vertex(), ptr->get_normal_vector() ) ) > 1e-12 )
+    {
+      std::cout << "dot_product: " << dot_product( pos - ptr->get_vertex(), ptr->get_normal_vector() ) << std::endl;
       throw std::invalid_argument("particle is not on the plane");
     //TODO if !in_this_face( pos, face_ptr ) then throw invalid_argument
+    }
 
     particle_id = id;
     position = pos;
