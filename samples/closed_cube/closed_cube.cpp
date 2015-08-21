@@ -36,7 +36,7 @@ int main()
   face_sptr tryangle11_ptr( new FaceAllGate(11, v3, v1, v6) );
 
   boost::shared_ptr<Polygon> cube_ptr( new Polygon( tryangle0_ptr ) );
-  
+
   cube_ptr->insert( tryangle1_ptr );
   cube_ptr->insert( tryangle2_ptr );
   cube_ptr->insert( tryangle3_ptr );
@@ -97,18 +97,18 @@ int main()
   cube_ptr->set_neighbor( 1, tryangle11_ptr, tryangle3_ptr );
   cube_ptr->set_neighbor( 2, tryangle11_ptr, tryangle5_ptr );
 
-  tryangle0_ptr->set_belonging_polygon( cube_ptr );
-  tryangle1_ptr->set_belonging_polygon( cube_ptr );
-  tryangle2_ptr->set_belonging_polygon( cube_ptr );
-  tryangle3_ptr->set_belonging_polygon( cube_ptr );
-  tryangle4_ptr->set_belonging_polygon( cube_ptr );
-  tryangle5_ptr->set_belonging_polygon( cube_ptr );
-  tryangle6_ptr->set_belonging_polygon( cube_ptr );
-  tryangle7_ptr->set_belonging_polygon( cube_ptr );
-  tryangle8_ptr->set_belonging_polygon( cube_ptr );
-  tryangle9_ptr->set_belonging_polygon( cube_ptr );
-  tryangle10_ptr->set_belonging_polygon( cube_ptr );
-  tryangle11_ptr->set_belonging_polygon( cube_ptr );
+  tryangle0_ptr->set_poly_ptr( cube_ptr );
+  tryangle1_ptr->set_poly_ptr( cube_ptr );
+  tryangle2_ptr->set_poly_ptr( cube_ptr );
+  tryangle3_ptr->set_poly_ptr( cube_ptr );
+  tryangle4_ptr->set_poly_ptr( cube_ptr );
+  tryangle5_ptr->set_poly_ptr( cube_ptr );
+  tryangle6_ptr->set_poly_ptr( cube_ptr );
+  tryangle7_ptr->set_poly_ptr( cube_ptr );
+  tryangle8_ptr->set_poly_ptr( cube_ptr );
+  tryangle9_ptr->set_poly_ptr( cube_ptr );
+  tryangle10_ptr->set_poly_ptr( cube_ptr );
+  tryangle11_ptr->set_poly_ptr( cube_ptr );
 
   cube_ptr->set_near_vertex();
 

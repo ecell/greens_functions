@@ -5,7 +5,7 @@
 #include <boost/shared_ptr.hpp>
 #include "FaceBase.hpp"
 
-using namespace greens_functions;
+// using namespace greens_functions;
 
 struct id_gateway{
   int face_id;
@@ -36,6 +36,10 @@ private:
   std::map< id_gateway, boost::shared_ptr<FaceBase> > gateway_map;
 
 public:
+  Polygon()
+  {
+  }
+
   Polygon( boost::shared_ptr<FaceBase> ptr )
   {
     int id( ptr->get_id() );

@@ -12,6 +12,7 @@ class particle
   bool shell_involves_vertex;
 public:
   particle( int id, const Realvec& pos, boost::shared_ptr<FaceBase> ptr )
+  : shell_involves_vertex(false)
   {
     if( fabs( dot_product( pos - ptr->get_vertex(), ptr->get_normal_vector() ) ) > 1e-12 )
     {
@@ -48,17 +49,17 @@ void particle::move( const Real& r, const Real& theta )
   {
     //TODO
     //theta?
-    Realvec axis( face_ptr->get_normal_vector() );
-    Realvec target( face_ptr->get_represent_vector() );
-
-    Realvec temp;
-    temp = rotation(theta, axis, target);
-
-    Realvec displacement( temp * r );
-
-    Realvec newpos( face_ptr->renew_position(position, displacement, face_ptr) );
-    position = newpos;
-    return;
+//     Realvec axis( face_ptr->get_normal_vector() );
+//     Realvec target( face_ptr->get_represent_vector() );
+//
+//     Realvec temp;
+//     temp = rotation(theta, axis, target);
+//
+//     Realvec displacement( temp * r );
+//
+//     Realvec newpos( face_ptr->renew_position(position, displacement, face_ptr) );
+//     position = newpos;
+//     return;
 
   }else{
 
@@ -79,13 +80,12 @@ void particle::move( const Real& r, const Real& theta )
       throw std::invalid_argument("displacement length is not equal to shell size.");
     }
 
-//     std::pair<Realvec, boost::shared_ptr<FaceBase> > 
-//       pos_ptr( face_ptr->renew_position position, displacement, face_ptr );
-//     newpos = pos_ptr.first;
-//     face_ptr = pos_ptr.second;
+    std::pair<Realvec, FaceBase_sptr> pos_ptr;
+    pos_ptr = face_ptr->apply_displacement(position, displacement, face_ptr);
 
-    Realvec newpos( face_ptr->renew_position(position, displacement, face_ptr) );
-    position = newpos;
+    position = pos_ptr.first;
+    face_ptr = pos_ptr.second;
+
     return;
   }
 
