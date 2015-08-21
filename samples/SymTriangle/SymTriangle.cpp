@@ -17,15 +17,14 @@ int main()
   Realvec v3(0e0, 0e0, 1e0);
 //   Realvec norm( cross_product(v2 - v1, v3 - v1) );
 
-  face_sptr tryangle_ptr( new FaceAllSym(0, v1, v2, v3) );
-//   face_sptr tryangle_ptr( new face_SymTry(0, v1, v2, v3, norm) );
+  face_sptr triangle_ptr( new FaceAllSym(0, v1, v2, v3) );
 
   Realvec e12( v2 - v1 );
   Realvec e13( v3 - v1 );
   Realvec position( v1 + e12/3e0 + e13/3e0 );
 //   std::cout << position << std::endl;
 
-  particle mol(0, position, tryangle_ptr);
+  particle mol(0, position, triangle_ptr);
 
   boost::random::mt19937 mt(0);
   boost::random::uniform_real_distribution<Real> rand(0.0, 1.0);

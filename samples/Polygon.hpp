@@ -5,8 +5,6 @@
 #include <boost/shared_ptr.hpp>
 #include "FaceBase.hpp"
 
-// using namespace greens_functions;
-
 struct id_gateway{
   int face_id;
   int gateway;

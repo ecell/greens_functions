@@ -69,15 +69,15 @@ int main()
   cube_ptr->set_neighbor( 0, tryangle7_ptr, tryangle6_ptr );
   cube_ptr->set_neighbor( 1, tryangle7_ptr, tryangle0_ptr );
 
-  tryangle0_ptr->set_belonging_polygon( cube_ptr );
-  tryangle1_ptr->set_belonging_polygon( cube_ptr );
-  tryangle2_ptr->set_belonging_polygon( cube_ptr );
-  tryangle3_ptr->set_belonging_polygon( cube_ptr );
-  tryangle4_ptr->set_belonging_polygon( cube_ptr );
-  tryangle4_5_ptr->set_belonging_polygon( cube_ptr );
-  tryangle5_ptr->set_belonging_polygon( cube_ptr );
-  tryangle6_ptr->set_belonging_polygon( cube_ptr );
-  tryangle7_ptr->set_belonging_polygon( cube_ptr );
+  tryangle0_ptr->set_poly_ptr( cube_ptr );
+  tryangle1_ptr->set_poly_ptr( cube_ptr );
+  tryangle2_ptr->set_poly_ptr( cube_ptr );
+  tryangle3_ptr->set_poly_ptr( cube_ptr );
+  tryangle4_ptr->set_poly_ptr( cube_ptr );
+  tryangle4_5_ptr->set_poly_ptr( cube_ptr );
+  tryangle5_ptr->set_poly_ptr( cube_ptr );
+  tryangle6_ptr->set_poly_ptr( cube_ptr );
+  tryangle7_ptr->set_poly_ptr( cube_ptr );
 
   cube_ptr->set_near_vertex();
 

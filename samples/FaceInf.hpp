@@ -2,56 +2,59 @@
 #define FACE_INF_HPP
 #include "FaceBase.hpp"
 
-using namespace greens_functions;
-
-// this infinite plane must pass through origin of coordinate
 class FaceInf : public FaceBase
 {
 public:
-  FaceInf( const int& id, const Realvec& norm, const Realvec& rep )
+  FaceInf( const int& id, const Realvec& norm, const Realvec& rep)
   : FaceBase( id, norm, rep )
   {
-    ;
+    Realvec zero(0e0, 0e0, 0e0);
+    para_origin = zero;
+    para_a = rep;
+    para_b = cross_product(norm, rep);
+  };
+
+  FaceInf( const int& id, const Realvec& norm, const Realvec& rep, const Realvec& origin)
+  : FaceBase( id, norm, rep )
+  {
+    para_origin = origin;
+    para_a = rep;
+    para_b = cross_product(norm, rep);
   };
 
   ~FaceInf(){ };
 
-  virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p);
+  virtual std::pair<Realvec, boost::shared_ptr<FaceBase> >
+  apply_displacement(const Realvec& position, const Realvec& displacement,
+		     const boost::shared_ptr<FaceBase>& p );
 
-  virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement );
+
+  virtual bool in_the_face( const Realvec& position, const Realvec& displacement, const Real tol = 1e-12 );
+//   virtual bool in_face( const std::pair<Real, Real>& parameters, const Real tol = 1e-12 );
 
   virtual Realvec get_vertex();
-  
   virtual void print_class_name();
 };
 
-Realvec FaceInf::renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& p)
+std::pair<Realvec, boost::shared_ptr<FaceBase> >
+FaceInf::apply_displacement(const Realvec& position, const Realvec& displacement, const FaceBase_sptr& p )
 {
-    bool in_the_infty_plane;
-    in_the_infty_plane = still_in_the_face(position, displacement);
-    THROW_UNLESS(std::invalid_argument, in_the_infty_plane);
+  if( !in_the_face( position, displacement ) )
+    throw std::invalid_argument("newpos is not on this face");
 
-    Realvec temp(position + displacement);
-    return temp;
+  std::pair<Realvec, FaceBase_sptr> retval(position + displacement, p);
+  return retval;
 }
 
-bool FaceInf::still_in_the_face( const Realvec& position, const Realvec& displacement )
+bool FaceInf::in_the_face( const Realvec& position, const Realvec& displacement, const Real tol )
 {
-  Real epsilon(1e-12);
-  Realvec v1( get_vertex() );
-  Realvec v2( position + displacement );
-  Realvec v3( v2 - v1 );
-  Realvec norm( get_normal_vector() );
-
-  Real orth( dot_product(v3, norm) );
-  
-  return ( orth < epsilon );
-};
+  Realvec p( position + displacement - para_origin );
+  return ( fabs(dot_product(p, normal) ) < tol );
+}
 
 Realvec FaceInf::get_vertex()
 {
-  Realvec zero(0e0, 0e0, 0e0);
-  return zero;
+  return para_origin;
 };
 
 void FaceInf::print_class_name()

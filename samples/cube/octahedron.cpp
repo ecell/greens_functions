@@ -48,12 +48,12 @@ int main()
   octahedron_ptr->set_neighbor( 0, tryangle5_ptr, tryangle4_ptr );
   octahedron_ptr->set_neighbor( 2, tryangle5_ptr, tryangle0_ptr );
 
-  tryangle0_ptr->set_belonging_polygon( octahedron_ptr );
-  tryangle1_ptr->set_belonging_polygon( octahedron_ptr );
-  tryangle2_ptr->set_belonging_polygon( octahedron_ptr );
-  tryangle3_ptr->set_belonging_polygon( octahedron_ptr );
-  tryangle4_ptr->set_belonging_polygon( octahedron_ptr );
-  tryangle5_ptr->set_belonging_polygon( octahedron_ptr );
+  tryangle0_ptr->set_poly_ptr( octahedron_ptr );
+  tryangle1_ptr->set_poly_ptr( octahedron_ptr );
+  tryangle2_ptr->set_poly_ptr( octahedron_ptr );
+  tryangle3_ptr->set_poly_ptr( octahedron_ptr );
+  tryangle4_ptr->set_poly_ptr( octahedron_ptr );
+  tryangle5_ptr->set_poly_ptr( octahedron_ptr );
 
   octahedron_ptr->set_near_vertex();
 

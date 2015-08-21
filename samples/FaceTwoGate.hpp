@@ -5,8 +5,6 @@
 #include "Polygon.hpp"
 #include "rotation.hpp"
 
-using namespace greens_functions;
-
 class FaceTwoGate : public FaceBase
 {
 private:
@@ -108,7 +106,7 @@ public:
 
   virtual Realvec renew_position( const Realvec& position, const Realvec& displacement, boost::shared_ptr<FaceBase>& ptr);
 
-  virtual bool still_in_the_face( const Realvec& position, const Realvec& displacement );
+  virtual bool in_the_face( const Realvec& position, const Realvec& displacement );
 
   virtual void set_near_vertexs();
   virtual Realvec get_another_vertex(const Realvec& edge);
@@ -403,7 +401,7 @@ FaceTwoGate::on_edge(const Real& alpha, const Real& beta,
 }
 
 //legacy?
-bool FaceTwoGate::still_in_the_face( const Realvec& position, const Realvec& displacement )
+bool FaceTwoGate::in_the_face( const Realvec& position, const Realvec& displacement )
 {
   Real alpha(0e0), beta(0e0);
   to_parametric( position+displacement, alpha, beta );
@@ -411,7 +409,7 @@ bool FaceTwoGate::still_in_the_face( const Realvec& position, const Realvec& dis
   bool just_on_vertex( (alpha == 0e0 || alpha == 1e0) &&
 		     ( beta == 0e0 ||  beta == 1e0) );
   if( just_on_vertex )
-    throw std::invalid_argument( "still_in_the_face : particle is just on a vertex." );
+    throw std::invalid_argument( "in_the_face : particle is just on a vertex." );
 
   bool alpha_in_the_range( 0e0 <= alpha && alpha <= 1e0 );
   bool  beta_in_the_range( 0e0 <= beta  && beta  <= 1e0 );

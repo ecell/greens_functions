@@ -22,22 +22,22 @@ int main()
   Realvec v3(0e0, 0e0, 0e0);
   Realvec v4(1e0, 1e0, 0e0);
 
-  face_sptr tryangle1_ptr( new FaceOneGate(0, v1, v2, v3, 1) );
-  face_sptr tryangle2_ptr( new FaceOneGate(1, v4, v3, v2, 1) );
+  face_sptr triangle1_ptr( new FaceOneGate(0, v1, v2, v3, 1) );
+  face_sptr triangle2_ptr( new FaceOneGate(1, v4, v3, v2, 1) );
 
-  boost::shared_ptr<Polygon> rectangle_ptr( new Polygon( tryangle1_ptr ) );
-  rectangle_ptr->insert( tryangle2_ptr );
-  rectangle_ptr->set_neighbor( 1, tryangle1_ptr, tryangle2_ptr);
-  rectangle_ptr->set_neighbor( 1, tryangle2_ptr, tryangle1_ptr);
+  boost::shared_ptr<Polygon> rectangle_ptr( new Polygon( triangle1_ptr ) );
+  rectangle_ptr->insert( triangle2_ptr );
+  rectangle_ptr->set_neighbor( 1, triangle1_ptr, triangle2_ptr);
+  rectangle_ptr->set_neighbor( 1, triangle2_ptr, triangle1_ptr);
 
-  tryangle1_ptr->set_belonging_polygon( rectangle_ptr );
-  tryangle2_ptr->set_belonging_polygon( rectangle_ptr );
+  triangle1_ptr->set_poly_ptr( rectangle_ptr );
+  triangle2_ptr->set_poly_ptr( rectangle_ptr );
 
 //   Realvec position( 1e0/3e0, 1e0/3e0, 0e0 );
   Realvec position( 0e0, 2e0/3e0, 1e0/3e0 );
 //   std::cout << position << std::endl;
 
-  particle mol(0, position, tryangle1_ptr);
+  particle mol(0, position, triangle1_ptr);
 
   boost::random::mt19937 mt(0);
   boost::random::uniform_real_distribution<Real> rand(0.0, 1.0);

@@ -53,7 +53,6 @@ public:
     throw std::invalid_argument("renew_position: this is not supported");
   }
 
-
   virtual std::pair<Realvec, boost::shared_ptr<FaceBase> >
   apply_displacement(const Realvec& position, const Realvec& displacement,
 		 const boost::shared_ptr<FaceBase>& p )
@@ -113,6 +112,18 @@ public:
     throw std::invalid_argument("in_the_face: this is not supported");
   }
 
+  virtual bool in_face(const std::pair<Real, Real> parameters, const Real tol = 1e-12)
+  {
+    Real alpha( parameters.first );
+    Real beta( parameters.second );
+    
+    bool alpha_in_range( -tol <= alpha && alpha <= 1e0 + tol );
+    bool beta_in_range( -tol <= beta  && beta  <= 1e0 + tol );
+    bool sum_in_range( -tol < alpha+beta && alpha+beta <= 1e0 + tol );
+
+    return ( (alpha_in_range && beta_in_range) && sum_in_range);
+  }
+
   virtual Realvec get_vertex()
   {
     print_class_name();
@@ -131,53 +142,35 @@ public:
     throw std::invalid_argument("set_near_vertex: this is not supported");
   }
 
-//   virtual void set_neighbors_edge(){};
-//   {
-//     print_class_name();
-//     throw std::invalid_argument( "this class has no neighbor or still not overloaded" )
-//   }
-
   virtual Realvec get_another_vertex( const Realvec& edge )
   {
     print_class_name();
-    throw std::invalid_argument("this is not supported");
+    throw std::invalid_argument("get_another_vertex: this is not supported");
   };
 
   virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag)
   {
     print_class_name();
-    throw std::invalid_argument("this is not supported");
+    throw std::invalid_argument("get_max_a: this is not supported");
   };
 
   virtual Real get_minimum_height(const Realvec& neighbors_edge)
   {
     print_class_name();
-    throw std::invalid_argument("this is not supported");
+    throw std::invalid_argument("get_minimum_height: this is not supported");
   };
 
   virtual Real get_left_angle( const Realvec& neighbors_edge )
   {
     print_class_name();
-    throw std::invalid_argument("this is not supported");
+    throw std::invalid_argument("get_left_angle: this is not supported");
   }
 
   virtual Real get_right_angle( const Realvec& neighbors_edge )
   {
     print_class_name();
-    throw std::invalid_argument("this is not supported");
+    throw std::invalid_argument("get_right_angle: this is not supported");
   }
-
-  virtual Realvec get_para_a()
-  {
-    print_class_name();
-    throw std::invalid_argument("this is not supported");
-  };
-
-  virtual Realvec get_para_b()
-  {
-    print_class_name();
-    throw std::invalid_argument("this is not supported");
-  };
 
   virtual void print_class_name()
   {
@@ -189,8 +182,8 @@ public:
   Realvec get_normal_vector(){ return normal; };
   Realvec get_represent_vector(){ return represent; };
   Realvec get_para_origin(){return para_origin;}
-  Realvec get_para_a_vec(){return para_a;}
-  Realvec get_para_b_vec(){return para_b;}
+  Realvec get_para_a(){return para_a;}
+  Realvec get_para_b(){return para_b;}
   std::pair<Real, Real> get_para_a_neighbor_at(const int i)
   {
     return para_a_neighbor.at(i);

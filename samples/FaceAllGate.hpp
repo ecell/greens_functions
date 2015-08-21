@@ -23,24 +23,6 @@ private:
   boost::weak_ptr<Polygon> poly_ptr;
   std::vector<Real> near_vert_height;
 
-/*
-public:
-  //parametric
-  Realvec para_origin;
-  Realvec para_a;
-  Realvec para_b;
-  // neighbors
-  // para_a = para_a_neighbor.first * neighbor->para_a + para_a_neighbor.second * neighbor->para_b;
-  // para_b = para_b_neighbor.first * neighbor->para_a + para_b_neighbor.second * neighbor->para_b;
-  // p(a, b) -> p'( a*para_a_neighbor.first + b*para_b_neighbor.first,
-  // 		    a*para_a_neighbor.second + b*para_b_neighbor.second)
-  std::vector< std::pair<Real, Real> > para_a_neighbor;
-  std::vector< std::pair<Real, Real> > para_b_neighbor;
-  // para_origin = rep_vec_neighbor.first * neighbor->para_a + 
-  // 			rep_vec_neighbor.second * neighbor->para_b;
-  std::vector< std::pair<Real, Real> > ori_vec_neighbor;
-*/
-
 public:
   FaceAllGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2)
   : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ),
@@ -102,38 +84,9 @@ public:
   //set near_vert_height.
   virtual void set_near_vertexs();
 
-/*
-  virtual Realvec
-  renew_position( const Realvec& position, const Realvec& displacement,
-		  FaceBase_sptr& ptr);*/
-
   virtual std::pair<Realvec, FaceBase_sptr>
   apply_displacement( const Realvec& position, const Realvec& displacement,
-		  const FaceBase_sptr& ptr);
-
-  //though input is absolute vector representation, using parametric representation.
-  virtual bool in_the_face( const Realvec& position, const Realvec& displacement );
-
-  //return the vertex such that input edge does not include.
-  virtual Realvec get_another_vertex(const Realvec& edge);
-
-  //return para_origin.
-  virtual Realvec get_vertex(){ return para_origin; };
-
-  //find max shell size (for greens function)
-  virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag);
-  
-  //call this func from neighbor face
-  virtual Real get_minimum_height( const Realvec& neighbors_edge );
-
-  //return own angle.
-  virtual Real get_right_angle( const Realvec& neighbors_edge );
-  virtual Real get_left_angle( const Realvec& neighbors_edge );
-
-  virtual Realvec get_para_a(){ return para_a; }
-  virtual Realvec get_para_b(){ return para_b; }
-
-  virtual void print_class_name();
+		      const FaceBase_sptr& ptr);
 
   //return whether the position is in a face ( in the range or not ).
   virtual bool in_face(const std::pair<Real, Real>& parameters, const Real tol = 1e-12);
@@ -158,6 +111,31 @@ public:
  
   // return absolute expression translated from parametric expression.
   virtual Realvec to_absolute( const std::pair<Real, Real>& parameters );
+
+
+  //though input is absolute vector representation, using parametric representation.
+  virtual bool in_the_face( const Realvec& position, const Realvec& displacement );
+
+  //return the vertex such that input edge does not include.
+  virtual Realvec get_another_vertex(const Realvec& edge);
+
+  //return para_origin.
+  virtual Realvec get_vertex(){ return para_origin; };
+
+  //find max shell size (for greens function)
+  virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag);
+  
+  //call this func from neighbor face
+  virtual Real get_minimum_height( const Realvec& neighbors_edge );
+
+  //return own angle.
+  virtual Real get_right_angle( const Realvec& neighbors_edge );
+  virtual Real get_left_angle( const Realvec& neighbors_edge );
+
+  virtual Realvec get_para_a(){ return para_a; }
+  virtual Realvec get_para_b(){ return para_b; }
+
+  virtual void print_class_name();
 
 private:
   std::pair<Real, Real> 
