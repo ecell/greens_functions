@@ -33,18 +33,17 @@ int main()
   triangle1_ptr->set_poly_ptr( rectangle_ptr );
   triangle2_ptr->set_poly_ptr( rectangle_ptr );
 
+  rectangle_ptr->set_near_vertex();
+
 //   Realvec position( 1e0/3e0, 1e0/3e0, 0e0 );
   Realvec position( 0e0, 2e0/3e0, 1e0/3e0 );
-//   std::cout << position << std::endl;
 
   particle mol(0, position, triangle1_ptr);
 
   boost::random::mt19937 mt(0);
   boost::random::uniform_real_distribution<Real> rand(0.0, 1.0);
 
-  Real a_max, t_end;
-  std::cout << "a_max: ";
-  std::cin >> a_max;
+  Real t_end;
   std::cout << "t_end: ";
   std::cin >> t_end;
 
@@ -60,7 +59,7 @@ int main()
   do
   {
     Real D(1e0);
-    a = a_max * rand(mt);
+    a = mol.get_max_a();
     GreensFunction2DAbsSym gf(D,a);
 
     dt = gf.drawTime( rand(mt) );

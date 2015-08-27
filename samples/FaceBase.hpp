@@ -106,12 +106,6 @@ public:
     throw std::invalid_argument("to_absolute: this is not supported");
   }
 
-  virtual bool in_the_face( const Realvec& position, const Realvec& displacement )
-  {
-    print_class_name();
-    throw std::invalid_argument("in_the_face: this is not supported");
-  }
-
   virtual bool in_face(const std::pair<Real, Real> parameters, const Real tol = 1e-12)
   {
     Real alpha( parameters.first );
@@ -176,6 +170,12 @@ public:
   {
     std::cout << "class: FaceBase" << std::endl;
     return;
+  }
+
+  virtual bool is_gate_at(int edge_id)
+  {
+    print_class_name();
+    throw std::invalid_argument("is_gate_at: this is not supported");
   }
 
   int get_id(){ return face_id; };

@@ -76,9 +76,7 @@ public:
  
   virtual Realvec to_absolute( const std::pair<Real, Real>& parameters );
 
-  virtual bool in_the_face( const Realvec& position, const Realvec& displacement );
-
-privateon_edge:
+private:
 
   std::pair<Real, Real> reverse( const std::pair<Real, Real>& dis, const int edge_num );
 
@@ -457,26 +455,6 @@ Realvec FaceAllSym::to_absolute( const std::pair<Real, Real>& parameters )
   Realvec absolute_pos( para_a * parameters.first + para_b * parameters.second );
   return absolute_pos;
 }
-
-
-bool FaceAllSym::in_the_face( const Realvec& position, const Realvec& displacement )
-{
-  Real epsilon(1e-8);
-  Realvec temppos(position + displacement);
-  Realvec v0p( vertexs.at(0) - temppos );
-  Realvec v1p( vertexs.at(1) - temppos );
-  Realvec v2p( vertexs.at(2) - temppos );
-  Real lv0p( length(v0p) );
-  Real lv1p( length(v1p) );
-  Real lv2p( length(v2p) );
-
-  double rot;
-  rot = acos( dot_product( v0p, v1p ) / lv0p / lv1p );
-  rot += acos( dot_product( v1p, v2p ) / lv1p / lv2p );
-  rot += acos( dot_product( v2p, v0p ) / lv2p / lv0p );
-
-  return (rot >= 2 * M_PI - epsilon);
-};
 
 Realvec FaceAllSym::get_vertex()
 {

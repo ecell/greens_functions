@@ -51,9 +51,9 @@ public:
 // use this function after all faces are inserted and all gateway edges are connected
   void set_near_vertex();
  
-  boost::shared_ptr<FaceBase> get_ptr_from_id(int id);
+  FaceBase_sptr id_to_faceptr(int id);
 
-  boost::shared_ptr<FaceBase> get_neighbor_ptr_from_gateway( const int& id, const int& gate);
+  FaceBase_sptr get_neighbor( const int& id, const int& gate);
 
 // private:
 
@@ -93,7 +93,7 @@ void Polygon::set_near_vertex()
   }
 }
 
-boost::shared_ptr<FaceBase> Polygon::get_ptr_from_id( int id )
+FaceBase_sptr Polygon::id_to_faceptr( int id )
 {
   std::map< int, boost::shared_ptr<FaceBase> >::iterator itr;
   itr = face_map.find(id);
@@ -103,14 +103,18 @@ boost::shared_ptr<FaceBase> Polygon::get_ptr_from_id( int id )
   return face_map[id];
 };
 
-boost::shared_ptr<FaceBase> Polygon::get_neighbor_ptr_from_gateway( const int& id, const int& gate )
+FaceBase_sptr Polygon::get_neighbor( const int& id, const int& gate )
 {
   id_gateway ig(id, gate);
 
   std::map< id_gateway, boost::shared_ptr<FaceBase> >::iterator itr;
   itr = gateway_map.find(ig);
-  bool find_neighbor_face( itr != gateway_map.end() );
-  THROW_UNLESS(std::invalid_argument, find_neighbor_face);
+
+  if( itr == gateway_map.end() )
+  {
+    std::cout << "face_id: " << id << " edge_id: " << gate << std::endl;
+    throw std::invalid_argument("no neighbor face");
+  }
 
   return gateway_map[ig];
 }

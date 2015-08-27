@@ -112,10 +112,6 @@ public:
   // return absolute expression translated from parametric expression.
   virtual Realvec to_absolute( const std::pair<Real, Real>& parameters );
 
-
-  //though input is absolute vector representation, using parametric representation.
-  virtual bool in_the_face( const Realvec& position, const Realvec& displacement );
-
   //return the vertex such that input edge does not include.
   virtual Realvec get_another_vertex(const Realvec& edge);
 
@@ -198,7 +194,7 @@ FaceAllGate::apply_displacement(const Realvec& position, const Realvec& displace
 
     int gate( face_ptr->through_edge(pos_para, newpos) );
 
-    FaceBase_sptr next_face( poly_ptr.lock()->get_neighbor_ptr_from_gateway(face_ptr->get_id(), gate) );
+    FaceBase_sptr next_face( poly_ptr.lock()->get_neighbor(face_ptr->get_id(), gate) );
 
     const Real ratio( face_ptr->cross_ratio( pos_para, dis_para, gate) );
 
@@ -540,19 +536,13 @@ Realvec FaceAllGate::to_absolute( const std::pair<Real, Real>& parameters )
   return absolute_pos;
 }
 
-bool FaceAllGate::in_the_face( const Realvec& position, const Realvec& displacement )
-{
-  std::pair<Real, Real> parameters( to_parametric( position + displacement ) );
-  return in_face( parameters );
-}
-
 /**************************************** renew position ***************************************/
 
 void FaceAllGate::set_near_vertexs()
 {
   for(int i(0); i<3; ++i)
   {
-    FaceBase_sptr ptr(poly_ptr.lock()->get_neighbor_ptr_from_gateway(face_id, i));
+    FaceBase_sptr ptr(poly_ptr.lock()->get_neighbor(face_id, i));
     near_vert_height.push_back( ptr->get_minimum_height( edges.at(i) ) );
   }
   set_neighbors_edge();
@@ -565,7 +555,7 @@ void FaceAllGate::set_neighbors_edge()
 {
   for(int i(0); i<3; ++i)
   {
-    FaceBase_sptr ptr(poly_ptr.lock()->get_neighbor_ptr_from_gateway(face_id, i));
+    FaceBase_sptr ptr(poly_ptr.lock()->get_neighbor(face_id, i));
 
     Realvec neighbor_para_a( ptr->get_para_a() );
     Realvec neighbor_para_b( ptr->get_para_b() );
@@ -613,7 +603,7 @@ void FaceAllGate::set_neighbors_ori_vtx()
 {
   for(int i(0); i<3; ++i)
   {
-    FaceBase_sptr ptr(poly_ptr.lock()->get_neighbor_ptr_from_gateway(face_id, i));
+    FaceBase_sptr ptr(poly_ptr.lock()->get_neighbor(face_id, i));
     Realvec vi_nbr_ori( ptr->get_para_origin() - vertexs.at(i) );
 
     Realvec neighbor_normal( ptr->get_normal_vector() );
@@ -734,7 +724,7 @@ int FaceAllGate::get_another_edge_id_left(const Realvec& neighbors_edge)
 Realvec FaceAllGate::get_another_vertex_right( const Realvec& neighbors_edge )
 {
   int gateway_id( get_another_edge_id_right(neighbors_edge) );
-  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
+  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
   Realvec ret_vertex( ptr->get_another_vertex( edges.at(gateway_id) ) );
   return ret_vertex;
 }
@@ -742,7 +732,7 @@ Realvec FaceAllGate::get_another_vertex_right( const Realvec& neighbors_edge )
 Realvec FaceAllGate::get_another_vertex_left( const Realvec& neighbors_edge )
 {
   int gateway_id( get_another_edge_id_left(neighbors_edge) );
-  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
+  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
   Realvec ret_vertex( ptr->get_another_vertex( edges.at(gateway_id) ) );
   return ret_vertex;
 }
@@ -852,7 +842,7 @@ Real FaceAllGate::get_right_angle( const Realvec& neighbors_edge )
 Real FaceAllGate::pull_neighbors_left_angle( const Realvec& neighbors_edge )
 {
   int gateway_id( get_another_edge_id_left(neighbors_edge) );
-  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
+  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
   Real neighbor_left_angle( ptr->get_left_angle( edges.at(gateway_id) ) );
   return neighbor_left_angle;
 }
@@ -860,7 +850,7 @@ Real FaceAllGate::pull_neighbors_left_angle( const Realvec& neighbors_edge )
 Real FaceAllGate::pull_neighbors_right_angle( const Realvec& neighbors_edge )
 {
   int gateway_id( get_another_edge_id_right(neighbors_edge) );
-  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor_ptr_from_gateway(face_id, gateway_id) );
+  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
   Real neighbor_right_angle( ptr->get_right_angle( edges.at(gateway_id) ) );
   return neighbor_right_angle;
 }

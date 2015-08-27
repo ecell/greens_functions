@@ -29,7 +29,7 @@ public:
 		     const boost::shared_ptr<FaceBase>& p );
 
 
-  virtual bool in_the_face( const Realvec& position, const Realvec& displacement, const Real tol = 1e-12 );
+  virtual bool in_face( const Realvec& position, const Realvec& displacement, const Real tol = 1e-12 );
 //   virtual bool in_face( const std::pair<Real, Real>& parameters, const Real tol = 1e-12 );
 
   virtual Realvec get_vertex();
@@ -39,14 +39,14 @@ public:
 std::pair<Realvec, boost::shared_ptr<FaceBase> >
 FaceInf::apply_displacement(const Realvec& position, const Realvec& displacement, const FaceBase_sptr& p )
 {
-  if( !in_the_face( position, displacement ) )
+  if( !in_face( position, displacement ) )
     throw std::invalid_argument("newpos is not on this face");
 
   std::pair<Realvec, FaceBase_sptr> retval(position + displacement, p);
   return retval;
 }
 
-bool FaceInf::in_the_face( const Realvec& position, const Realvec& displacement, const Real tol )
+bool FaceInf::in_face( const Realvec& position, const Realvec& displacement, const Real tol )
 {
   Realvec p( position + displacement - para_origin );
   return ( fabs(dot_product(p, normal) ) < tol );
