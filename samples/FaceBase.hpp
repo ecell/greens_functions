@@ -11,7 +11,6 @@
 #include "Vector3.hpp"
 
 class Polygon;
-typedef Vector3<Real> Realvec;
 
 class FaceBase
 {
@@ -71,6 +70,8 @@ public:
 
   virtual Real get_right_angle( const Realvec& neighbors_edge );
   virtual Real get_left_angle( const Realvec& neighbors_edge );
+
+  virtual Real get_angles_at(int i);
 
   virtual bool is_gate_at(int edge_id);
 
@@ -227,6 +228,12 @@ Real FaceBase::get_right_angle( const Realvec& neighbors_edge )
   throw std::invalid_argument("get_right_angle: this is not supported");
 }
 
+Real FaceBase::get_angles_at(int i)
+{
+  print_class_name();
+  throw std::invalid_argument("get_angles_at: this is not supported");
+}
+
 void FaceBase::print_class_name()
 {
   std::cout << "class: FaceBase" << std::endl;
@@ -286,35 +293,6 @@ Real FaceBase::smaller_angle(const Realvec& v1, const Realvec& v2)
   return angle;
 }
 
-
-//**************************** std::pair ****************************************
-std::pair<Real, Real>
-sum( const std::pair<Real, Real>& lhs, const std::pair<Real, Real>& rhs )
-{
-  std::pair<Real, Real> retpair( lhs.first + rhs.first, lhs.second + rhs.second );
-  return retpair;
-}
-
-std::pair<Real, Real>
-subtract(const std::pair<Real, Real>& lhs, const std::pair<Real, Real>& rhs)
-{
-  std::pair<Real, Real> retpair( lhs.first - rhs.first, lhs.second - rhs.second );
-  return retpair;
-}
-
-std::pair<Real, Real>
-multiple( const Real lhs, const std::pair<Real, Real>& rhs )
-{
-  std::pair<Real, Real> retpair( lhs * rhs.first, lhs * rhs.second );
-  return retpair;
-}
-
-std::pair<Real, Real>
-multiple( const std::pair<Real, Real>& lhs, const Real rhs )
-{
-  std::pair<Real, Real> retpair( rhs * lhs.first, rhs * lhs.second );
-  return retpair;
-}
 
 
 typedef boost::shared_ptr<FaceBase> FaceBase_sptr;

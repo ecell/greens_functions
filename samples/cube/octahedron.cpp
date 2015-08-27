@@ -9,7 +9,6 @@
 #include <cmath>
 
 using namespace greens_functions;
-typedef boost::shared_ptr<FaceBase> face_sptr;
 
 int main()
 {
@@ -20,12 +19,12 @@ int main()
   Realvec v4(0e0, -1e0, 0e0);
   Realvec v5(0e0, 0e0, -1e0);
 
-  face_sptr tryangle0_ptr( new FaceTwoGate(0, v0, v1, v2, 0, 1) );
-  face_sptr tryangle1_ptr( new FaceTwoGate(1, v2, v1, v5, 0, 2) );
-  face_sptr tryangle2_ptr( new FaceTwoGate(2, v2, v5, v3, 0, 1) );
-  face_sptr tryangle3_ptr( new FaceTwoGate(3, v3, v5, v4, 0, 2) );
-  face_sptr tryangle4_ptr( new FaceTwoGate(4, v3, v4, v0, 0, 1) );
-  face_sptr tryangle5_ptr( new FaceTwoGate(5, v0, v4, v1, 0, 2) );
+  FaceBase_sptr tryangle0_ptr( new FaceTwoGate(0, v0, v1, v2, 0, 1) );
+  FaceBase_sptr tryangle1_ptr( new FaceTwoGate(1, v2, v1, v5, 0, 2) );
+  FaceBase_sptr tryangle2_ptr( new FaceTwoGate(2, v2, v5, v3, 0, 1) );
+  FaceBase_sptr tryangle3_ptr( new FaceTwoGate(3, v3, v5, v4, 0, 2) );
+  FaceBase_sptr tryangle4_ptr( new FaceTwoGate(4, v3, v4, v0, 0, 1) );
+  FaceBase_sptr tryangle5_ptr( new FaceTwoGate(5, v0, v4, v1, 0, 2) );
 
   boost::shared_ptr<Polygon> octahedron_ptr( new Polygon( tryangle0_ptr ) );
   
@@ -61,7 +60,7 @@ int main()
   Realvec position( 1e0/3e0, 1e0/3e0, 1e0/3e0 );
 //   std::cout << position << std::endl;
 
-  particle mol(0, position, tryangle0_ptr);
+  OneParticle particle(0, position, tryangle0_ptr);
 
   boost::random::mt19937 mt(0);
   boost::random::uniform_real_distribution<Real> rand(0.0, 1.0);
@@ -77,12 +76,12 @@ int main()
 
   Real t(0), dt(0), theta(0), r(0), a(0);
 
-  fout << mol << " " << t << " " << a << std::endl;
+  fout << particle << " " << t << " " << a << std::endl;
   
   do
   {
     Real D(1e0);
-    a = mol.get_max_a();
+    a = particle.get_max_a();
     GreensFunction2DAbsSym gf(D,a);
 
     dt = gf.drawTime( rand(mt) );
@@ -97,11 +96,11 @@ int main()
 
     theta = 2 * M_PI * rand(mt);
 
-    mol.move( r, theta );
+    particle.move( r, theta );
 
     t += dt;
    
-    fout << mol << " " << t << " " << a << std::endl;
+    fout << particle << " " << t << " " << a << std::endl;
 
   }while(t < t_end);
 

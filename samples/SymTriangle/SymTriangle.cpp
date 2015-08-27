@@ -8,7 +8,6 @@
 #include <cmath>
 
 using namespace greens_functions;
-typedef boost::shared_ptr<FaceBase> face_sptr;
 
 int main()
 {
@@ -17,14 +16,14 @@ int main()
   Realvec v3(0e0, 0e0, 1e0);
 //   Realvec norm( cross_product(v2 - v1, v3 - v1) );
 
-  face_sptr triangle_ptr( new FaceAllSym(0, v1, v2, v3) );
+  FaceBase_sptr triangle_ptr( new FaceAllSym(0, v1, v2, v3) );
 
   Realvec e12( v2 - v1 );
   Realvec e13( v3 - v1 );
   Realvec position( v1 + e12/3e0 + e13/3e0 );
 //   std::cout << position << std::endl;
 
-  particle mol(0, position, triangle_ptr);
+  OneParticle particle(0, position, triangle_ptr);
 
   boost::random::mt19937 mt(0);
   boost::random::uniform_real_distribution<Real> rand(0.0, 1.0);
@@ -42,7 +41,7 @@ int main()
 
   Real t(0), dt(0), theta(0), r(0), a(0);
 
-  fout << mol << " " << t << " " << a << std::endl;
+  fout << particle << " " << t << " " << a << std::endl;
   
   do
   {
@@ -62,11 +61,11 @@ int main()
 
     theta = 2 * M_PI * rand(mt);
 
-    mol.move( r, theta );
+    particle.move( r, theta );
 
     t += dt;
    
-    fout << mol << " " << t << " " << a << std::endl;
+    fout << particle << " " << t << " " << a << std::endl;
 
   }while(t < t_end);
 

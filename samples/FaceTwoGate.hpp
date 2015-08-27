@@ -9,7 +9,7 @@
 #include <boost/weak_ptr.hpp>
 #include "FaceBase.hpp"
 #include "Polygon.hpp"
-#include "rotation.hpp"
+#include "Defs.hpp"
 
 const int RENEWLOOP_UPPER_LIMIT(100);
 

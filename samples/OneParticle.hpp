@@ -2,11 +2,12 @@
 #define SINGLETON_HPP
 #include <iostream>
 #include <stdexcept>
-
+#include <cmath>
+#include <utility>
 #include "FaceBase.hpp"
-#include "rotation.hpp"
+#include "Defs.hpp"
 
-class particle 
+class OneParticle 
 {
   bool shell_involves_vertex;
   int particle_id;
@@ -14,7 +15,7 @@ class particle
   FaceBase_sptr face_ptr;
 
 public:
-  particle( int id, const Realvec& pos, FaceBase_sptr ptr )
+  OneParticle( int id, const Realvec& pos, FaceBase_sptr ptr )
   : shell_involves_vertex(false)
   {
     if( fabs( dot_product( pos - ptr->get_para_origin(), ptr->get_normal_vector() ) ) > 1e-12 )
@@ -41,11 +42,11 @@ public:
 
   FaceBase_sptr get_face_sptr();
 
-  friend std::ostream& operator<<(std::ostream& os, const particle& part);
+  friend std::ostream& operator<<(std::ostream& os, const OneParticle& part);
 };
 
 //TODO make it possible that particle move in 2d and 3d using same function
-void particle::move( const Real r, const Real theta )
+void OneParticle::move( const Real r, const Real theta )
 {
 
   if(shell_involves_vertex)
@@ -104,27 +105,28 @@ void particle::move( const Real r, const Real theta )
 
     return;
   }
-
 }
 
-Real particle::get_max_a()
+// std::pair<Realvec, FaceBase_sptr>
+
+Real OneParticle::get_max_a()
 {
   Real retval( face_ptr->get_max_a(position, shell_involves_vertex) );
   return retval;
 }
 
-FaceBase_sptr particle::get_face_sptr()
+FaceBase_sptr OneParticle::get_face_sptr()
 {
   return face_ptr;
 };
 
-int particle::get_face_id()
+int OneParticle::get_face_id()
 {
   int ret_id(face_ptr->get_id());
   return ret_id;
 }
 
-std::ostream& operator<<( std::ostream& os, const particle& part)
+std::ostream& operator<<( std::ostream& os, const OneParticle& part)
 {
   os << std::setprecision(16) << std::setw(25) << part.position[0] << " ";
   os << std::setprecision(16) << std::setw(25) << part.position[1] << " ";

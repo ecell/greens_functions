@@ -9,7 +9,7 @@
 #include <boost/weak_ptr.hpp>
 #include "FaceBase.hpp"
 #include "Polygon.hpp"
-#include "rotation.hpp"
+#include "Defs.hpp"
 
 const int RENEWLOOP_UPPER_LIMIT(100);
 
@@ -141,6 +141,8 @@ public:
   //return own angle.
   virtual Real get_right_angle( const Realvec& neighbors_edge );
   virtual Real get_left_angle( const Realvec& neighbors_edge );
+
+  virtual Real get_angles_at(int i){return angles.at(i);}
 
   virtual Realvec get_para_origin(){return para_origin;}
 
