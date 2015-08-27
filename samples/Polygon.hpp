@@ -5,33 +5,11 @@
 #include <boost/shared_ptr.hpp>
 #include "FaceBase.hpp"
 
-struct id_gateway{
-  int face_id;
-  int gateway;
-  id_gateway(int id, int gate): face_id(id), gateway(gate){};
-};
-
-bool operator<(const id_gateway& lhs, const id_gateway& rhs)
-{
-  if(lhs.face_id == rhs.face_id){
-    return lhs.gateway < rhs.gateway;
-  }
-  return lhs.face_id < rhs.face_id;
-}
-
-bool operator>(const id_gateway& lhs, const id_gateway& rhs)
-{
-  if(lhs.face_id == rhs.face_id){
-    return lhs.gateway > rhs.gateway;
-  }
-  return lhs.face_id > rhs.face_id;
-}
-
 class Polygon
 {
 private:
   std::map< int, boost::shared_ptr<FaceBase> > face_map;
-  std::map< id_gateway, boost::shared_ptr<FaceBase> > gateway_map;
+  std::map< std::pair<int, int>, boost::shared_ptr<FaceBase> > gateway_map;
 
 public:
   Polygon()
@@ -46,16 +24,14 @@ public:
 
   void insert( boost::shared_ptr<FaceBase> ptr );
   
-  void set_neighbor( const int& gate, const boost::shared_ptr<FaceBase>& ptr0, const boost::shared_ptr<FaceBase>& ptr1 );
+  void set_neighbor( const int gate, const boost::shared_ptr<FaceBase>& ptr0, const boost::shared_ptr<FaceBase>& ptr1 );
 
 // use this function after all faces are inserted and all gateway edges are connected
   void set_near_vertex();
  
   FaceBase_sptr id_to_faceptr(int id);
 
-  FaceBase_sptr get_neighbor( const int& id, const int& gate);
-
-// private:
+  FaceBase_sptr get_neighbor( const int id, const int gate);
 
 };
 
@@ -72,14 +48,15 @@ void Polygon::insert( boost::shared_ptr<FaceBase> ptr )
   return;
 };
 
-void Polygon::set_neighbor( const int& gate, const boost::shared_ptr<FaceBase>& ptr0, const boost::shared_ptr<FaceBase>& ptr1 )
+void Polygon::set_neighbor( const int gate, const boost::shared_ptr<FaceBase>& ptr0, const boost::shared_ptr<FaceBase>& ptr1 )
 {
-  id_gateway ig( ptr0->get_id(), gate );
+  std::pair<int, int> ig( ptr0->get_id(), gate );
 
-  std::map< id_gateway, boost::shared_ptr<FaceBase> >::iterator itr;
+  std::map< std::pair<int, int>, boost::shared_ptr<FaceBase> >::iterator itr;
   itr = gateway_map.find(ig);
-  bool id_gateway_duplicate( itr == gateway_map.end() );
-  THROW_UNLESS(std::invalid_argument, id_gateway_duplicate);
+
+  if( itr != gateway_map.end() )
+    throw std::invalid_argument("polygon::set_neighbor: id duplicated");
 
   gateway_map[ig] = ptr1;
   return;
@@ -97,17 +74,18 @@ FaceBase_sptr Polygon::id_to_faceptr( int id )
 {
   std::map< int, boost::shared_ptr<FaceBase> >::iterator itr;
   itr = face_map.find(id);
-  bool find_face( itr != face_map.end() );
-  THROW_UNLESS(std::invalid_argument, find_face);
+
+  if(itr == face_map.end() )
+    throw std::invalid_argument("Polygon::id_to_faceptr: no face");
 
   return face_map[id];
 };
 
-FaceBase_sptr Polygon::get_neighbor( const int& id, const int& gate )
+FaceBase_sptr Polygon::get_neighbor( const int id, const int gate )
 {
-  id_gateway ig(id, gate);
+  std::pair<int, int> ig(id, gate);
 
-  std::map< id_gateway, boost::shared_ptr<FaceBase> >::iterator itr;
+  std::map< std::pair<int, int>, boost::shared_ptr<FaceBase> >::iterator itr;
   itr = gateway_map.find(ig);
 
   if( itr == gateway_map.end() )

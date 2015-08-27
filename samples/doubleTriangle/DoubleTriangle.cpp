@@ -1,6 +1,6 @@
 #include "../../GreensFunction2DAbsSym.hpp"
 #include "../FaceOneGate.hpp"
-#include "../singleton.hpp"
+#include "../OneParticle.hpp"
 #include "../Polygon.hpp"
 #include <boost/random.hpp>
 #include <iostream>

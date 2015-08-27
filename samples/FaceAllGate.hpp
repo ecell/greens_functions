@@ -23,11 +23,27 @@ private:
   boost::weak_ptr<Polygon> poly_ptr;
   std::vector<Real> near_vert_height;
 
+  //parametric
+  Realvec para_origin;
+  Realvec para_a;
+  Realvec para_b;
+
+  // neighbors
+  //para_a = para_a_neighbor.first * neighbor->para_a + para_a_neighbor.second * neighbor->para_b;
+  //para_b = para_b_neighbor.first * neighbor->para_a + para_b_neighbor.second * neighbor->para_b;
+  //p(a, b) -> p'( a*para_a_neighbor.first + b*para_b_neighbor.first,
+  //		   a*para_a_neighbor.second + b*para_b_neighbor.second)
+  std::vector< std::pair<Real, Real> > para_a_neighbor;
+  std::vector< std::pair<Real, Real> > para_b_neighbor;
+  // para_origin = ori_vec_neighbor.first * neighbor->para_a + 
+  // 		   ori_vec_neighbor.second * neighbor->para_b;
+  std::vector< std::pair<Real, Real> > ori_vec_neighbor;
+
+
 public:
-  FaceAllGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2)
+  FaceAllGate(const int id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2)
   : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ),
-    vertexs(3), edges(3), angles(3)
-    /*,para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)*/
+    vertexs(3), edges(3), angles(3), para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)
   {
     vertexs.at(0) = vtx0;
     vertexs.at(1) = vtx1;
@@ -50,7 +66,8 @@ public:
 
   FaceAllGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2,
 	      const Realvec& norm)
-  : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3), angles(3)
+  : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3), angles(3),
+    para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)
   {
     bool normal_vec_is_oritented_orthogonally_to_the_edges(
  		 dot_product(norm, vtx1-vtx0) == 0 &&
@@ -73,16 +90,12 @@ public:
     para_origin = vertexs.at(0);
     para_a = edges.at(0);
     para_b = edges.at(2) * (-1e0);
-
   }
 
   virtual void set_poly_ptr( boost::shared_ptr<Polygon>& p_sptr)
   {
     poly_ptr = p_sptr;
   }
-
-  //set near_vert_height.
-  virtual void set_near_vertexs();
 
   virtual std::pair<Realvec, FaceBase_sptr>
   apply_displacement( const Realvec& position, const Realvec& displacement,
@@ -103,6 +116,7 @@ public:
   //  if false, edge_num = -1.
   virtual bool on_edge(const std::pair<Real, Real>& position, int& edge_num,
 		       const Real tol = 1e-12);
+
   virtual bool on_edge(const std::pair<Real, Real>& position, const Real tol = 1e-12);
 
   // return pair of parameters of parametric expression of vector pos.
@@ -112,11 +126,11 @@ public:
   // return absolute expression translated from parametric expression.
   virtual Realvec to_absolute( const std::pair<Real, Real>& parameters );
 
+//set near_vert_height.
+  virtual void set_near_vertexs();
+
   //return the vertex such that input edge does not include.
   virtual Realvec get_another_vertex(const Realvec& edge);
-
-  //return para_origin.
-  virtual Realvec get_vertex(){ return para_origin; };
 
   //find max shell size (for greens function)
   virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag);
@@ -128,8 +142,20 @@ public:
   virtual Real get_right_angle( const Realvec& neighbors_edge );
   virtual Real get_left_angle( const Realvec& neighbors_edge );
 
-  virtual Realvec get_para_a(){ return para_a; }
-  virtual Realvec get_para_b(){ return para_b; }
+  virtual Realvec get_para_origin(){return para_origin;}
+
+  virtual Realvec get_para_a(){return para_a;}
+
+  virtual Realvec get_para_b(){return para_b;}
+
+  virtual std::pair<Real, Real> get_para_a_neighbor_at(const int i)
+  {return para_a_neighbor.at(i);}
+
+  virtual std::pair<Real, Real> get_para_b_neighbor_at(const int i)
+  {return para_b_neighbor.at(i);}
+
+  virtual std::pair<Real, Real> get_ori_vec_neighbor_at(const int i)
+  {return ori_vec_neighbor.at(i);}
 
   virtual void print_class_name();
 
@@ -574,6 +600,7 @@ void FaceAllGate::set_neighbors_edge()
       neighbor_para_b = rotation( rot_angle, axis/length(axis), neighbor_para_b );
     }
 
+//
     if( fabs( dot_product( neighbor_para_a, normal ) ) > 1e-12 )
       throw std::invalid_argument("rotated neighbor edge but it is not on this face");
     if( fabs( dot_product( neighbor_para_b, normal ) ) > 1e-12 )

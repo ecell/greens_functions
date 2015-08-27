@@ -22,10 +22,27 @@ class FaceOneGate : public FaceBase
   std::vector<bool> is_gate;
   boost::weak_ptr<Polygon> poly_ptr;
   
+  //parametric
+  Realvec para_origin;
+  Realvec para_a;
+  Realvec para_b;
+
+  // neighbors
+  //para_a = para_a_neighbor.first * neighbor->para_a + para_a_neighbor.second * neighbor->para_b;
+  //para_b = para_b_neighbor.first * neighbor->para_a + para_b_neighbor.second * neighbor->para_b;
+  //p(a, b) -> p'( a*para_a_neighbor.first + b*para_b_neighbor.first,
+  //		   a*para_a_neighbor.second + b*para_b_neighbor.second)
+  std::vector< std::pair<Real, Real> > para_a_neighbor;
+  std::vector< std::pair<Real, Real> > para_b_neighbor;
+  // para_origin = ori_vec_neighbor.first * neighbor->para_a + 
+  // 		   ori_vec_neighbor.second * neighbor->para_b;
+  std::vector< std::pair<Real, Real> > ori_vec_neighbor;
+
+
 public:
   FaceOneGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const int gate)
-  : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ),
-    vertexs(3), edges(3), angles(3), is_gate(3)
+  : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ), vertexs(3), edges(3),
+    angles(3), is_gate(3), para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)
   {
     vertexs.at(0) = vtx0;
     vertexs.at(1) = vtx1;
@@ -48,11 +65,14 @@ public:
   }
 
   FaceOneGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2, const Realvec& norm, const int gate)
-  : FaceBase( id, norm, vtx1-vtx0 ), is_gate(3)
+  : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3), angles(3), is_gate(3),
+    para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)
   {
-    bool normal_vec_is_oritented_orthogonally_to_the_edges( dot_product(norm, vtx1-vtx0) == 0 && dot_product(norm, vtx2-vtx1) == 0 );
-    THROW_UNLESS(std::invalid_argument, normal_vec_is_oritented_orthogonally_to_the_edges );
-  
+    if( dot_product(norm, vtx1-vtx0) == 0 )
+      throw std::invalid_argument("FaceOneGate: normal vector is not vertical to edge 0");
+    if( dot_product(norm, vtx2-vtx1) == 0 )
+      throw std::invalid_argument("FaceOneGate: normal vector is not vertical to edge 1");
+
     vertexs.at(0) = vtx0;
     vertexs.at(1) = vtx1;
     vertexs.at(2) = vtx2;
@@ -84,8 +104,6 @@ public:
   apply_displacement( const Realvec& position, const Realvec& displacement,
 		      const FaceBase_sptr& ptr);
 
-  virtual std::pair<Real, Real> to_parametric( const Realvec& pos );
-
   virtual bool in_face(const std::pair<Real, Real>& parameters, const Real tol = 1e-12);
 
   virtual int through_edge(const std::pair<Real, Real>& position,
@@ -98,15 +116,32 @@ public:
 		       const Real tol = 1e-12);
   virtual bool on_edge(const std::pair<Real, Real>& position, const Real tol = 1e-12);
 
+  virtual std::pair<Real, Real> to_parametric( const Realvec& pos );
+
   virtual Realvec to_absolute( const std::pair<Real, Real>& parameters );
 
   virtual void set_near_vertexs();
 
   virtual Realvec get_another_vertex(const Realvec& edge);
 
-  virtual Realvec get_vertex(){ return para_origin; };
-
   virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag);
+
+  virtual bool is_gate_at(int edge_id){ return is_gate.at(edge_id); };
+
+  virtual Realvec get_para_origin(){return para_origin;}
+
+  virtual Realvec get_para_a(){return para_a;}
+
+  virtual Realvec get_para_b(){return para_b;}
+
+  virtual std::pair<Real, Real> get_para_a_neighbor_at(const int i)
+  {return para_a_neighbor.at(i);}
+
+  virtual std::pair<Real, Real> get_para_b_neighbor_at(const int i)
+  {return para_b_neighbor.at(i);}
+
+  virtual std::pair<Real, Real> get_ori_vec_neighbor_at(const int i)
+  {return ori_vec_neighbor.at(i);}
 
   virtual void print_class_name();
 
@@ -130,8 +165,8 @@ FaceOneGate::apply_displacement(const Realvec& position, const Realvec& displace
 				const FaceBase_sptr& ptr )
 {
 // debug
-  std::cout << position[0] << " " << position[1] << " " << position[2] << " ";
-  std::cout << displacement[0] <<" "<< displacement[1] << " " << displacement[2] << std::endl;
+//   std::cout << position[0] << " " << position[1] << " " << position[2] << " ";
+//   std::cout << displacement[0] <<" "<< displacement[1] << " " << displacement[2] << std::endl;
  
   if( fabs( dot_product( position - para_origin, normal ) ) > 1e-12 )
     throw std::invalid_argument("apply_displacement: position is not on the plane");
@@ -162,7 +197,7 @@ FaceOneGate::apply_displacement(const Realvec& position, const Realvec& displace
     std::pair<Real, Real> tempdis( multiple( (1e0 - ratio), dis_para ) );
     assert( on_edge(temppos) );
 
-    if( is_gate.at(edge_id) )
+    if( face_ptr->is_gate_at(edge_id) )
     {
       FaceBase_sptr next_face( poly_ptr.lock()->get_neighbor(face_ptr->get_id(), edge_id) );
 

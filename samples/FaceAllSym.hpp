@@ -17,7 +17,12 @@ class FaceAllSym : public FaceBase
 {
   std::vector<Realvec> vertexs;
   std::vector<Realvec> edges;
- 
+
+ //parametric
+  Realvec para_origin;
+  Realvec para_a;
+  Realvec para_b;
+
 public:
   FaceAllSym(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2)
   : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ), vertexs(3), edges(3)
@@ -76,6 +81,14 @@ public:
  
   virtual Realvec to_absolute( const std::pair<Real, Real>& parameters );
 
+  virtual Realvec get_para_origin(){return para_origin;}
+
+  virtual Realvec get_para_a(){return para_a;}
+
+  virtual Realvec get_para_b(){return para_b;}
+
+  virtual void print_class_name();
+
 private:
 
   std::pair<Real, Real> reverse( const std::pair<Real, Real>& dis, const int edge_num );
@@ -83,9 +96,6 @@ private:
   virtual Realvec get_vertex();
 
   virtual Realvec get_another_vertex(const Realvec& edge);
-
-  virtual void print_class_name();
-
 };
 
 std::pair<Realvec, FaceBase_sptr>

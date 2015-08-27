@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 #include <cmath>
+#include <cassert>
 #include <boost/shared_ptr.hpp>
 #include <boost/array.hpp>
 #include "Defs.hpp"
@@ -19,186 +20,261 @@ protected:
   Realvec normal;
   Realvec represent;
 
-  //parametric
-  Realvec para_origin;
-  Realvec para_a;
-  Realvec para_b;
-  // neighbors
-  //para_a = para_a_neighbor.first * neighbor->para_a + para_a_neighbor.second * neighbor->para_b;
-  //para_b = para_b_neighbor.first * neighbor->para_a + para_b_neighbor.second * neighbor->para_b;
-  //p(a, b) -> p'( a*para_a_neighbor.first + b*para_b_neighbor.first,
-  //		   a*para_a_neighbor.second + b*para_b_neighbor.second)
-  std::vector< std::pair<Real, Real> > para_a_neighbor;
-  std::vector< std::pair<Real, Real> > para_b_neighbor;
-  // para_origin = ori_vec_neighbor.first * neighbor->para_a + 
-  // 		   ori_vec_neighbor.second * neighbor->para_b;
-  std::vector< std::pair<Real, Real> > ori_vec_neighbor;
-
-
 public:
-  FaceBase( const int& id, const Realvec& norm, const Realvec& rep )
-  : face_id(id), normal( norm/length(norm) ), represent( rep/length(rep) ),
-    para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)
+  FaceBase( const int id, const Realvec& norm, const Realvec& rep )
+  : face_id(id), normal( norm/length(norm) ), represent( rep/length(rep) )
   {
-    THROW_UNLESS( std::invalid_argument, dot_product(norm, rep) == 0 );
-    THROW_UNLESS( std::invalid_argument, length( norm ) != 0 );
-    THROW_UNLESS( std::invalid_argument, length( rep ) != 0 );
-  };
-
-  virtual Realvec
-  renew_position(const Realvec& position, const Realvec& displacement,
-		 boost::shared_ptr<FaceBase>& p )
-  {
-    print_class_name();
-    throw std::invalid_argument("renew_position: this is not supported");
+    assert( dot_product(norm, rep) == 0e0 );
+    assert( length( norm ) != 0e0 );
+    assert( length( rep ) != 0e0 );
   }
+
+  virtual void set_poly_ptr( boost::shared_ptr<Polygon>& p_sptr );
 
   virtual std::pair<Realvec, boost::shared_ptr<FaceBase> >
   apply_displacement(const Realvec& position, const Realvec& displacement,
-		 const boost::shared_ptr<FaceBase>& p )
-  {
-    print_class_name();
-    throw std::invalid_argument("apply_displacement: this is not supported");
-  }
+		     const boost::shared_ptr<FaceBase>& p );
+
+  virtual bool in_face(const std::pair<Real, Real>& parameters, const Real tol = 1e-12);
+
+  virtual bool on_vertex(const std::pair<Real, Real>& parameters, const Real tol = 1e-12);
 
   //return whitch edge the displacement(newpos-pos) goes through.
-  virtual int through_edge(const std::pair<Real, Real>& position,
-			   const std::pair<Real, Real>& newposition, const Real tol=1e-12)
-  {
-    print_class_name();
-    throw std::invalid_argument("through_edge: this is not supported");
-  }
+  virtual int  through_edge(const std::pair<Real, Real>& position,
+                            const std::pair<Real, Real>& newposition, const Real tol=1e-12);
 
   //return the ratio(0~1) of a displacement segment not cross the edge.
   virtual Real cross_ratio(const std::pair<Real, Real>& position,
-		   const std::pair<Real, Real>& displacement, const int& edge_num )
-  {
-    print_class_name();
-    throw std::invalid_argument("cross_ratio: this is not supported");
-  }
-
+			   const std::pair<Real, Real>& displacement, const int& edge_num );
+  
   //return whether the place is on the edge and rewrite edge_num to the edge.
   //  if false, edge_num = -1.
-  virtual bool on_edge(const std::pair<Real, Real>& position, int& edge_num, const Real tol = 1e-12)
-  {
-    print_class_name();
-    throw std::invalid_argument("on_edge(pair, int, Real): this is not supported");
-  }
+  virtual bool on_edge(const std::pair<Real, Real>& position, int& edge_num,
+		       const Real tol = 1e-12);
 
-  virtual bool on_edge(const std::pair<Real, Real>& position, const Real tol = 1e-12)
-  {
-    print_class_name();
-    throw std::invalid_argument("on_edge(pair, Real): this is not supported");
-  }
-
+  virtual bool on_edge(const std::pair<Real, Real>& position, const Real tol = 1e-12);
 
   // return pair of parameters of parametric expression of vector pos.
   // pair.first = alpha, pair.second = beta
-  virtual std::pair<Real, Real> to_parametric( const Realvec& pos )
-  {
-    print_class_name();
-    throw std::invalid_argument("to_parametric: this is not supported");
-  }
+  virtual std::pair<Real, Real> to_parametric( const Realvec& pos );
+  
   // return absolute expression translated from parametric expression.
-  virtual Realvec to_absolute( const std::pair<Real, Real>& parameters )
-  {
-    print_class_name();
-    throw std::invalid_argument("to_absolute: this is not supported");
-  }
+  virtual Realvec to_absolute( const std::pair<Real, Real>& parameters );
+ 
+  virtual void set_near_vertexs();
 
-  virtual bool in_face(const std::pair<Real, Real> parameters, const Real tol = 1e-12)
-  {
-    Real alpha( parameters.first );
-    Real beta( parameters.second );
-    
-    bool alpha_in_range( -tol <= alpha && alpha <= 1e0 + tol );
-    bool beta_in_range( -tol <= beta  && beta  <= 1e0 + tol );
-    bool sum_in_range( -tol < alpha+beta && alpha+beta <= 1e0 + tol );
+  virtual Realvec get_another_vertex( const Realvec& edge );
 
-    return ( (alpha_in_range && beta_in_range) && sum_in_range);
-  }
+  virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag);
 
-  virtual Realvec get_vertex()
-  {
-    print_class_name();
-    throw std::invalid_argument("get_vertex: this is not supported");
-  }
+  virtual Real get_minimum_height(const Realvec& neighbors_edge);
 
-  virtual void set_poly_ptr( boost::shared_ptr<Polygon>& p_sptr )
-  {
-    print_class_name();
-    throw std::invalid_argument("set_poly_ptr: this is not supported");
-  };
+  virtual Real get_right_angle( const Realvec& neighbors_edge );
+  virtual Real get_left_angle( const Realvec& neighbors_edge );
 
-  virtual void set_near_vertexs()
-  {
-    print_class_name();
-    throw std::invalid_argument("set_near_vertex: this is not supported");
-  }
+  virtual bool is_gate_at(int edge_id);
 
-  virtual Realvec get_another_vertex( const Realvec& edge )
-  {
-    print_class_name();
-    throw std::invalid_argument("get_another_vertex: this is not supported");
-  };
+  int get_id(){ return face_id; }
 
-  virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag)
-  {
-    print_class_name();
-    throw std::invalid_argument("get_max_a: this is not supported");
-  };
+  Realvec get_normal_vector(){ return normal; }
 
-  virtual Real get_minimum_height(const Realvec& neighbors_edge)
-  {
-    print_class_name();
-    throw std::invalid_argument("get_minimum_height: this is not supported");
-  };
+  Realvec get_represent_vector(){ return represent; }
 
-  virtual Real get_left_angle( const Realvec& neighbors_edge )
-  {
-    print_class_name();
-    throw std::invalid_argument("get_left_angle: this is not supported");
-  }
+  virtual Realvec get_para_origin();
 
-  virtual Real get_right_angle( const Realvec& neighbors_edge )
-  {
-    print_class_name();
-    throw std::invalid_argument("get_right_angle: this is not supported");
-  }
+  virtual Realvec get_para_a();
 
-  virtual void print_class_name()
-  {
-    std::cout << "class: FaceBase" << std::endl;
-    return;
-  }
+  virtual Realvec get_para_b();
 
-  virtual bool is_gate_at(int edge_id)
-  {
-    print_class_name();
-    throw std::invalid_argument("is_gate_at: this is not supported");
-  }
+  virtual std::pair<Real, Real> get_para_a_neighbor_at(const int i);
 
-  int get_id(){ return face_id; };
-  Realvec get_normal_vector(){ return normal; };
-  Realvec get_represent_vector(){ return represent; };
-  Realvec get_para_origin(){return para_origin;}
-  Realvec get_para_a(){return para_a;}
-  Realvec get_para_b(){return para_b;}
-  std::pair<Real, Real> get_para_a_neighbor_at(const int i)
-  {
-    return para_a_neighbor.at(i);
-  }
-  std::pair<Real, Real> get_para_b_neighbor_at(const int i)
-  {
-    return para_b_neighbor.at(i);
-  }
-  std::pair<Real, Real> get_ori_vec_neighbor_at(const int i)
-  {
-    return ori_vec_neighbor.at(i);
-  }
+  virtual std::pair<Real, Real> get_para_b_neighbor_at(const int i);
+
+  virtual std::pair<Real, Real> get_ori_vec_neighbor_at(const int i);
+
+  virtual void print_class_name();
 
   Real smaller_angle(const Realvec& v1, const Realvec& v2);
 };
+
+
+std::pair<Realvec, boost::shared_ptr<FaceBase> >
+FaceBase::apply_displacement(const Realvec& position, const Realvec& displacement,
+  const boost::shared_ptr<FaceBase>& p )
+{
+  print_class_name();
+  throw std::invalid_argument("apply_displacement: this is not supported");
+}
+
+int
+FaceBase::through_edge(const std::pair<Real, Real>& position,
+  const std::pair<Real, Real>& newposition, const Real tol )
+{
+  print_class_name();
+  throw std::invalid_argument("through_edge: this is not supported");
+}
+
+Real
+FaceBase::cross_ratio(const std::pair<Real, Real>& position,
+  const std::pair<Real, Real>& displacement, const int& edge_num )
+{
+  print_class_name();
+  throw std::invalid_argument("cross_ratio: this is not supported");
+}
+
+bool
+FaceBase::on_edge(const std::pair<Real, Real>& position, int& edge_num, const Real tol)
+{
+  print_class_name();
+  throw std::invalid_argument("on_edge(pair, int, Real): this is not supported");
+}
+
+bool
+FaceBase::on_edge(const std::pair<Real, Real>& position, const Real tol)
+{
+  print_class_name();
+  throw std::invalid_argument("on_edge(pair, Real): this is not supported");
+}
+
+// return pair of parameters of parametric expression of vector pos.
+// pair.first = alpha, pair.second = beta
+std::pair<Real, Real>
+FaceBase::to_parametric( const Realvec& pos )
+{
+  print_class_name();
+  throw std::invalid_argument("to_parametric: this is not supported");
+}
+
+// return absolute expression translated from parametric expression.
+Realvec
+FaceBase::to_absolute( const std::pair<Real, Real>& parameters )
+{
+  print_class_name();
+  throw std::invalid_argument("to_absolute: this is not supported");
+}
+
+bool
+FaceBase::in_face(const std::pair<Real, Real>& parameters, const Real tol)
+{
+// if(on_vertex(parameters))
+//   throw std::invalid_argument("in_face::particle is on vertex");
+
+  Real alpha( parameters.first );
+  Real beta( parameters.second );
+  
+  bool alpha_in_range( -tol <= alpha && alpha <= 1e0 + tol );
+  bool beta_in_range( -tol <= beta  && beta  <= 1e0 + tol );
+  bool sum_in_range( -tol < alpha+beta && alpha+beta <= 1e0 + tol );
+
+  return ( (alpha_in_range && beta_in_range) && sum_in_range);
+}
+
+bool
+FaceBase::on_vertex(const std::pair<Real, Real>& parameters, const Real tol)
+{
+  Real alpha( parameters.first );
+  Real beta( parameters.second );
+  
+  bool vtx0( (-tol < alpha && alpha < tol) && (-tol < beta && beta < tol) );
+  bool vtx1( (-tol < alpha && alpha < tol) && (1e0-tol < beta && beta < 1e0+tol) );
+  bool vtx2( (1e0-tol < alpha && alpha < 1e0+tol) && (-tol < beta && beta < tol) );
+
+  return ( vtx0 && vtx1 && vtx2 );
+}
+
+void 
+FaceBase::set_poly_ptr( boost::shared_ptr<Polygon>& p_sptr )
+{
+  print_class_name();
+  throw std::invalid_argument("set_poly_ptr: this is not supported");
+}
+
+void 
+FaceBase::set_near_vertexs()
+{
+  print_class_name();
+  throw std::invalid_argument("set_near_vertex: this is not supported");
+}
+
+Realvec 
+FaceBase::get_another_vertex( const Realvec& edge )
+{
+  print_class_name();
+  throw std::invalid_argument("get_another_vertex: this is not supported");
+}
+
+Real FaceBase::get_max_a(const Realvec& position, bool& vertex_involve_flag)
+{
+  print_class_name();
+  throw std::invalid_argument("get_max_a: this is not supported");
+}
+
+Real FaceBase::get_minimum_height(const Realvec& neighbors_edge)
+{
+  print_class_name();
+  throw std::invalid_argument("get_minimum_height: this is not supported");
+}
+
+Real FaceBase::FaceBase::get_left_angle( const Realvec& neighbors_edge )
+{
+  print_class_name();
+  throw std::invalid_argument("get_left_angle: this is not supported");
+}
+
+Real FaceBase::get_right_angle( const Realvec& neighbors_edge )
+{
+  print_class_name();
+  throw std::invalid_argument("get_right_angle: this is not supported");
+}
+
+void FaceBase::print_class_name()
+{
+  std::cout << "class: FaceBase" << std::endl;
+  return;
+}
+
+bool FaceBase::is_gate_at(int edge_id)
+{
+  print_class_name();
+  throw std::invalid_argument("is_gate_at: this is not supported");
+}
+
+std::pair<Real, Real> FaceBase::get_para_a_neighbor_at(const int i)
+{
+  print_class_name();
+  throw std::invalid_argument("get_para_a_neighbor_at: this is not supported");
+}
+
+std::pair<Real, Real> FaceBase::get_para_b_neighbor_at(const int i)
+{
+  print_class_name();
+  throw std::invalid_argument("get_para_b_neighbor_at: this is not supported");
+}
+
+std::pair<Real, Real> FaceBase::get_ori_vec_neighbor_at(const int i)
+{
+  print_class_name();
+  throw std::invalid_argument("get_ori_vec_neighbor_at: this is not supported");
+}
+
+Realvec FaceBase::get_para_origin()
+{
+  print_class_name();
+  throw std::invalid_argument("get_para_origin: this is not supported");
+}
+
+Realvec FaceBase::get_para_a()
+{
+  print_class_name();
+  throw std::invalid_argument("get_para_a: this is not supported");
+}
+
+Realvec FaceBase::get_para_b()
+{
+  print_class_name();
+  throw std::invalid_argument("get_para_b: this is not supported");
+}
+
 
 Real FaceBase::smaller_angle(const Realvec& v1, const Realvec& v2)
 {
@@ -210,25 +286,31 @@ Real FaceBase::smaller_angle(const Realvec& v1, const Realvec& v2)
   return angle;
 }
 
-std::pair<Real, Real> sum( const std::pair<Real, Real>& lhs, const std::pair<Real, Real>& rhs )
+
+//**************************** std::pair ****************************************
+std::pair<Real, Real>
+sum( const std::pair<Real, Real>& lhs, const std::pair<Real, Real>& rhs )
 {
   std::pair<Real, Real> retpair( lhs.first + rhs.first, lhs.second + rhs.second );
   return retpair;
 }
 
-std::pair<Real, Real> subtract(const std::pair<Real, Real>& lhs, const std::pair<Real, Real>& rhs)
+std::pair<Real, Real>
+subtract(const std::pair<Real, Real>& lhs, const std::pair<Real, Real>& rhs)
 {
   std::pair<Real, Real> retpair( lhs.first - rhs.first, lhs.second - rhs.second );
   return retpair;
 }
 
-std::pair<Real, Real> multiple( const Real lhs, const std::pair<Real, Real>& rhs )
+std::pair<Real, Real>
+multiple( const Real lhs, const std::pair<Real, Real>& rhs )
 {
   std::pair<Real, Real> retpair( lhs * rhs.first, lhs * rhs.second );
   return retpair;
 }
 
-std::pair<Real, Real> multiple( const std::pair<Real, Real>& lhs, const Real rhs )
+std::pair<Real, Real>
+multiple( const std::pair<Real, Real>& lhs, const Real rhs )
 {
   std::pair<Real, Real> retpair( rhs * lhs.first, rhs * lhs.second );
   return retpair;

@@ -1,22 +1,25 @@
 #ifndef SINGLETON_HPP
 #define SINGLETON_HPP
+#include <iostream>
+#include <stdexcept>
 
 #include "FaceBase.hpp"
 #include "rotation.hpp"
 
 class particle 
 {
-  Realvec position;
-  int particle_id;
-  boost::shared_ptr<FaceBase> face_ptr;
   bool shell_involves_vertex;
+  int particle_id;
+  Realvec position;
+  FaceBase_sptr face_ptr;
+
 public:
-  particle( int id, const Realvec& pos, boost::shared_ptr<FaceBase> ptr )
+  particle( int id, const Realvec& pos, FaceBase_sptr ptr )
   : shell_involves_vertex(false)
   {
-    if( fabs( dot_product( pos - ptr->get_vertex(), ptr->get_normal_vector() ) ) > 1e-12 )
+    if( fabs( dot_product( pos - ptr->get_para_origin(), ptr->get_normal_vector() ) ) > 1e-12 )
     {
-      std::cout << "dot_product: " << dot_product( pos - ptr->get_vertex(), ptr->get_normal_vector() ) << std::endl;
+      std::cout << "dot_product: " << dot_product( pos - ptr->get_para_origin(), ptr->get_normal_vector() ) << std::endl;
       throw std::invalid_argument("particle is not on the plane");
     //TODO if !in_this_face( pos, face_ptr ) then throw invalid_argument
     }
@@ -26,7 +29,7 @@ public:
     face_ptr = ptr;
   };
 
-  void move( const Real& r, const Real& theta );
+  void move( const Real r, const Real theta );
 
   Real get_max_a();
 
@@ -36,13 +39,13 @@ public:
 
   bool involve_vertex(){ return shell_involves_vertex; };
 
-  boost::shared_ptr<FaceBase> get_face_sptr();
+  FaceBase_sptr get_face_sptr();
 
   friend std::ostream& operator<<(std::ostream& os, const particle& part);
 };
 
 //TODO make it possible that particle move in 2d and 3d using same function
-void particle::move( const Real& r, const Real& theta )
+void particle::move( const Real r, const Real theta )
 {
 
   if(shell_involves_vertex)
@@ -110,7 +113,7 @@ Real particle::get_max_a()
   return retval;
 }
 
-boost::shared_ptr<FaceBase> particle::get_face_sptr()
+FaceBase_sptr particle::get_face_sptr()
 {
   return face_ptr;
 };

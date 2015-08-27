@@ -4,23 +4,21 @@
 
 class FaceInf : public FaceBase
 {
+private:
+  Realvec para_origin;
+  
 public:
   FaceInf( const int& id, const Realvec& norm, const Realvec& rep)
   : FaceBase( id, norm, rep )
   {
     Realvec zero(0e0, 0e0, 0e0);
     para_origin = zero;
-    para_a = rep;
-    para_b = cross_product(norm, rep);
-  };
+  }
 
   FaceInf( const int& id, const Realvec& norm, const Realvec& rep, const Realvec& origin)
-  : FaceBase( id, norm, rep )
+  : FaceBase( id, norm, rep ), para_origin(origin)
   {
-    para_origin = origin;
-    para_a = rep;
-    para_b = cross_product(norm, rep);
-  };
+  }
 
   ~FaceInf(){ };
 
@@ -32,7 +30,7 @@ public:
   virtual bool in_face( const Realvec& position, const Realvec& displacement, const Real tol = 1e-12 );
 //   virtual bool in_face( const std::pair<Real, Real>& parameters, const Real tol = 1e-12 );
 
-  virtual Realvec get_vertex();
+  virtual Realvec get_para_origin();
   virtual void print_class_name();
 };
 
@@ -52,7 +50,7 @@ bool FaceInf::in_face( const Realvec& position, const Realvec& displacement, con
   return ( fabs(dot_product(p, normal) ) < tol );
 }
 
-Realvec FaceInf::get_vertex()
+Realvec FaceInf::get_para_origin()
 {
   return para_origin;
 };
