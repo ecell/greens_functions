@@ -81,6 +81,8 @@ public:
 
   Realvec get_represent_vector(){ return represent; }
 
+  virtual Realvec get_center_mass();
+
   virtual Realvec get_para_origin();
 
   virtual Realvec get_para_a();
@@ -262,6 +264,13 @@ std::pair<Real, Real> FaceBase::get_ori_vec_neighbor_at(const int i)
 {
   print_class_name();
   throw std::invalid_argument("get_ori_vec_neighbor_at: this is not supported");
+}
+
+Realvec FaceBase::get_center_mass()
+{
+  print_class_name();
+  throw std::invalid_argument("get_center_mass: this is not supported");
+ 
 }
 
 Realvec FaceBase::get_para_origin()

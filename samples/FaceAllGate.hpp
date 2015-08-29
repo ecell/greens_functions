@@ -144,6 +144,12 @@ public:
 
   virtual Real get_angles_at(int i){return angles.at(i);}
 
+  virtual Realvec get_center_mass()
+  {
+    Realvec cm(vertexs.at(0) + vertexs.at(1) + vertexs.at(2));
+    return (cm / 3e0);
+  }
+
   virtual Realvec get_para_origin(){return para_origin;}
 
   virtual Realvec get_para_a(){return para_a;}
