@@ -20,7 +20,6 @@
 
 class StlBinReader
 {
-
   typedef std::pair<Realvec, Realvec> vtxpair;
 
   struct TriangleBase
@@ -87,6 +86,8 @@ private:
 
   //for debug.
   void dump_connection();
+
+  void write_for_gnuplot();
 };
 
 void StlBinReader::read_file()
@@ -122,6 +123,7 @@ void StlBinReader::read_file()
 //     }
   }
 
+//   write_for_gnuplot();
 //   dump_connection();
 
   already_read = true;
@@ -254,6 +256,13 @@ StlBinReader::TriangleBase StlBinReader::to_tri(int id, const char* facetbin)
   retTri.vertexs.at(1) = to_vec(facetbin+24);
   retTri.vertexs.at(2) = to_vec(facetbin+36);
 
+  if( fabs(dot_product(retTri.normal, retTri.vertexs.at(0) - retTri.vertexs.at(1) ) ) > 1e-12 )
+  {
+//     std::cout << "caution: normal vector rewrited dot_product: ";
+//     std::cout << dot_product(retTri.normal, retTri.vertexs.at(0) - retTri.vertexs.at(1) ) << std::endl;
+    retTri.normal = cross_product( retTri.vertexs.at(1)-retTri.vertexs.at(0), retTri.vertexs.at(1)-retTri.vertexs.at(2) );
+    retTri.normal = retTri.normal / (length(retTri.normal) );
+  }
 //the last 2 bytes have no meaning
   return retTri;
 }
@@ -269,9 +278,13 @@ Realvec StlBinReader::to_vec(const char* vecbin)
   float y = *( (float*)fl1 );
   float z = *( (float*)fl2 );
 
+//   std::cout << std::setprecision(16) << x << ", " << y << ", " << z << std::endl;
+
   Real xr( (double)x );
   Real yr( (double)y );
   Real zr( (double)z );
+
+//   std::cout << std::setprecision(16) << xr << ", " << yr << ", " << zr << std::endl;
 
   Realvec retvec( xr, yr, zr );
 //   std::cout << retvec << std::endl;
@@ -303,6 +316,28 @@ void StlBinReader::dump_connection()
     std::cout << "edge: " << itr->edge.first << " -> " << itr->edge.second << std::endl;
     std::cout << "first id: " << itr->first_face_id << " second id: " << itr->second_face_id << std::endl;
   }
+  return;
+}
+
+void StlBinReader::write_for_gnuplot()
+{
+  int size(faces.size());
+  std::cout << "index: " << size << std::endl;
+  std::ofstream ofs("cube_for_gnuplot.dat");
+  for(std::vector<TriangleBase>::iterator itr = faces.begin(); itr != faces.end(); ++itr)
+  {
+    ofs << itr->vertexs.at(0)[0] << " " << itr->vertexs.at(0)[1] << " " << itr->vertexs.at(0)[2] << std::endl;
+    ofs << itr->vertexs.at(1)[0] << " " << itr->vertexs.at(1)[1] << " " << itr->vertexs.at(1)[2] << std::endl;
+    ofs << itr->vertexs.at(2)[0] << " " << itr->vertexs.at(2)[1] << " " << itr->vertexs.at(2)[2] << std::endl;
+    ofs << itr->vertexs.at(0)[0] << " " << itr->vertexs.at(0)[1] << " " << itr->vertexs.at(0)[2] << std::endl;
+    ofs << "\n\n";
+  }
+
+  std::ofstream gpo("cube_.gp");
+  gpo << "splot 'cube_for_gnuplot.dat' index " << 0 << " using 1:2:3 w l lc rgb 'green' notitle" << std::endl;
+  for(int i(0); i<size; ++i)
+    gpo << "replot 'cube_for_gnuplot.dat' index " << i << " using 1:2:3 w l lc rgb 'green' notitle" << std::endl;
+
   return;
 }
 

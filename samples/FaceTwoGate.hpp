@@ -11,8 +11,6 @@
 #include "Polygon.hpp"
 #include "Defs.hpp"
 
-const int RENEWLOOP_UPPER_LIMIT(100);
-
 class FaceTwoGate : public FaceBase
 {
 private:

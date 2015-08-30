@@ -11,8 +11,6 @@
 #include "Polygon.hpp"
 #include "Defs.hpp"
 
-const int RENEWLOOP_UPPER_LIMIT(100);
-
 class FaceAllGate : public FaceBase
 {
 private:
@@ -66,14 +64,12 @@ public:
 
   FaceAllGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2,
 	      const Realvec& norm)
-  : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3), angles(3),
+  : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ), vertexs(3), edges(3), angles(3),
     para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)
   {
-    bool normal_vec_is_oritented_orthogonally_to_the_edges(
- 		 dot_product(norm, vtx1-vtx0) == 0 &&
-		 dot_product(norm, vtx2-vtx1) == 0 );
-    THROW_UNLESS(std::invalid_argument, normal_vec_is_oritented_orthogonally_to_the_edges );
-  
+    if(fabs(dot_product(norm, vtx1-vtx0) ) > GLOBAL_TOLERANCE || fabs(dot_product(norm, vtx2-vtx1) ) > GLOBAL_TOLERANCE )
+      throw std::invalid_argument("constructor : normal is not vertical");
+
     vertexs.at(0) = vtx0;
     vertexs.at(1) = vtx1;
     vertexs.at(2) = vtx2;
@@ -87,9 +83,32 @@ public:
     angles.at(2) = smaller_angle( edges.at(2), edges.at(1)*(-1e0) );
 
     // define parametric expression
-    para_origin = vertexs.at(0);
-    para_a = edges.at(0);
-    para_b = edges.at(2) * (-1e0);
+    if(length(edges.at(0)) >= length(edges.at(1)) )
+    {
+      if(length(edges.at(2)) >= length(edges.at(1)) )
+      {//0&2
+        para_a = edges.at(0);
+        para_b = edges.at(2) * (-1e0);
+        para_origin = vertexs.at(0);
+      }else{
+       //0&1
+        para_a = edges.at(0) * (-1e0);
+        para_b = edges.at(1);
+        para_origin = vertexs.at(1);
+      }
+    }else{
+      if(length(edges.at(2)) >= length(edges.at(0)) )
+      {//1&2
+        para_a = edges.at(2);
+        para_b = edges.at(1) * (-1e0);
+        para_origin = vertexs.at(2);
+      }else{
+       //1&0
+        para_a = edges.at(0) * (-1e0);
+        para_b = edges.at(1);
+        para_origin = vertexs.at(1);
+      }
+    }
   }
 
   virtual void set_poly_ptr( boost::shared_ptr<Polygon>& p_sptr)
@@ -102,11 +121,11 @@ public:
 		      const FaceBase_sptr& ptr);
 
   //return whether the position is in a face ( in the range or not ).
-  virtual bool in_face(const std::pair<Real, Real>& parameters, const Real tol = 1e-12);
+  virtual bool in_face(const std::pair<Real, Real>& parameters, const Real tol = GLOBAL_TOLERANCE);
 
   //return whitch edge the displacement(newpos-pos) goes through.
   virtual int through_edge(const std::pair<Real, Real>& position,
-			   const std::pair<Real, Real>& newposition, const Real tol = 1e-12);
+			   const std::pair<Real, Real>& newposition, const Real tol = GLOBAL_TOLERANCE);
 
   //return the ratio(0~1) of a displacement segment not cross the edge.
   virtual Real cross_ratio(const std::pair<Real, Real>& position,
@@ -115,9 +134,9 @@ public:
   //return whether the place is on the edge and rewrite edge_num to the edge.
   //  if false, edge_num = -1.
   virtual bool on_edge(const std::pair<Real, Real>& position, int& edge_num,
-		       const Real tol = 1e-12);
+		       const Real tol = GLOBAL_TOLERANCE);
 
-  virtual bool on_edge(const std::pair<Real, Real>& position, const Real tol = 1e-12);
+  virtual bool on_edge(const std::pair<Real, Real>& position, const Real tol = GLOBAL_TOLERANCE);
 
   // return pair of parameters of parametric expression of vector pos.
   // pair.first = alpha, pair.second = beta
@@ -125,6 +144,8 @@ public:
  
   // return absolute expression translated from parametric expression.
   virtual Realvec to_absolute( const std::pair<Real, Real>& parameters );
+
+  virtual std::pair<Real, Real> projection(const Realvec& pos);
 
 //set near_vert_height.
   virtual void set_near_vertexs();
@@ -151,19 +172,12 @@ public:
   }
 
   virtual Realvec get_para_origin(){return para_origin;}
-
   virtual Realvec get_para_a(){return para_a;}
-
   virtual Realvec get_para_b(){return para_b;}
 
-  virtual std::pair<Real, Real> get_para_a_neighbor_at(const int i)
-  {return para_a_neighbor.at(i);}
-
-  virtual std::pair<Real, Real> get_para_b_neighbor_at(const int i)
-  {return para_b_neighbor.at(i);}
-
-  virtual std::pair<Real, Real> get_ori_vec_neighbor_at(const int i)
-  {return ori_vec_neighbor.at(i);}
+  virtual std::pair<Real, Real> get_para_a_neighbor_at(const int i){return para_a_neighbor.at(i);}
+  virtual std::pair<Real, Real> get_para_b_neighbor_at(const int i){return para_b_neighbor.at(i);}
+  virtual std::pair<Real, Real> get_ori_vec_neighbor_at(const int i){return ori_vec_neighbor.at(i);}
 
   virtual void print_class_name();
 
@@ -205,8 +219,11 @@ FaceAllGate::apply_displacement(const Realvec& position, const Realvec& displace
 //   std::cout << position[0] << " " << position[1] << " " << position[2] << " ";
 //   std::cout << displacement[0] <<" "<< displacement[1] << " " << displacement[2] << std::endl;
  
-  if( fabs( dot_product( position - para_origin, normal ) ) > 1e-12 )
-    throw std::invalid_argument("renew_position: position is not on the plane");
+  if( fabs( dot_product( position - para_origin, normal ) ) > GLOBAL_TOLERANCE )
+  {
+    std::cout << "dot product: " << dot_product( position - para_origin, normal ) << std::endl;
+    throw std::invalid_argument("apply_displacement: position is not on the plane");
+  }
 
   std::pair<Real, Real> pos_para( to_parametric( position - para_origin ) );
   std::pair<Real, Real> dis_para( to_parametric( displacement ) );
@@ -234,11 +251,34 @@ FaceAllGate::apply_displacement(const Realvec& position, const Realvec& displace
 
     std::pair<Real, Real> temppos( sum( pos_para, multiple(ratio, dis_para) ) );
     std::pair<Real, Real> tempdis( multiple( (1e0 - ratio), dis_para ) );
-    assert( on_edge(temppos) );
+
+    if(on_vertex(temppos))
+    {
+      std::cout << "ratio: " << ratio << "in_face(pos_para): " << in_face(pos_para) << std::endl;
+      std::cout << "pos_para: " << std::setprecision(16) << "(" << pos_para.first << ", " << pos_para.second << ")" << std::endl;
+      std::cout << "dis_para: " << std::setprecision(16) << "(" << dis_para.first << ", " << dis_para.second << ")" << std::endl;
+      std::cout << "temppos: " << std::setprecision(16) << "(" << temppos.first << ", " << temppos.second << ")" << std::endl;
+      throw std::invalid_argument("temppos is on vertex" );
+    }
+//     assert( on_edge(temppos) );
+    if( !on_edge(temppos) )
+    {
+      std::cout << "ratio: " << ratio << "in_face(pos_para): " << in_face(pos_para) << std::endl;
+      std::cout << "pos_para: " << std::setprecision(16) << "(" << pos_para.first << ", " << pos_para.second << ")" << std::endl;
+      std::cout << "dis_para: " << std::setprecision(16) << "(" << dis_para.first << ", " << dis_para.second << ")" << std::endl;
+      std::cout << "temppos: " << std::setprecision(16) << "(" << temppos.first << ", " << temppos.second << ")" << std::endl;
+      throw std::invalid_argument("temppos is not on edge");
+    }
 
     std::pair<Real, Real> neighbor_pos( translate_pos(temppos, gate, face_ptr) );
     std::pair<Real, Real> neighbor_dis( translate_dis(tempdis, gate, face_ptr) );
-    assert( on_edge(neighbor_pos) );
+    if( !on_edge(neighbor_pos) )
+    {
+      std::cout << "neighbor_pos: ";
+      std::cout << "(" << std::setprecision(16) << neighbor_pos.first << ", " << neighbor_pos.second << ")" << std::endl;
+      throw std::invalid_argument("neighbor_pos is not on edge");
+    }
+//     assert( on_edge(neighbor_pos) );
 
     pos_para = neighbor_pos;
     dis_para = neighbor_dis;
@@ -506,62 +546,98 @@ std::pair<Real, Real> FaceAllGate::to_parametric( const Realvec& pos )
   Real alpha, beta;
   Realvec parametric_pos( pos );
 
-  if( (para_a[0]*para_b[1] - para_b[0]*para_a[1]) != 0e0 )
+  Real determinant = para_a[0]*para_b[1] - para_b[0]*para_a[1];
+  if( determinant != 0e0 )
   {
-  // matrix( a0 b0 )
-  //       ( a1 b1 )
-    alpha = ( para_b[1] * parametric_pos[0] - para_b[0] * parametric_pos[1] )
-	    / (para_a[0]*para_b[1] - para_b[0]*para_a[1]);
-
-     beta = ( para_a[0] * parametric_pos[1] - para_a[1] * parametric_pos[0] )
-	    / (para_a[0]*para_b[1] - para_b[0]*para_a[1]);
+  // matrix( a0 b0 )-1 = (b1 -b0)  /
+  //       ( a1 b1 )     (-a1 a0) / det
+    alpha = ( para_b[1] * parametric_pos[0] - para_b[0] * parametric_pos[1] ) / determinant;
+     beta = ( para_a[0] * parametric_pos[1] - para_a[1] * parametric_pos[0] ) / determinant;
  
-    //confirm (alpha beta) * (a2 b2) = (pos2)
-    if( fabs(alpha * para_a[2] + beta * para_b[2] - parametric_pos[2]) > 1e-12 ) 
-      throw std::invalid_argument( "function to_parametric: invalid solution" );
+    //confirm (alpha beta) * (a2 b) = (pos2)
+    if( fabs(alpha * para_a[2] + beta * para_b[2] - parametric_pos[2]) > GLOBAL_TOLERANCE )
+    {
+      for(int i(0); i<3; ++i)
+        std::cout <<"vertexs.at(" << i << "): " << vertexs.at(i) << std::endl;
+      std::cout << "alpha: " << alpha << " beta: " << beta << std::endl;
+      std::cout << "position: " << pos << std::endl;
+      std::cout << "value: " << alpha * para_a[2] + beta * para_b[2] - parametric_pos[2] << std::endl;
+//       throw std::invalid_argument( "function to_parametric: invalid solution" );
+    }
     
-    std::pair<Real, Real> parameters(alpha, beta);
-    return parameters;
-
-  }else if( (para_a[1]*para_b[2] - para_b[1]*para_a[2]) != 0e0 )
+    return std::make_pair(alpha, beta);
+  }
+  
+  determinant = para_a[1]*para_b[2] - para_b[1]*para_a[2];
+  if( determinant != 0e0 )
   {
   // matrix( a1 b1 )
   //       ( a2 b2 )
-    alpha = ( para_b[2] * parametric_pos[1] - para_b[1] * parametric_pos[2] )
-	    / (para_a[1]*para_b[2] - para_b[1]*para_a[2]);
-
-     beta = ( para_a[1] * parametric_pos[2] - para_a[2] * parametric_pos[1] )
-	    / (para_a[1]*para_b[2] - para_b[1]*para_a[2]);
+    alpha = ( para_b[2] * parametric_pos[1] - para_b[1] * parametric_pos[2] ) / determinant;
+     beta = ( para_a[1] * parametric_pos[2] - para_a[2] * parametric_pos[1] ) / determinant;
  
     //confirm (alpha beta) * (a0 b0) = (pos0)
-    if( fabs(alpha * para_a[0] + beta * para_b[0] - parametric_pos[0]) > 1e-12 )
-      throw std::invalid_argument( "function to_parametric: invalid solution" );
+    if( fabs(alpha * para_a[0] + beta * para_b[0] - parametric_pos[0]) > GLOBAL_TOLERANCE )
+    {
+      for(int i(0); i<3; ++i)
+        std::cout <<"vertexs.at(" << i << "): " << vertexs.at(i) << std::endl;
+      std::cout << "alpha: " << alpha << " beta: " << beta << std::endl;
+      std::cout << "position: " << pos << std::endl;
+      std::cout << "value: " << alpha * para_a[0] + beta * para_b[0] - parametric_pos[0] << std::endl;
+//       throw std::invalid_argument( "function to_parametric: invalid solution" );
+    }
       
-    std::pair<Real, Real> parameters(alpha, beta);
-    return parameters;
-
-  }else if( (para_a[2]*para_b[0] - para_b[2]*para_a[0]) != 0e0 )
+    return std::make_pair(alpha, beta);
+  }
+  
+  determinant = para_a[2]*para_b[0] - para_b[2]*para_a[0];
+  if( determinant != 0e0 )
   {
   // matrix( a2 b2 )
   //       ( a0 b0 )
-    alpha = ( para_b[0] * parametric_pos[2] - para_b[2] * parametric_pos[0] )
-	    / (para_a[2]*para_b[0] - para_b[2]*para_a[0]);
-
-     beta = ( para_a[2] * parametric_pos[0] - para_a[0] * parametric_pos[2] )
-	    / (para_a[2]*para_b[0] - para_b[2]*para_a[0]);
+    alpha = ( para_b[0] * parametric_pos[2] - para_b[2] * parametric_pos[0] ) / determinant;
+     beta = ( para_a[2] * parametric_pos[0] - para_a[0] * parametric_pos[2] ) / determinant;
  
     //confirm (alpha beta) * (a1 b1) = (pos1)
-    if( fabs(alpha * para_a[1] + beta * para_b[1] - parametric_pos[1]) > 1e-12 ) 
-      throw std::invalid_argument( "function to_parametric: invalid solution" ); 
-      
-    std::pair<Real, Real> parameters(alpha, beta);
-    return parameters;
-
+    if( fabs(alpha * para_a[1] + beta * para_b[1] - parametric_pos[1]) > GLOBAL_TOLERANCE) 
+    { 
+      for(int i(0); i<3; ++i)
+        std::cout <<"vertexs.at(" << i << "): " << vertexs.at(i) << std::endl;
+      std::cout << "alpha: " << alpha << " beta: " << beta << std::endl;
+      std::cout << "position: " << pos << std::endl;
+      std::cout << "value: " << alpha * para_a[1] + beta * para_b[1] - parametric_pos[1] << std::endl;
+//       throw std::invalid_argument( "function to_parametric: invalid solution" );
+    }
+     
+    return std::make_pair(alpha, beta);
   }
 
   throw std::invalid_argument( "function to_parametric: could not parametrise input position" );
-  std::pair<Real, Real> ret(0e0, 0e0);
-  return ret;
+}
+
+std::pair<Real, Real> FaceAllGate::projection(const Realvec& pos)
+{
+  Realvec _pos(pos);
+  Real alpha, beta, gamma;
+  Real det_term1( para_a[0] * para_b[1] * normal[2] + para_a[1] * para_b[2] * normal[0] + para_a[2] * para_b[0] * normal[1] );
+  Real det_term2( para_a[0] * para_b[2] * normal[1] + para_a[1] * para_b[0] * normal[2] + para_a[2] * para_b[1] * normal[0] );
+  Real determinant(det_term1 - det_term2);
+
+  if(determinant == 0e0)
+    throw std::invalid_argument("projection: determinant is zero.");
+  
+  alpha = (para_b[1]*normal[2] - normal[1]*para_b[2])*_pos[0] + (para_b[2]*normal[0] - para_b[0]*normal[2])*_pos[1] + (para_b[0]*normal[1] - para_b[1]*normal[0])*_pos[2];
+   beta = (para_a[2]*normal[1] - normal[2]*para_a[1])*_pos[0] + (para_a[0]*normal[2] - para_a[2]*normal[0])*_pos[1] + (para_a[1]*normal[0] - para_a[0]*normal[1])*_pos[2];
+  gamma = (para_a[1]*para_b[2] - para_a[2]*para_b[1])*_pos[0] + (para_a[2]*para_b[0] - para_a[0]*para_b[2])*_pos[1] + (para_a[0]*para_b[1] - para_a[1]*para_b[0])*_pos[2];
+
+  alpha /= determinant;
+   beta /= determinant;
+  gamma /= determinant;
+
+  if(gamma > 1e-4)
+    throw std::invalid_argument("projection: gamma > 1e-4");
+
+  return std::make_pair(alpha, beta);
 }
 
 Realvec FaceAllGate::to_absolute( const std::pair<Real, Real>& parameters )
@@ -600,7 +676,7 @@ void FaceAllGate::set_neighbors_edge()
     Realvec axis( cross_product(normal, neighbor_normal) );
     if( length(axis) == 0e0 )
     {
-      //do nothing
+      ;//do nothing
     }
     else
     {
@@ -608,14 +684,20 @@ void FaceAllGate::set_neighbors_edge()
       neighbor_para_b = rotation( rot_angle, axis/length(axis), neighbor_para_b );
     }
 
+//     if( fabs( dot_product( neighbor_para_a, normal ) ) > GLOBAL_TOLERANCE )
+//     {
+//       std::cout << "dot product: " << fabs(dot_product( neighbor_para_a, normal )) << std::endl;
+//       throw std::invalid_argument("rotated neighbor edge but it is not on this face");
+//     }
 //
-    if( fabs( dot_product( neighbor_para_a, normal ) ) > 1e-12 )
-      throw std::invalid_argument("rotated neighbor edge but it is not on this face");
-    if( fabs( dot_product( neighbor_para_b, normal ) ) > 1e-12 )
-      throw std::invalid_argument("rotated neighbor edge but it is not on this face");
+//     if( fabs( dot_product( neighbor_para_b, normal ) ) > GLOBAL_TOLERANCE )
+//     {
+//       std::cout << "dot product: " << fabs(dot_product( neighbor_para_b, normal )) << std::endl;
+//       throw std::invalid_argument("rotated neighbor edge but it is not on this face");
+//     }
 
-    std::pair<Real, Real> neighbor_a( to_parametric( neighbor_para_a ) );
-    std::pair<Real, Real> neighbor_b( to_parametric( neighbor_para_b ) );
+    std::pair<Real, Real> neighbor_a( projection( neighbor_para_a ) );
+    std::pair<Real, Real> neighbor_b( projection( neighbor_para_b ) );
 
     // ( neighbor_a.first neighbor_a.second ) (para_a) = (neighbor_para_a)
     // ( neighbor_b.first neighbor_b.second ) (para_b)   (neighbor_para_b)
@@ -625,8 +707,8 @@ void FaceAllGate::set_neighbors_edge()
 
     // ( neighbor_b.second -neighbor_a_second)
     // ( -neighbor_b.first neighbor_a.first )
-    std::pair<Real, Real> nbr_a( neighbor_b.second / determinant, -1e0 * neighbor_a.second / determinant );
-    std::pair<Real, Real> nbr_b( -1e0 * neighbor_b.first / determinant, neighbor_a.first / determinant );
+    std::pair<Real, Real> nbr_a( neighbor_b.second / determinant, -neighbor_a.second / determinant );
+    std::pair<Real, Real> nbr_b( -neighbor_b.first / determinant, neighbor_a.first / determinant );
 
     para_a_neighbor.at(i) = nbr_a;
     para_b_neighbor.at(i) = nbr_b;
@@ -655,7 +737,7 @@ void FaceAllGate::set_neighbors_ori_vtx()
     }
 
     Realvec nbrori_ori( para_origin - vertexs.at(i) - vi_nbr_ori );
-    std::pair<Real, Real> neighbor_ori_this_ori( to_parametric( nbrori_ori ) );
+    std::pair<Real, Real> neighbor_ori_this_ori( projection( nbrori_ori ) );
 
     Real nbr_alpha( neighbor_ori_this_ori.first * para_a_neighbor.at(i).first 
 		  + neighbor_ori_this_ori.second * para_b_neighbor.at(i).first );
@@ -683,9 +765,7 @@ Realvec FaceAllGate::get_another_vertex(const Realvec& edge)
 
   for(int i(0); i<3; ++i)
   {
-    if( edges.at(i)[0] == tempedge[0] &&
-	edges.at(i)[1] == tempedge[1] &&
-	edges.at(i)[2] == tempedge[2])
+    if( edges.at(i)[0] == tempedge[0] && edges.at(i)[1] == tempedge[1] && edges.at(i)[2] == tempedge[2])
     {
       int vertex_id( (i+2) % 3 );
       return vertexs.at( vertex_id );
@@ -804,16 +884,14 @@ Real FaceAllGate::get_max_a(const Realvec& position, bool& vertex_involve_flag)
 //   {
 //     vertex_involve_flag = true;
 //     Real second_distance;
-//     size = vertexs.size();
 //
-//     for(int i(0); i < size; ++i)
+//     for(int i(0); i < 3; ++i)
 //     {
-//       if(i == nearest_face_vertex) continue;
 //       vertvec = vertexs.at(i) - position;
 //       second_distance = length(vertvec);
 //     }
 //
-//     for(int i(0); i < size; ++i)
+//     for(int i(0); i < 3; ++i)
 //     {
 //       if(i == nearest_face_vertex) continue;
 //       vertvec = vertexs.at(i) - position;
@@ -823,7 +901,7 @@ Real FaceAllGate::get_max_a(const Realvec& position, bool& vertex_involve_flag)
 //     if(near_vertexs.empty()) return second_distance;
 //
 //     size = near_vertexs.size();
-//     for(int i(0); i < size; ++i)
+//     for(int i(0); i < 3; ++i)
 //     {
 //       if(i == nearest_neighbor_vertex) continue;
 //       vertvec = vertexs.at(i) - position;

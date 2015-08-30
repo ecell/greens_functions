@@ -3,6 +3,8 @@
 #include <fstream>
 #include <string>
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 #include "../GreensFunction2DAbsSym.hpp"
 #include "StlBinReader.hpp"
 #include "FaceAllGate.hpp"
@@ -25,8 +27,8 @@ int main(int argc, char* argv[])
 //   if(filetype == "-bin")
 //   {
   if(filetype != "-bin") throw std::invalid_argument("bin stl file only...");
-    StlBinReader reader(filename);
-    reader.read_file();
+  StlBinReader reader(filename);
+  reader.read_file();
 //   }
 //   else
 //   {
@@ -35,11 +37,11 @@ int main(int argc, char* argv[])
 
   std::pair<boost::shared_ptr<Polygon>, std::vector<FaceBase_sptr> > ptrpair( reader.get_polygon() );
   
-  Realvec initial_position( ptrpair.second.at(0)->get_center_mass() );
+  Realvec initial_position( ptrpair.second.at(457)->get_center_mass() );
 
-  OneParticle particle(0, initial_position, ptrpair.second.at(0));
+  OneParticle particle(0, initial_position, ptrpair.second.at(457));
 
-  boost::random::mt19937 mt(0);
+  boost::random::mt19937 mt( static_cast<unsigned long>(time(0)) );
   boost::random::uniform_real_distribution<Real> rand(0.0, 1.0);
 
   Real t_end;
@@ -58,7 +60,10 @@ int main(int argc, char* argv[])
     do
     {
       Real D(1e0);
-      a = particle.get_max_a();
+//       a = particle.get_max_a();
+//       a *= 0.5;
+      // in order to treat vertex
+      a = 1e0;
       GreensFunction2DAbsSym gf(D,a);
 
       dt = gf.drawTime( rand(mt) );
@@ -88,5 +93,6 @@ int main(int argc, char* argv[])
 
     }while(t < t_end);
 
+    std::cout << "end." << std::endl;
   return 0;
 }

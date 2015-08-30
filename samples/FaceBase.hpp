@@ -23,7 +23,12 @@ public:
   FaceBase( const int id, const Realvec& norm, const Realvec& rep )
   : face_id(id), normal( norm/length(norm) ), represent( rep/length(rep) )
   {
-    assert( dot_product(norm, rep) == 0e0 );
+    if( fabs(dot_product(norm, rep)) > 1e-12 )
+    {
+      std::cout << "caution: normal vecter is not vertical ";
+      std::cout << std::setprecision(16) << fabs(dot_product(norm, rep)) << std::endl;
+    }
+    assert( fabs(dot_product(norm, rep)) < 1e-12 );
     assert( length( norm ) != 0e0 );
     assert( length( rep ) != 0e0 );
   }
@@ -60,6 +65,8 @@ public:
   // return absolute expression translated from parametric expression.
   virtual Realvec to_absolute( const std::pair<Real, Real>& parameters );
  
+  virtual std::pair<Real, Real> projection(const Realvec& pos);
+
   virtual void set_near_vertexs();
 
   virtual Realvec get_another_vertex( const Realvec& edge );
@@ -154,6 +161,12 @@ FaceBase::to_absolute( const std::pair<Real, Real>& parameters )
 {
   print_class_name();
   throw std::invalid_argument("to_absolute: this is not supported");
+}
+
+std::pair<Real, Real> FaceBase::projection(const Realvec& pos)
+{
+  print_class_name();
+  throw std::invalid_argument("projection: this is not supported");
 }
 
 bool
