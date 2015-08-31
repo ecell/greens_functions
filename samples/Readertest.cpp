@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "../GreensFunction2DAbsSym.hpp"
-#include "StlBinReader.hpp"
+#include "StlFileReader.hpp"
 #include "FaceAllGate.hpp"
 #include "OneParticle.hpp"
 #include "Polygon.hpp"
@@ -15,33 +15,28 @@ using namespace greens_functions;
 
 int main(int argc, char* argv[])
 {
-  if(argc != 3)
+  if(argc != 4)
   {
-    std::cout << "please input file type(ASCII(-asc) or binary(-bin) and path to stl file." << std::endl;
+    std::cout << "please input file type(ASCII(-asc) or binary(-bin), path to stl file and initial face id." << std::endl;
     return -1;
   }
 
   std::string filetype( argv[1] );
   std::string filename( argv[2] );
+  int initial_face( atoi(argv[3]) );
 
-//   if(filetype == "-bin")
-//   {
-  if(filetype != "-bin") throw std::invalid_argument("bin stl file only...");
-  StlBinReader reader(filename);
+  StlFileReader reader(filename, filetype);
   reader.read_file();
-//   }
-//   else
-//   {
-//     std::cout << filetype << std::endl;
-//   }
 
   std::pair<boost::shared_ptr<Polygon>, std::vector<FaceBase_sptr> > ptrpair( reader.get_polygon() );
   
-  Realvec initial_position( ptrpair.second.at(457)->get_center_mass() );
+  //457
+  Realvec initial_position( ptrpair.second.at(initial_face)->get_center_mass() );
 
-  OneParticle particle(0, initial_position, ptrpair.second.at(457));
+  OneParticle particle(0, initial_position, ptrpair.second.at(initial_face) );
 
-  boost::random::mt19937 mt( static_cast<unsigned long>(time(0)) );
+//   boost::random::mt19937 mt( static_cast<unsigned long>(time(0)) );
+  boost::random::mt19937 mt( 0 );
   boost::random::uniform_real_distribution<Real> rand(0.0, 1.0);
 
   Real t_end;

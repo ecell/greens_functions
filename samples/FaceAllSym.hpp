@@ -11,7 +11,7 @@
 #include "Polygon.hpp"
 #include "Defs.hpp"
 
-const int RENEWLOOP_UPPER_LIMIT(100);
+// const int RENEWLOOP_UPPER_LIMIT(100);
 
 class FaceAllSym : public FaceBase
 {
