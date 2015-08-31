@@ -51,6 +51,9 @@ public:
     edges.at(0) = vtx1 - vtx0;
     edges.at(1) = vtx2 - vtx1;
     edges.at(2) = vtx0 - vtx2;
+    assert(length(edges.at(0)) != 0e0);
+    assert(length(edges.at(1)) != 0e0);
+    assert(length(edges.at(2)) != 0e0);
   
     angles.at(0) = smaller_angle( edges.at(0), edges.at(2)*(-1e0) );
     angles.at(1) = smaller_angle( edges.at(1), edges.at(0)*(-1e0) );
@@ -64,7 +67,7 @@ public:
 
   FaceAllGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2,
 	      const Realvec& norm)
-  : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ), vertexs(3), edges(3), angles(3),
+  : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3), angles(3),
     para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)
   {
     if(fabs(dot_product(norm, vtx1-vtx0) ) > GLOBAL_TOLERANCE || fabs(dot_product(norm, vtx2-vtx1) ) > GLOBAL_TOLERANCE )
@@ -163,6 +166,7 @@ public:
   virtual Real get_right_angle( const Realvec& neighbors_edge );
   virtual Real get_left_angle( const Realvec& neighbors_edge );
 
+  virtual Realvec get_vertex_at(const int i){return vertexs.at(i);}
   virtual Real get_angles_at(int i){return angles.at(i);}
 
   virtual Realvec get_center_mass()
@@ -276,9 +280,20 @@ FaceAllGate::apply_displacement(const Realvec& position, const Realvec& displace
     {
       std::cout << "neighbor_pos: ";
       std::cout << "(" << std::setprecision(16) << neighbor_pos.first << ", " << neighbor_pos.second << ")" << std::endl;
+      std::cout << "face id: " << next_face->get_id() << std::endl;
+      std::cout << "vertex 0: " << next_face->get_vertex_at(0) << std::endl;
+      std::cout << "vertex 1: " << next_face->get_vertex_at(1) << std::endl;
+      std::cout << "vertex 2: " << next_face->get_vertex_at(2) << std::endl;
+
+      std::pair<Real, Real> temp;
+      temp = face_ptr->get_para_a_neighbor_at(gate);
+      std::cout << " n_a_vec: (" << temp.first <<", "<< temp.second << ")" << std::endl;
+      temp = face_ptr->get_para_b_neighbor_at(gate);
+      std::cout << " n_b_vec: (" << temp.first <<", "<< temp.second << ")" << std::endl;
+      temp = face_ptr->get_ori_vec_neighbor_at(gate);
+      std::cout << " n_ori_vec: (" << temp.first <<", "<< temp.second << ")" << std::endl;
       throw std::invalid_argument("neighbor_pos is not on edge");
     }
-//     assert( on_edge(neighbor_pos) );
 
     pos_para = neighbor_pos;
     dis_para = neighbor_dis;
@@ -625,14 +640,23 @@ std::pair<Real, Real> FaceAllGate::projection(const Realvec& pos)
 
   if(determinant == 0e0)
     throw std::invalid_argument("projection: determinant is zero.");
-  
+  if(isnan(determinant))
+  {
+    std::cout << "face id: " << get_id() <<std::endl;
+    std::cout << "projection: determinant is NaN" << std::endl;
+    std::cout << "vertexs.at(0)" << vertexs.at(0) << std::endl;
+    std::cout << "vertexs.at(1)" << vertexs.at(1) << std::endl;
+    std::cout << "vertexs.at(2)" << vertexs.at(2) << std::endl;
+  }
+//     throw std::invalid_argument("projection: determinant is NaN.");
+ 
   alpha = (para_b[1]*normal[2] - normal[1]*para_b[2])*_pos[0] + (para_b[2]*normal[0] - para_b[0]*normal[2])*_pos[1] + (para_b[0]*normal[1] - para_b[1]*normal[0])*_pos[2];
    beta = (para_a[2]*normal[1] - normal[2]*para_a[1])*_pos[0] + (para_a[0]*normal[2] - para_a[2]*normal[0])*_pos[1] + (para_a[1]*normal[0] - para_a[0]*normal[1])*_pos[2];
   gamma = (para_a[1]*para_b[2] - para_a[2]*para_b[1])*_pos[0] + (para_a[2]*para_b[0] - para_a[0]*para_b[2])*_pos[1] + (para_a[0]*para_b[1] - para_a[1]*para_b[0])*_pos[2];
 
-  alpha /= determinant;
-   beta /= determinant;
-  gamma /= determinant;
+  alpha = alpha / determinant;
+   beta = beta / determinant;
+  gamma = gamma / determinant;
 
   if(gamma > 1e-4)
     throw std::invalid_argument("projection: gamma > 1e-4");
@@ -671,10 +695,27 @@ void FaceAllGate::set_neighbors_edge()
     Realvec neighbor_para_b( ptr->get_para_b() );
 
     Realvec neighbor_normal( ptr->get_normal_vector() );
-    Real rot_angle( (-1e0) * acos( dot_product(normal, neighbor_normal) ) );
+
+    Real rot_angle;
+    if(fabs(dot_product(normal, neighbor_normal) < 1e0) )
+    {
+      rot_angle = (-1e0) * acos( dot_product(normal, neighbor_normal) );
+    }else if(dot_product(normal, neighbor_normal) > 0e0){
+      std::cout << "Warning: dot product of neighbor normal vectors is : " << dot_product(normal, neighbor_normal) << std::endl;
+      std::cout << "This treats as just 1. acos(dot product) is 0e0." << std::endl;
+      std::cout << "face id is " << get_id() << std::endl;
+      std::cout << std::endl;
+      rot_angle = 0e0;
+    }else{
+      std::cout << "Warning: dot product of neighbor normal vectors is : " << dot_product(normal, neighbor_normal);
+      std::cout << "This treats as just -1. acos(dot product) is M_PI." << std::endl;
+      std::cout << "face id is " << get_id() << std::endl;
+      std::cout << std::endl;
+      rot_angle = M_PI;
+    }
 
     Realvec axis( cross_product(normal, neighbor_normal) );
-    if( length(axis) == 0e0 )
+    if( length(axis) == 0e0 || rot_angle == 0e0 )
     {
       ;//do nothing
     }
@@ -704,11 +745,36 @@ void FaceAllGate::set_neighbors_edge()
     Real determinant(neighbor_a.first * neighbor_b.second - neighbor_a.second * neighbor_b.first);
     if(determinant == 0e0)
       throw std::invalid_argument("set_neighbors_edge: determinant is zero");
+    if(isnan( determinant ))
+    {
+      std::cout << "face id: " << get_id() << std::endl;
+      std::cout << "set_neighbors_edge: determinant is NaN" << std::endl;
+      std::cout << "neighbor_a: (" << neighbor_a.first << ", " << neighbor_a.second << ")" << std::endl;
+      std::cout << "neighbor_b: (" << neighbor_b.first << ", " << neighbor_b.second << ")" << std::endl;
+      std::cout << "rotated neighbor_para_a: " << neighbor_para_a << std::endl;
+      std::cout << "rotated neighbor_para_b: " << neighbor_para_b << std::endl;
+      std::cout << "rotation angle: " << rot_angle << std::endl;
+      std::cout << "dot_product(normal, neighbor_normal): " << std::setprecision(16) << dot_product(normal, neighbor_normal) << std::endl;
+      std::cout << "length(axis): " << length(axis) << std::endl;
+      std::cout << "neighbor_para_a: " << ptr->get_para_a() << std::endl;
+      std::cout << "neighbor_para_b: " << ptr->get_para_b() << std::endl;
+
+    }
+//       throw std::invalid_argument("set_neighbors_edge: determinant is NaN");
 
     // ( neighbor_b.second -neighbor_a_second)
     // ( -neighbor_b.first neighbor_a.first )
     std::pair<Real, Real> nbr_a( neighbor_b.second / determinant, -neighbor_a.second / determinant );
     std::pair<Real, Real> nbr_b( -neighbor_b.first / determinant, neighbor_a.first / determinant );
+
+    if( ( isnan(nbr_a.first) || isnan(nbr_a.second) ) || (isnan(nbr_b.first) || isnan(nbr_b.second)) )
+    {
+      std::cout << "nbr_a: " << nbr_a.first <<", "<< nbr_a.second << std::endl;
+      std::cout << "nbr_b: " << nbr_b.first <<", "<< nbr_b.second << std::endl;
+      std::cout << "neighbor_a.first" << neighbor_a.first << ", neighbor_a.sec" << neighbor_a.second << std::endl;
+      std::cout << "neighbor_b.first" << neighbor_b.first << ", neighbor_b.sec" << neighbor_b.second << std::endl;
+      std::cout << "determinant: " << determinant << std::endl;
+    }
 
     para_a_neighbor.at(i) = nbr_a;
     para_b_neighbor.at(i) = nbr_b;
@@ -724,7 +790,26 @@ void FaceAllGate::set_neighbors_ori_vtx()
     Realvec vi_nbr_ori( ptr->get_para_origin() - vertexs.at(i) );
 
     Realvec neighbor_normal( ptr->get_normal_vector() );
-    Real rot_angle( (-1e0) * acos( dot_product(normal, neighbor_normal) ) );
+
+    //sometimes rot angle become NaN...
+    Real rot_angle;
+    if(fabs(dot_product(normal, neighbor_normal) < 1e0) )
+    {
+      rot_angle = (-1e0) * acos( dot_product(normal, neighbor_normal) );
+    }else if(dot_product(normal, neighbor_normal) > 0e0){
+      std::cout << "Warning: dot product of neighbor normal vectors is : " << dot_product(normal, neighbor_normal) << std::endl;
+      std::cout << "This treats as just 1. acos(dot product) is 0e0." << std::endl;
+      std::cout << "face id is " << get_id() << std::endl;
+      std::cout << std::endl;
+      rot_angle = 0e0;
+    }else{
+      std::cout << "Warning: dot product of neighbor normal vectors is : " << dot_product(normal, neighbor_normal);
+      std::cout << "This treats as just -1. acos(dot product) is M_PI." << std::endl;
+      std::cout << "face id is " << get_id() << std::endl;
+      std::cout << std::endl;
+      rot_angle = M_PI;
+    }
+
 
     Realvec axis( cross_product(normal, neighbor_normal) );
     if( length(axis) == 0e0 )
@@ -941,9 +1026,9 @@ Real FaceAllGate::get_right_angle( const Realvec& neighbors_edge )
 
   for(int i(0); i<number_of_edge; ++i)
   {
-    if( edges.at(i)[0] == tempedge[0] &&
-	edges.at(i)[1] == tempedge[1] &&
-	edges.at(i)[2] == tempedge[2])
+    if( fabs(edges.at(i)[0] - tempedge[0]) < GLOBAL_TOLERANCE &&
+      	fabs(edges.at(i)[1] - tempedge[1]) < GLOBAL_TOLERANCE &&
+	      fabs(edges.at(i)[2] - tempedge[2]) < GLOBAL_TOLERANCE )
     {
       return angles.at( (i+1) % 3 );
     }

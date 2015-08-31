@@ -52,6 +52,8 @@ int main(int argc, char* argv[])
 
   fout << particle << " " << std::setw(25) << t << " " << std::setw(25) << a << std::endl;
 
+  Real index(1e0);
+  Real last_time(0e0);
     do
     {
       Real D(1e0);
@@ -85,6 +87,16 @@ int main(int argc, char* argv[])
       t += dt;
 
       fout << particle << " " << std::setw(25) << t << " " << std::setw(25) << a << std::endl;
+
+      if( (t < index ) && ( index < t+last_time ) )
+      {
+        fout << "\n\n";
+        fout << particle << " " << std::setw(25) << t << " " << std::setw(25) << a << std::endl;
+ 
+        index = index * 2e0;
+      }
+
+      last_time = t;
 
     }while(t < t_end);
 

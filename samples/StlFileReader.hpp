@@ -110,7 +110,7 @@ private:
 
   //for debug.
   void dump_connection();
-
+  void write_for_gnuplot();
 };
 
 void StlFileReader::read_file()
@@ -153,6 +153,7 @@ void StlFileReader::read_file()
   }
 
 //   dump_connection();
+  write_for_gnuplot();
 
   already_read = true;
   return;
@@ -372,7 +373,18 @@ Realvec StlFileReader::bin_to_vec(const char* vecbin)
   Real yr( (double)y );
   Real zr( (double)z );
 
+  if(isnan(xr)) throw std::invalid_argument("input 3Dvector x is NaN");
+  if(isnan(yr)) throw std::invalid_argument("input 3Dvector y is NaN");
+  if(isnan(zr)) throw std::invalid_argument("input 3Dvector z is NaN");
+
   Realvec retvec( xr, yr, zr );
+  if(length(retvec) == 0e0)
+  {
+    std::cout << "length of vector written in STL file is zero." << std::endl;
+    std::cout << length(retvec) << std::endl;
+    throw std::invalid_argument("read 0 vector from bin STL");
+  }
+
   return retvec;
 }
 
@@ -544,5 +556,29 @@ void StlFileReader::dump_connection()
   }
   return;
 }
+
+void StlFileReader::write_for_gnuplot()
+{
+  int size(faces.size());
+  std::cout << "index: " << size << std::endl;
+  std::ofstream ofs("cat_for_gnuplot.dat");
+  for(std::vector<TriangleBase>::iterator itr = faces.begin(); itr != faces.end(); ++itr)
+  {
+    ofs << itr->vertexs.at(0)[0] << " " << itr->vertexs.at(0)[1] << " " << itr->vertexs.at(0)[2] << std::endl;
+    ofs << itr->vertexs.at(1)[0] << " " << itr->vertexs.at(1)[1] << " " << itr->vertexs.at(1)[2] << std::endl;
+    ofs << itr->vertexs.at(2)[0] << " " << itr->vertexs.at(2)[1] << " " << itr->vertexs.at(2)[2] << std::endl;
+    ofs << itr->vertexs.at(0)[0] << " " << itr->vertexs.at(0)[1] << " " << itr->vertexs.at(0)[2] << std::endl;
+    ofs << "\n\n";
+  }
+
+  std::ofstream gpo("cat.gp");
+  gpo << "splot 'cat_for_gnuplot.dat' index " << 0 << " using 1:2:3 w l lc rgb 'green' notitle" << std::endl;
+  for(int i(0); i<size; ++i)
+    gpo << "replot 'cat_for_gnuplot.dat' index " << i << " using 1:2:3 w l lc rgb 'green' notitle" << std::endl;
+
+  return;
+}
+
+
 
 #endif //STL_FILE_READER

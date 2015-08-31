@@ -88,6 +88,8 @@ public:
 
   Realvec get_represent_vector(){ return represent; }
 
+  virtual Realvec get_vertex_at(const int i);
+
   virtual Realvec get_center_mass();
 
   virtual Realvec get_para_origin();
@@ -259,6 +261,12 @@ bool FaceBase::is_gate_at(int edge_id)
 {
   print_class_name();
   throw std::invalid_argument("is_gate_at: this is not supported");
+}
+
+Realvec FaceBase::get_vertex_at(const int i)
+{
+  print_class_name();
+  throw std::invalid_argument("get_vertex_at: this is not supported");
 }
 
 std::pair<Real, Real> FaceBase::get_para_a_neighbor_at(const int i)

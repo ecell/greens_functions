@@ -287,6 +287,13 @@ Realvec StlBinReader::to_vec(const char* vecbin)
 //   std::cout << std::setprecision(16) << xr << ", " << yr << ", " << zr << std::endl;
 
   Realvec retvec( xr, yr, zr );
+
+  if(length(retvec) == 0e0)
+  {
+    std::cout << "length of vector written in STL file is zero." << std::endl;
+    std::cout << length(retvec) << std::endl;
+    throw std::invalid_argument("read 0 vector from bin STL");
+  }
 //   std::cout << retvec << std::endl;
   return retvec;
 }
