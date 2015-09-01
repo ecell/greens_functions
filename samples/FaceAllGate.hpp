@@ -697,17 +697,19 @@ void FaceAllGate::set_neighbors_edge()
     Realvec neighbor_normal( ptr->get_normal_vector() );
 
     Real rot_angle;
-    if(fabs(dot_product(normal, neighbor_normal) < 1e0) )
+    if(fabs(dot_product(normal, neighbor_normal) <= 1e0) )
     {
       rot_angle = (-1e0) * acos( dot_product(normal, neighbor_normal) );
     }else if(dot_product(normal, neighbor_normal) > 0e0){
-      std::cout << "Warning: dot product of neighbor normal vectors is : " << dot_product(normal, neighbor_normal) << std::endl;
+      std::cout << "Warning: dot product of neighbor normal vectors is : 1 + ";
+      std::cout << std::scientific << std::setprecision(16) << (dot_product(normal, neighbor_normal) - 1e0) << std::endl;
       std::cout << "This treats as just 1. acos(dot product) is 0e0." << std::endl;
       std::cout << "face id is " << get_id() << std::endl;
       std::cout << std::endl;
       rot_angle = 0e0;
     }else{
-      std::cout << "Warning: dot product of neighbor normal vectors is : " << dot_product(normal, neighbor_normal);
+      std::cout << "Warning: dot product of neighbor normal vectors is : -1 + ";
+      std::cout << std::scientific << std::setprecision(16) << (dot_product(normal, neighbor_normal) + 1e0) << std::endl;;
       std::cout << "This treats as just -1. acos(dot product) is M_PI." << std::endl;
       std::cout << "face id is " << get_id() << std::endl;
       std::cout << std::endl;
@@ -791,19 +793,22 @@ void FaceAllGate::set_neighbors_ori_vtx()
 
     Realvec neighbor_normal( ptr->get_normal_vector() );
 
-    //sometimes rot angle become NaN...
     Real rot_angle;
-    if(fabs(dot_product(normal, neighbor_normal) < 1e0) )
+    if(fabs(dot_product(normal, neighbor_normal) <= 1e0) )
     {
       rot_angle = (-1e0) * acos( dot_product(normal, neighbor_normal) );
     }else if(dot_product(normal, neighbor_normal) > 0e0){
-      std::cout << "Warning: dot product of neighbor normal vectors is : " << dot_product(normal, neighbor_normal) << std::endl;
+      std::cout << "Warning: dot product of neighbor normal vectors is : 1 + ";
+      std::cout << std::scientific << std::setprecision(16);
+      std::cout << (dot_product(normal, neighbor_normal) - 1e0) << std::endl;
       std::cout << "This treats as just 1. acos(dot product) is 0e0." << std::endl;
       std::cout << "face id is " << get_id() << std::endl;
       std::cout << std::endl;
       rot_angle = 0e0;
     }else{
-      std::cout << "Warning: dot product of neighbor normal vectors is : " << dot_product(normal, neighbor_normal);
+      std::cout << "Warning: dot product of neighbor normal vectors is : -1 + ";
+      std::cout << std::scientific << std::setprecision(16);
+      std::cout << (dot_product(normal, neighbor_normal) + 1e0) << std::endl;
       std::cout << "This treats as just -1. acos(dot product) is M_PI." << std::endl;
       std::cout << "face id is " << get_id() << std::endl;
       std::cout << std::endl;

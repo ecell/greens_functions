@@ -110,7 +110,6 @@ private:
 
   //for debug.
   void dump_connection();
-  void write_for_gnuplot();
 };
 
 void StlFileReader::read_file()
@@ -153,7 +152,6 @@ void StlFileReader::read_file()
   }
 
 //   dump_connection();
-  write_for_gnuplot();
 
   already_read = true;
   return;
@@ -554,28 +552,6 @@ void StlFileReader::dump_connection()
     std::cout << "edge: " << itr->edge.first << " -> " << itr->edge.second << std::endl;
     std::cout << "first id: " << itr->first_face_id << " second id: " << itr->second_face_id << std::endl;
   }
-  return;
-}
-
-void StlFileReader::write_for_gnuplot()
-{
-  int size(faces.size());
-  std::cout << "index: " << size << std::endl;
-  std::ofstream ofs("cat_for_gnuplot.dat");
-  for(std::vector<TriangleBase>::iterator itr = faces.begin(); itr != faces.end(); ++itr)
-  {
-    ofs << itr->vertexs.at(0)[0] << " " << itr->vertexs.at(0)[1] << " " << itr->vertexs.at(0)[2] << std::endl;
-    ofs << itr->vertexs.at(1)[0] << " " << itr->vertexs.at(1)[1] << " " << itr->vertexs.at(1)[2] << std::endl;
-    ofs << itr->vertexs.at(2)[0] << " " << itr->vertexs.at(2)[1] << " " << itr->vertexs.at(2)[2] << std::endl;
-    ofs << itr->vertexs.at(0)[0] << " " << itr->vertexs.at(0)[1] << " " << itr->vertexs.at(0)[2] << std::endl;
-    ofs << "\n\n";
-  }
-
-  std::ofstream gpo("cat.gp");
-  gpo << "splot 'cat_for_gnuplot.dat' index " << 0 << " using 1:2:3 w l lc rgb 'green' notitle" << std::endl;
-  for(int i(0); i<size; ++i)
-    gpo << "replot 'cat_for_gnuplot.dat' index " << i << " using 1:2:3 w l lc rgb 'green' notitle" << std::endl;
-
   return;
 }
 
