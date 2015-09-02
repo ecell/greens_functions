@@ -5,7 +5,7 @@
 #include <list>
 #include <stdexcept>
 #include "Polygon.hpp"
-#include "FaceAllGate.hpp"
+#include "FaceClose.hpp"
 // include "FaceBorder.hpp"
 
 class StlFileReader
@@ -328,7 +328,7 @@ std::vector<boost::shared_ptr<FaceBase> > StlFileReader::get_faces_close()
 
   for(unsigned int i(0); i<numTriangle; ++i)
   {
-    FaceBase_sptr tempTriangle(new FaceAllGate( faces.at(i).face_id, faces.at(i).vertexs.at(0), faces.at(i).vertexs.at(1), faces.at(i).vertexs.at(2) ) );
+    FaceBase_sptr tempTriangle(new FaceClose( faces.at(i).face_id, faces.at(i).vertexs.at(0), faces.at(i).vertexs.at(1), faces.at(i).vertexs.at(2) ) );
     retFBsptr.push_back(tempTriangle);
   }
 

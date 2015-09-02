@@ -1,5 +1,5 @@
 #include "../../GreensFunction2DAbsSym.hpp"
-#include "../FaceOneGate.hpp"
+#include "../FaceOpen.hpp"
 #include "../OneParticle.hpp"
 #include "../Polygon.hpp"
 #include <boost/random.hpp>
@@ -21,8 +21,13 @@ int main()
   Realvec v3(0e0, 0e0, 0e0);
   Realvec v4(1e0, 1e0, 0e0);
 
-  FaceBase_sptr triangle1_ptr( new FaceOneGate(0, v1, v2, v3, 1) );
-  FaceBase_sptr triangle2_ptr( new FaceOneGate(1, v4, v3, v2, 1) );
+  std::vector<bool> gate(3);
+  gate.at(0) = false;
+  gate.at(1) = true;
+  gate.at(2) = false;
+
+  FaceBase_sptr triangle1_ptr( new FaceOpen(0, v1, v2, v3, gate) );
+  FaceBase_sptr triangle2_ptr( new FaceOpen(1, v4, v3, v2, gate) );
 
   boost::shared_ptr<Polygon> rectangle_ptr( new Polygon( triangle1_ptr ) );
   rectangle_ptr->insert( triangle2_ptr );

@@ -1,5 +1,5 @@
 #include "../../GreensFunction2DAbsSym.hpp"
-#include "../FaceAllGate.hpp"
+#include "../FaceClose.hpp"
 #include "../OneParticle.hpp"
 #include "../Polygon.hpp"
 #include <boost/random.hpp>
@@ -21,18 +21,18 @@ int main()
   Realvec v6(1e0, 0e0, 1e0);
   Realvec v7(1e0, 1e0, 1e0);
 
-  FaceBase_sptr tryangle0_ptr(  new FaceAllGate( 0, v0, v2, v4) );
-  FaceBase_sptr tryangle1_ptr(  new FaceAllGate( 1, v0, v4, v1) );
-  FaceBase_sptr tryangle2_ptr(  new FaceAllGate( 2, v1, v4, v7) );
-  FaceBase_sptr tryangle3_ptr(  new FaceAllGate( 3, v1, v7, v6) );
-  FaceBase_sptr tryangle4_ptr(  new FaceAllGate( 4, v6, v7, v5) );
-  FaceBase_sptr tryangle5_ptr(  new FaceAllGate( 5, v6, v5, v3) );
-  FaceBase_sptr tryangle6_ptr(  new FaceAllGate( 6, v3, v5, v2) );
-  FaceBase_sptr tryangle7_ptr(  new FaceAllGate( 7, v3, v2, v0) );
-  FaceBase_sptr tryangle8_ptr(  new FaceAllGate( 8, v2, v5, v7) );
-  FaceBase_sptr tryangle9_ptr(  new FaceAllGate( 9, v2, v7, v4) );
-  FaceBase_sptr tryangle10_ptr( new FaceAllGate(10, v3, v0, v1) );
-  FaceBase_sptr tryangle11_ptr( new FaceAllGate(11, v3, v1, v6) );
+  FaceBase_sptr tryangle0_ptr(  new FaceClose( 0, v0, v2, v4) );
+  FaceBase_sptr tryangle1_ptr(  new FaceClose( 1, v0, v4, v1) );
+  FaceBase_sptr tryangle2_ptr(  new FaceClose( 2, v1, v4, v7) );
+  FaceBase_sptr tryangle3_ptr(  new FaceClose( 3, v1, v7, v6) );
+  FaceBase_sptr tryangle4_ptr(  new FaceClose( 4, v6, v7, v5) );
+  FaceBase_sptr tryangle5_ptr(  new FaceClose( 5, v6, v5, v3) );
+  FaceBase_sptr tryangle6_ptr(  new FaceClose( 6, v3, v5, v2) );
+  FaceBase_sptr tryangle7_ptr(  new FaceClose( 7, v3, v2, v0) );
+  FaceBase_sptr tryangle8_ptr(  new FaceClose( 8, v2, v5, v7) );
+  FaceBase_sptr tryangle9_ptr(  new FaceClose( 9, v2, v7, v4) );
+  FaceBase_sptr tryangle10_ptr( new FaceClose(10, v3, v0, v1) );
+  FaceBase_sptr tryangle11_ptr( new FaceClose(11, v3, v1, v6) );
 
   boost::shared_ptr<Polygon> cube_ptr( new Polygon( tryangle0_ptr ) );
 

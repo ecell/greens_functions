@@ -1,17 +1,10 @@
-#ifndef FACE_ALL_GATE
-#define FACE_ALL_GATE
-#include <vector>
-#include <utility>
-#include <iostream>
-#include <cmath>
-#include <cassert>
-#include <boost/shared_ptr.hpp>
+#ifndef FACE_CLOSE
+#define FACE_CLOSE
 #include <boost/weak_ptr.hpp>
 #include "FaceBase.hpp"
 #include "Polygon.hpp"
-#include "Defs.hpp"
 
-class FaceAllGate : public FaceBase
+class FaceClose : public FaceBase
 {
 private:
   std::vector<Realvec> vertexs;
@@ -39,7 +32,7 @@ private:
 
 
 public:
-  FaceAllGate(const int id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2)
+  FaceClose(const int id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2)
   : FaceBase( id, cross_product(vtx1-vtx0, vtx2-vtx0), vtx1-vtx0 ),
     vertexs(3), edges(3), angles(3), para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)
   {
@@ -65,7 +58,7 @@ public:
     para_b = edges.at(2) * (-1e0);
   }
 
-  FaceAllGate(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2,
+  FaceClose(const int& id, const Realvec& vtx0, const Realvec& vtx1, const Realvec& vtx2,
 	      const Realvec& norm)
   : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3), angles(3),
     para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)
@@ -216,7 +209,7 @@ private:
 };
 
 std::pair<Realvec, FaceBase_sptr>
-FaceAllGate::apply_displacement(const Realvec& position, const Realvec& displacement,
+FaceClose::apply_displacement(const Realvec& position, const Realvec& displacement,
 				const FaceBase_sptr& ptr )
 {
 // debug
@@ -304,7 +297,7 @@ FaceAllGate::apply_displacement(const Realvec& position, const Realvec& displace
 }
 
 std::pair<Real, Real> 
-FaceAllGate::translate_pos(std::pair<Real, Real> pos, const int edge_id, FaceBase_sptr face_ptr)
+FaceClose::translate_pos(std::pair<Real, Real> pos, const int edge_id, FaceBase_sptr face_ptr)
 {
   std::pair<Real, Real> n_a_vec( face_ptr->get_para_a_neighbor_at(edge_id) );
   std::pair<Real, Real> n_b_vec( face_ptr->get_para_b_neighbor_at(edge_id) );
@@ -319,7 +312,7 @@ FaceAllGate::translate_pos(std::pair<Real, Real> pos, const int edge_id, FaceBas
 }
 
 std::pair<Real, Real>
-FaceAllGate::translate_dis(std::pair<Real, Real> dis, const int edge_id, FaceBase_sptr face_ptr)
+FaceClose::translate_dis(std::pair<Real, Real> dis, const int edge_id, FaceBase_sptr face_ptr)
 {
   std::pair<Real, Real> n_a_vec( face_ptr->get_para_a_neighbor_at(edge_id) );
   std::pair<Real, Real> n_b_vec( face_ptr->get_para_b_neighbor_at(edge_id) );
@@ -333,7 +326,7 @@ FaceAllGate::translate_dis(std::pair<Real, Real> dis, const int edge_id, FaceBas
 }
 
 bool
-FaceAllGate::in_face(const std::pair<Real, Real>& parameters, const Real tol )
+FaceClose::in_face(const std::pair<Real, Real>& parameters, const Real tol )
 {
   Real alpha( parameters.first );
   Real beta( parameters.second );
@@ -353,7 +346,7 @@ FaceAllGate::in_face(const std::pair<Real, Real>& parameters, const Real tol )
   return ( (alpha_in_range && beta_in_range) && sum_in_range);
 }
 
-int FaceAllGate::through_edge( const std::pair<Real, Real>& position,
+int FaceClose::through_edge( const std::pair<Real, Real>& position,
 	  		       const std::pair<Real, Real>& newposition, const Real tol)
 {
   Real pos_alpha(position.first);
@@ -458,7 +451,7 @@ int FaceAllGate::through_edge( const std::pair<Real, Real>& position,
 }
 
 Real
-FaceAllGate::cross_ratio( const std::pair<Real, Real>& position,
+FaceClose::cross_ratio( const std::pair<Real, Real>& position,
 			  const std::pair<Real, Real>& displacement,
 			  const int& edge_num )
 {
@@ -504,7 +497,7 @@ FaceAllGate::cross_ratio( const std::pair<Real, Real>& position,
 // 0 ->a  1
 */
 bool
-FaceAllGate::on_edge(const std::pair<Real, Real>& position,
+FaceClose::on_edge(const std::pair<Real, Real>& position,
 		     int& edge_num, const Real tol)
 {
   Real alpha(position.first);
@@ -532,7 +525,7 @@ FaceAllGate::on_edge(const std::pair<Real, Real>& position,
 }
 
 bool
-FaceAllGate::on_edge(const std::pair<Real, Real>& position,
+FaceClose::on_edge(const std::pair<Real, Real>& position,
 		     const Real tol)
 {
   Real alpha(position.first);
@@ -556,7 +549,7 @@ FaceAllGate::on_edge(const std::pair<Real, Real>& position,
 }
 
 
-std::pair<Real, Real> FaceAllGate::to_parametric( const Realvec& pos )
+std::pair<Real, Real> FaceClose::to_parametric( const Realvec& pos )
 {
   Real alpha, beta;
   Realvec parametric_pos( pos );
@@ -630,7 +623,7 @@ std::pair<Real, Real> FaceAllGate::to_parametric( const Realvec& pos )
   throw std::invalid_argument( "function to_parametric: could not parametrise input position" );
 }
 
-std::pair<Real, Real> FaceAllGate::projection(const Realvec& pos)
+std::pair<Real, Real> FaceClose::projection(const Realvec& pos)
 {
   Realvec _pos(pos);
   Real alpha, beta, gamma;
@@ -664,7 +657,7 @@ std::pair<Real, Real> FaceAllGate::projection(const Realvec& pos)
   return std::make_pair(alpha, beta);
 }
 
-Realvec FaceAllGate::to_absolute( const std::pair<Real, Real>& parameters )
+Realvec FaceClose::to_absolute( const std::pair<Real, Real>& parameters )
 {
   Realvec absolute_pos( para_a * parameters.first + para_b * parameters.second );
   return absolute_pos;
@@ -672,7 +665,7 @@ Realvec FaceAllGate::to_absolute( const std::pair<Real, Real>& parameters )
 
 /**************************************** renew position ***************************************/
 
-void FaceAllGate::set_near_vertexs()
+void FaceClose::set_near_vertexs()
 {
   for(int i(0); i<3; ++i)
   {
@@ -685,7 +678,7 @@ void FaceAllGate::set_near_vertexs()
 }
 
 
-void FaceAllGate::set_neighbors_edge()
+void FaceClose::set_neighbors_edge()
 {
   for(int i(0); i<3; ++i)
   {
@@ -784,7 +777,7 @@ void FaceAllGate::set_neighbors_edge()
   return;
 }
 
-void FaceAllGate::set_neighbors_ori_vtx()
+void FaceClose::set_neighbors_ori_vtx()
 {
   for(int i(0); i<3; ++i)
   {
@@ -849,7 +842,7 @@ void FaceAllGate::set_neighbors_ori_vtx()
  * \<-/
  *  \/ <-call this func using ptr
 */
-Realvec FaceAllGate::get_another_vertex(const Realvec& edge)
+Realvec FaceClose::get_another_vertex(const Realvec& edge)
 {
   Realvec tempedge( edge * (-1e0) );
 
@@ -868,7 +861,7 @@ Realvec FaceAllGate::get_another_vertex(const Realvec& edge)
 }
 
 //may redundant.
-int FaceAllGate::get_another_vertex_id(const Realvec& edge)
+int FaceClose::get_another_vertex_id(const Realvec& edge)
 {
   Realvec tempedge( edge * (-1e0) );
 
@@ -892,7 +885,7 @@ int FaceAllGate::get_another_vertex_id(const Realvec& edge)
  * \<-/
  *  \/ <-neighboring face call this func using ptr
 */
-int FaceAllGate::get_another_edge_id_right(const Realvec& neighbors_edge)
+int FaceClose::get_another_edge_id_right(const Realvec& neighbors_edge)
 {
   Realvec tempedge( neighbors_edge * (-1e0) );
 
@@ -909,7 +902,7 @@ int FaceAllGate::get_another_edge_id_right(const Realvec& neighbors_edge)
   return -1;
 }
 
-int FaceAllGate::get_another_edge_id_left(const Realvec& neighbors_edge)
+int FaceClose::get_another_edge_id_left(const Realvec& neighbors_edge)
 {
   Realvec tempedge( neighbors_edge * (-1e0) );
 
@@ -926,7 +919,7 @@ int FaceAllGate::get_another_edge_id_left(const Realvec& neighbors_edge)
   return -1;
 }
 
-Realvec FaceAllGate::get_another_vertex_right( const Realvec& neighbors_edge )
+Realvec FaceClose::get_another_vertex_right( const Realvec& neighbors_edge )
 {
   int gateway_id( get_another_edge_id_right(neighbors_edge) );
   FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
@@ -934,7 +927,7 @@ Realvec FaceAllGate::get_another_vertex_right( const Realvec& neighbors_edge )
   return ret_vertex;
 }
 
-Realvec FaceAllGate::get_another_vertex_left( const Realvec& neighbors_edge )
+Realvec FaceClose::get_another_vertex_left( const Realvec& neighbors_edge )
 {
   int gateway_id( get_another_edge_id_left(neighbors_edge) );
   FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
@@ -942,7 +935,7 @@ Realvec FaceAllGate::get_another_vertex_left( const Realvec& neighbors_edge )
   return ret_vertex;
 }
 
-Real FaceAllGate::get_max_a(const Realvec& position, bool& vertex_involve_flag)
+Real FaceClose::get_max_a(const Realvec& position, bool& vertex_involve_flag)
 {
   vertex_involve_flag = false;
   int size( vertexs.size() );
@@ -1006,7 +999,7 @@ Real FaceAllGate::get_max_a(const Realvec& position, bool& vertex_involve_flag)
   return min_distance;
 }
 
-Real FaceAllGate::get_left_angle( const Realvec& neighbors_edge )
+Real FaceClose::get_left_angle( const Realvec& neighbors_edge )
 {
   Realvec tempedge( neighbors_edge * (-1e0) );
   int number_of_edge(edges.size());
@@ -1024,7 +1017,7 @@ Real FaceAllGate::get_left_angle( const Realvec& neighbors_edge )
   return 0e0;
 }
 
-Real FaceAllGate::get_right_angle( const Realvec& neighbors_edge )
+Real FaceClose::get_right_angle( const Realvec& neighbors_edge )
 {
   Realvec tempedge( neighbors_edge * (-1e0) );
   int number_of_edge(edges.size());
@@ -1042,7 +1035,7 @@ Real FaceAllGate::get_right_angle( const Realvec& neighbors_edge )
   return 0e0;
 }
 
-Real FaceAllGate::pull_neighbors_left_angle( const Realvec& neighbors_edge )
+Real FaceClose::pull_neighbors_left_angle( const Realvec& neighbors_edge )
 {
   int gateway_id( get_another_edge_id_left(neighbors_edge) );
   FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
@@ -1050,7 +1043,7 @@ Real FaceAllGate::pull_neighbors_left_angle( const Realvec& neighbors_edge )
   return neighbor_left_angle;
 }
 
-Real FaceAllGate::pull_neighbors_right_angle( const Realvec& neighbors_edge )
+Real FaceClose::pull_neighbors_right_angle( const Realvec& neighbors_edge )
 {
   int gateway_id( get_another_edge_id_right(neighbors_edge) );
   FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
@@ -1058,7 +1051,7 @@ Real FaceAllGate::pull_neighbors_right_angle( const Realvec& neighbors_edge )
   return neighbor_right_angle;
 }
 
-Real FaceAllGate::get_minimum_height( const Realvec& neighbors_edge )
+Real FaceClose::get_minimum_height( const Realvec& neighbors_edge )
 {
   Real perpendicular(M_PI * 0.5);
   Real min_height(-1e0);
@@ -1102,9 +1095,9 @@ Real FaceAllGate::get_minimum_height( const Realvec& neighbors_edge )
   return min_height;
 }
 
-void FaceAllGate::print_class_name()
+void FaceClose::print_class_name()
 {
-  std::cout << "class: FaceAllGate" << std::endl;
+  std::cout << "class: FaceClose" << std::endl;
 }
 
-#endif /*FACE_TWO_GATE*/
+#endif /*FACE_CLOSE*/

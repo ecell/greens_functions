@@ -1,5 +1,5 @@
 #include "../../GreensFunction2DAbsSym.hpp"
-#include "../FaceTwoGate.hpp"
+#include "../FaceOpen.hpp"
 #include "../OneParticle.hpp"
 #include "../Polygon.hpp"
 #include <boost/random.hpp>
@@ -21,14 +21,23 @@ int main()
   Realvec v6(1e0, 0e0, 1e0);
   Realvec v7(1e0, 1e0, 1e0);
 
-  FaceBase_sptr tryangle0_ptr( new FaceTwoGate(0, v0, v2, v4, 0, 2) );
-  FaceBase_sptr tryangle1_ptr( new FaceTwoGate(1, v0, v4, v1, 0, 1) );
-  FaceBase_sptr tryangle2_ptr( new FaceTwoGate(2, v1, v4, v7, 0, 2) );
-  FaceBase_sptr tryangle3_ptr( new FaceTwoGate(3, v1, v7, v6, 0, 1) );
-  FaceBase_sptr tryangle4_ptr( new FaceTwoGate(4, v6, v7, v5, 0, 2) );
-  FaceBase_sptr tryangle5_ptr( new FaceTwoGate(5, v6, v5, v3, 0, 1) );
-  FaceBase_sptr tryangle6_ptr( new FaceTwoGate(6, v3, v5, v2, 0, 2) );
-  FaceBase_sptr tryangle7_ptr( new FaceTwoGate(7, v3, v2, v0, 0, 1) );
+  std::vector<bool> gate1(3);
+  std::vector<bool> gate2(3);
+  gate1.at(0) = true;
+  gate1.at(1) = true;
+  gate1.at(2) = false;
+  gate2.at(0) = true;
+  gate2.at(1) = false;
+  gate2.at(2) = true;
+
+  FaceBase_sptr tryangle0_ptr( new FaceOpen(0, v0, v2, v4, gate2) );
+  FaceBase_sptr tryangle1_ptr( new FaceOpen(1, v0, v4, v1, gate1) );
+  FaceBase_sptr tryangle2_ptr( new FaceOpen(2, v1, v4, v7, gate2) );
+  FaceBase_sptr tryangle3_ptr( new FaceOpen(3, v1, v7, v6, gate1) );
+  FaceBase_sptr tryangle4_ptr( new FaceOpen(4, v6, v7, v5, gate2) );
+  FaceBase_sptr tryangle5_ptr( new FaceOpen(5, v6, v5, v3, gate1) );
+  FaceBase_sptr tryangle6_ptr( new FaceOpen(6, v3, v5, v2, gate2) );
+  FaceBase_sptr tryangle7_ptr( new FaceOpen(7, v3, v2, v0, gate1) );
 
   boost::shared_ptr<Polygon> cube_ptr( new Polygon( tryangle0_ptr ) );
   

@@ -4,6 +4,9 @@
 #include <cstddef>
 #include <boost/math/quaternion.hpp>
 #include <cmath>
+#include <stdexcept>
+#include <cassert>
+#include <utility>
 #include "Vector3.hpp"
 
 typedef double Real;

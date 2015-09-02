@@ -1,12 +1,8 @@
 #ifndef FACE_BASE_HPP
 #define FACE_BASE_HPP
 #include <iostream>
-#include <utility>
 #include <vector>
-#include <cmath>
-#include <cassert>
 #include <boost/shared_ptr.hpp>
-#include <boost/array.hpp>
 #include "Defs.hpp"
 #include "Vector3.hpp"
 

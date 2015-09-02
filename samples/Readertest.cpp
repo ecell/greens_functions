@@ -7,7 +7,6 @@
 #include <ctime>
 #include "../GreensFunction2DAbsSym.hpp"
 #include "StlFileReader.hpp"
-#include "FaceAllGate.hpp"
 #include "OneParticle.hpp"
 #include "Polygon.hpp"
 
