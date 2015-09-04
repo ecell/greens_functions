@@ -58,9 +58,9 @@ public:
   : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3), angles(3), is_gate(gate),
     para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)
   {
-    if( dot_product(norm, vtx1-vtx0) == 0 )
+    if( dot_product(norm, vtx1-vtx0) < GLOBAL_TOLERANCE )
       throw std::invalid_argument("FaceOpen: normal vector is not vertical to edge 0");
-    if( dot_product(norm, vtx2-vtx1) == 0 )
+    if( dot_product(norm, vtx2-vtx1) < GLOBAL_TOLERANCE )
       throw std::invalid_argument("FaceOpen: normal vector is not vertical to edge 1");
   
     vertexs.at(0) = vtx0;
@@ -87,8 +87,7 @@ public:
   }
 
   virtual std::pair<Realvec, FaceBase_sptr>
-  apply_displacement( const Realvec& position, const Realvec& displacement,
-		      const FaceBase_sptr& ptr);
+  apply_displacement( const Realvec& position, const Realvec& displacement, const FaceBase_sptr& ptr);
 
   virtual bool in_face(const std::pair<Real, Real>& parameters, const Real tol = GLOBAL_TOLERANCE);
 
@@ -100,6 +99,7 @@ public:
 
   virtual bool on_edge(const std::pair<Real, Real>& position, int& edge_num,
 		       const Real tol = GLOBAL_TOLERANCE);
+
   virtual bool on_edge(const std::pair<Real, Real>& position, const Real tol = GLOBAL_TOLERANCE);
 
   virtual std::pair<Real, Real> to_parametric( const Realvec& pos );
@@ -115,19 +115,12 @@ public:
   virtual bool is_gate_at(int edge_id){ return is_gate.at(edge_id); };
 
   virtual Realvec get_para_origin(){return para_origin;}
-
   virtual Realvec get_para_a(){return para_a;}
-
   virtual Realvec get_para_b(){return para_b;}
 
-  virtual std::pair<Real, Real> get_para_a_neighbor_at(const int i)
-  {return para_a_neighbor.at(i);}
-
-  virtual std::pair<Real, Real> get_para_b_neighbor_at(const int i)
-  {return para_b_neighbor.at(i);}
-
-  virtual std::pair<Real, Real> get_ori_vec_neighbor_at(const int i)
-  {return ori_vec_neighbor.at(i);}
+  virtual std::pair<Real, Real> get_para_a_neighbor_at(const int i){return para_a_neighbor.at(i);}
+  virtual std::pair<Real, Real> get_para_b_neighbor_at(const int i){return para_b_neighbor.at(i);}
+  virtual std::pair<Real, Real> get_ori_vec_neighbor_at(const int i){return ori_vec_neighbor.at(i);}
 
   virtual void print_class_name();
 
@@ -734,8 +727,8 @@ Real FaceOpen::get_max_a(const Realvec& position, bool& vertex_involve_flag)
       // but it is lesser equal to distance along the surface
       if( min_distance > length( vertvec ) )
       {
-	min_distance = length( vertvec );
-	nearest_neighbor_vertex = i;
+        min_distance = length( vertvec );
+        nearest_neighbor_vertex = i;
       }
     }
   }

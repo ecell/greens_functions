@@ -44,10 +44,7 @@ public:
     edges.at(0) = vtx1 - vtx0;
     edges.at(1) = vtx2 - vtx1;
     edges.at(2) = vtx0 - vtx2;
-    assert(length(edges.at(0)) != 0e0);
-    assert(length(edges.at(1)) != 0e0);
-    assert(length(edges.at(2)) != 0e0);
-  
+ 
     angles.at(0) = smaller_angle( edges.at(0), edges.at(2)*(-1e0) );
     angles.at(1) = smaller_angle( edges.at(1), edges.at(0)*(-1e0) );
     angles.at(2) = smaller_angle( edges.at(2), edges.at(1)*(-1e0) );
@@ -63,8 +60,9 @@ public:
   : FaceBase( id, norm, vtx1-vtx0 ), vertexs(3), edges(3), angles(3),
     para_a_neighbor(3), para_b_neighbor(3), ori_vec_neighbor(3)
   {
-    if(fabs(dot_product(norm, vtx1-vtx0) ) > GLOBAL_TOLERANCE || fabs(dot_product(norm, vtx2-vtx1) ) > GLOBAL_TOLERANCE )
-      throw std::invalid_argument("constructor : normal is not vertical");
+    if(fabs(dot_product(norm, vtx1-vtx0) ) > GLOBAL_TOLERANCE ||
+       fabs(dot_product(norm, vtx2-vtx1) ) > GLOBAL_TOLERANCE )
+      throw std::invalid_argument("constructor : normal vector is not vertical");
 
     vertexs.at(0) = vtx0;
     vertexs.at(1) = vtx1;
@@ -244,7 +242,7 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
 
     FaceBase_sptr next_face( poly_ptr.lock()->get_neighbor(face_ptr->get_id(), gate) );
 
-    const Real ratio( face_ptr->cross_ratio( pos_para, dis_para, gate) );
+    Real ratio( face_ptr->cross_ratio( pos_para, dis_para, gate) );
 
     std::pair<Real, Real> temppos( sum( pos_para, multiple(ratio, dis_para) ) );
     std::pair<Real, Real> tempdis( multiple( (1e0 - ratio), dis_para ) );

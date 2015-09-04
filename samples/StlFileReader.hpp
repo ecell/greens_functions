@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include "Polygon.hpp"
 #include "FaceClose.hpp"
-// include "FaceBorder.hpp"
+#include "FaceOpen.hpp"
 
 class StlFileReader
 {
@@ -78,7 +78,6 @@ private:
   Realvec bin_to_vec(const char* vecbin);
 
   TriangleBase bin_to_tri(const int id, const char* facetbin);
-  //binary end*****************************************
 
   //ascii read*****************************************
   void read_ascii();
@@ -94,7 +93,6 @@ private:
   void find_endfacet( std::ifstream& file );
 
   void find_solid( std::ifstream& file );
-  //ascii end*******************************************
 
   //returns the object is close(true) or open(false).
   //write std::vector<edges_faces> connection.
@@ -105,8 +103,6 @@ private:
   bool is_same_vec(const Realvec& lhs, const Realvec& rhs, const Real tol = 1e-12);
 
   std::vector<boost::shared_ptr<FaceBase> > get_faces_close();
-
-//   std::pair<boost::shared_ptr<Polygon>, std::vector<FaceBase_sptr> > get_polygon();
 
   //for debug.
   void dump_connection();
@@ -371,18 +367,11 @@ Realvec StlFileReader::bin_to_vec(const char* vecbin)
   Real yr( (double)y );
   Real zr( (double)z );
 
-  if(isnan(xr)) throw std::invalid_argument("input 3Dvector x is NaN");
-  if(isnan(yr)) throw std::invalid_argument("input 3Dvector y is NaN");
-  if(isnan(zr)) throw std::invalid_argument("input 3Dvector z is NaN");
+//   if(isnan(xr)) throw std::invalid_argument("input 3Dvector x is NaN");
+//   if(isnan(yr)) throw std::invalid_argument("input 3Dvector y is NaN");
+//   if(isnan(zr)) throw std::invalid_argument("input 3Dvector z is NaN");
 
   Realvec retvec( xr, yr, zr );
-  if(length(retvec) == 0e0)
-  {
-    std::cout << "length of vector written in STL file is zero." << std::endl;
-    std::cout << length(retvec) << std::endl;
-    throw std::invalid_argument("read 0 vector from bin STL");
-  }
-
   return retvec;
 }
 
