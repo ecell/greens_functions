@@ -67,7 +67,9 @@ public:
 
   virtual Realvec get_another_vertex( const Realvec& edge );
 
-  virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag);
+  virtual int matching_edge(const Realvec& neighbors_edge );
+
+  virtual Real get_max_a(const Realvec& position, bool& vertex_include_flag);
 
   virtual Real get_minimum_height(const Realvec& neighbors_edge);
 
@@ -75,6 +77,7 @@ public:
   virtual Real get_left_angle( const Realvec& neighbors_edge );
 
   virtual Real get_angles_at(int i);
+  virtual Realvec get_edges_at(int i);
 
   virtual bool is_gate_at(int edge_id);
 
@@ -217,7 +220,13 @@ FaceBase::get_another_vertex( const Realvec& edge )
   throw std::invalid_argument("get_another_vertex: this is not supported");
 }
 
-Real FaceBase::get_max_a(const Realvec& position, bool& vertex_involve_flag)
+int FaceBase::matching_edge(const Realvec& neighbors_edge )
+{
+  print_class_name();
+  throw std::invalid_argument("matching_edge: this is not supported");
+}
+
+Real FaceBase::get_max_a(const Realvec& position, bool& vertex_include_flag)
 {
   print_class_name();
   throw std::invalid_argument("get_max_a: this is not supported");
@@ -245,6 +254,12 @@ Real FaceBase::get_angles_at(int i)
 {
   print_class_name();
   throw std::invalid_argument("get_angles_at: this is not supported");
+}
+
+Realvec FaceBase::get_edges_at(int i)
+{
+  print_class_name();
+  throw std::invalid_argument("get_edges_at: this is not supported");
 }
 
 void FaceBase::print_class_name()

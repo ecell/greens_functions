@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
 {
   if(argc != 4)
   {
+    std::cout << "Usage: ./Readertest -<char[3]: filetype> <path/to/file> <int initial face_id>" << std::endl;
     std::cout << "please input file type(ASCII(-asc) or binary(-bin), path to stl file and initial face id." << std::endl;
     return -1;
   }
@@ -29,7 +30,6 @@ int main(int argc, char* argv[])
 
   std::pair<boost::shared_ptr<Polygon>, std::vector<FaceBase_sptr> > ptrpair( reader.get_polygon() );
   
-  //457
   Realvec initial_position( ptrpair.second.at(initial_face)->get_center_mass() );
 
   OneParticle particle(0, initial_position, ptrpair.second.at(initial_face) );
@@ -56,10 +56,9 @@ int main(int argc, char* argv[])
     do
     {
       Real D(1e0);
-//       a = particle.get_max_a();
-//       a *= 0.5;
+      a = particle.get_max_a();
       // in order to treat vertex
-      a = 1e0;
+//       a = 1e0;
       GreensFunction2DAbsSym gf(D,a);
 
       dt = gf.drawTime( rand(mt) );
@@ -73,7 +72,7 @@ int main(int argc, char* argv[])
       	r = a;
       }
 
-      if( particle.involve_vertex() )
+      if( particle.include_vertex() )
       {
         //TODO
         theta = 2 * M_PI * rand(mt);

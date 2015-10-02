@@ -16,6 +16,7 @@ typedef Vector3<double> Realvec;
 typedef boost::math::quaternion<double> Realquat;
 
 const Real GLOBAL_TOLERANCE(1e-7);
+const Real VERTEX_THRESHOLD(1e-4);
 const int RENEWLOOP_UPPER_LIMIT(100);
 
 #define STR( S ) #S

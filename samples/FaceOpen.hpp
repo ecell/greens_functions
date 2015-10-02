@@ -110,7 +110,7 @@ public:
 
   virtual Realvec get_another_vertex(const Realvec& edge);
 
-  virtual Real get_max_a(const Realvec& position, bool& vertex_involve_flag);
+  virtual Real get_max_a(const Realvec& position, bool& vertex_include_flag);
 
   virtual bool is_gate_at(int edge_id){ return is_gate.at(edge_id); };
 
@@ -694,9 +694,9 @@ Realvec FaceOpen::get_another_vertex(const Realvec& edge)
   return zero;
 }
 
-Real FaceOpen::get_max_a(const Realvec& position, bool& vertex_involve_flag)
+Real FaceOpen::get_max_a(const Realvec& position, bool& vertex_include_flag)
 {
-  vertex_involve_flag = false;
+  vertex_include_flag = false;
   int nearest_face_vertex(-1);
   int nearest_neighbor_vertex(-1);
 
@@ -734,10 +734,10 @@ Real FaceOpen::get_max_a(const Realvec& position, bool& vertex_involve_flag)
   }
 
   // if minimal distance from particle to vertex is smaller than this threshold
-  // this allows the shell to involve only one vertex.
+  // this allows the shell to include only one vertex.
   if(min_distance < 1e-6)
   {
-    vertex_involve_flag = true;
+    vertex_include_flag = true;
     Real second_distance;
     size = vertexs.size();
 

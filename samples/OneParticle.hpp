@@ -9,14 +9,15 @@
 
 class OneParticle 
 {
-  bool shell_involves_vertex;
+  bool shell_includes_vertex;
   int particle_id;
   Realvec position;
   FaceBase_sptr face_ptr;
+  int times_shell_include_vertex;
 
 public:
   OneParticle( int id, const Realvec& pos, FaceBase_sptr ptr )
-  : shell_involves_vertex(false)
+  : shell_includes_vertex(false), times_shell_include_vertex(0)
   {
     if( fabs( dot_product( pos - ptr->get_para_origin(), ptr->get_normal_vector() ) ) > 1e-12 )
     {
@@ -30,6 +31,11 @@ public:
     face_ptr = ptr;
   };
 
+  ~OneParticle()
+  {
+    std::cout << "particle id: " << particle_id << " : number of times shell includes vertex: " << times_shell_include_vertex << std::endl;
+  }
+
   void move( const Real r, const Real theta );
 
   Real get_max_a();
@@ -38,7 +44,7 @@ public:
 
   int get_face_id();
 
-  bool involve_vertex(){ return shell_involves_vertex; };
+  bool include_vertex(){ return shell_includes_vertex; };
 
   FaceBase_sptr get_face_sptr();
 
@@ -49,10 +55,10 @@ public:
 void OneParticle::move( const Real r, const Real theta )
 {
 
-  if(shell_involves_vertex)
+  if(shell_includes_vertex)
   {
     //TODO
-    //theta?
+    ++times_shell_include_vertex;
     Realvec axis( face_ptr->get_normal_vector() );
     Realvec target( face_ptr->get_represent_vector() );
     Realvec disp_direction( rotation(theta, axis, target) );
@@ -111,7 +117,7 @@ void OneParticle::move( const Real r, const Real theta )
 
 Real OneParticle::get_max_a()
 {
-  Real retval( face_ptr->get_max_a(position, shell_involves_vertex) );
+  Real retval( face_ptr->get_max_a(position, shell_includes_vertex) );
   return retval;
 }
 
