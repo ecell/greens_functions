@@ -167,7 +167,7 @@ int main()
 	r = a;
       }
 
-      if( particle.involve_vertex() )
+      if( particle.include_vertex() )
       {
 	//TODO
 	theta = 2 * M_PI * rand(mt);

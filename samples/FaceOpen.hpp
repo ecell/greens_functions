@@ -8,11 +8,12 @@ class FaceOpen : public FaceBase
 {
 private:
   std::vector<Realvec> vertexs;
-  std::vector<Realvec> near_vertexs;
   std::vector<Realvec> edges;
   std::vector<Real> angles;
+
   std::vector<bool> is_gate;
   boost::weak_ptr<Polygon> poly_ptr;
+  std::vector<Real> near_vert_height;
 
   //parametric
   Realvec para_origin;
@@ -108,11 +109,31 @@ public:
 
   virtual void set_near_vertexs();
 
-  virtual Realvec get_another_vertex(const Realvec& edge);
+  //**********************************************************************//
+
+  virtual Realvec get_another_vertex(const Realvec& neighbors_edge);
+
+  //return an id of edge that matches argument neighbors_edge
+  int matching_edge(const Realvec& neighbors_edge );
 
   virtual Real get_max_a(const Realvec& position, bool& vertex_include_flag);
 
+  virtual Real get_minimum_height( const Realvec& neighbors_edge );
+
   virtual bool is_gate_at(int edge_id){ return is_gate.at(edge_id); };
+
+  virtual Real get_right_angle( const Realvec& neighbors_edge );
+  virtual Real get_left_angle( const Realvec& neighbors_edge );
+
+  virtual Realvec get_vertex_at(int i){return vertexs.at(i);}
+  virtual Realvec get_edges_at(int i){return edges.at(i);}
+  virtual Real get_angles_at(int i){return angles.at(i);}
+
+  virtual Realvec get_center_mass()
+  {
+    Realvec cm(vertexs.at(0) + vertexs.at(1) + vertexs.at(2));
+    return (cm / 3e0);
+  }
 
   virtual Realvec get_para_origin(){return para_origin;}
   virtual Realvec get_para_a(){return para_a;}
@@ -135,8 +156,13 @@ private:
   std::pair<Real, Real> reverse( const std::pair<Real, Real>& dis, const int edge_num );
 
   void set_neighbors_edge();
-
   void set_neighbors_ori_vtx();
+
+  int get_another_vertex_id(const Realvec& neighbors_edge);
+
+  //return own edge id
+  int get_another_edge_id_right( const Realvec& neighbors_edge);
+  int get_another_edge_id_left( const Realvec& neighbors_edge);
 
 };
 
@@ -372,9 +398,6 @@ FaceOpen::cross_ratio( const std::pair<Real, Real>& position,
   Real dis_alpha( displacement.first );
   Real dis_beta( displacement.second );
 
-  if( dis_alpha == 0e0 && dis_beta == 0e0 )
-    throw std::invalid_argument("ratio: displacement is zero vector");
-
   Real ratio(-1e0);
   switch(edge_num)
   {
@@ -413,12 +436,12 @@ FaceOpen::on_edge(const std::pair<Real, Real>& position,
   Real alpha(position.first);
   Real beta(position.second);
 
-  if( alpha == 0e0 && (-tol <= beta && beta <= 1e0+tol) )
+  if( fabs(alpha) < tol && (-tol <= beta && beta <= 1e0+tol) )
   {
     edge_num = 2;
     return true;
   }
-  else if( beta == 0e0 && ( -tol <= alpha && alpha <= 1e0+tol ) )
+  else if( fabs(beta) < tol && ( -tol <= alpha && alpha <= 1e0+tol ) )
   {
     edge_num = 0;
     return true;
@@ -574,7 +597,7 @@ void FaceOpen::set_near_vertexs()
   {
     if( !is_gate.at(i) ) continue;
     FaceBase_sptr ptr(poly_ptr.lock()->get_neighbor(face_id, i));
-//     near_vert_height.push_back( ptr->get_minimum_height( edges.at(i) ) );
+    near_vert_height.push_back( ptr->get_minimum_height( edges.at(i) ) );
   }
   set_neighbors_edge();
   set_neighbors_ori_vtx();
@@ -666,111 +689,198 @@ void FaceOpen::set_neighbors_ori_vtx()
   return;
 }
 
-Realvec FaceOpen::get_another_vertex(const Realvec& edge)
+Realvec FaceOpen::get_another_vertex(const Realvec& neighbors_edge)
 {
-  Realvec tempedge( edge * (-1e0) );
+  return vertexs.at( get_another_vertex_id(neighbors_edge) );
+}
 
-  for(int i(0); i<3; ++i)
-  {
-    if( edges.at(i)[0] == tempedge[0] &&
-	edges.at(i)[1] == tempedge[1] &&
-	edges.at(i)[2] == tempedge[2])
-    {
-      int vertex_id( (i+2) % 3 );
-      return vertexs.at( vertex_id );
-    }
-  }
+int FaceOpen::get_another_vertex_id(const Realvec& neighbors_edge)
+{
+  int i(matching_edge(neighbors_edge));
+  return (i+2) % 3;
+}
 
-//   std::cout << "face id:" << face_id << std::endl;
-//   std::cout << tempedge << std::endl;
-//   std::cout << edges.at(0) << " ";
-//   std::cout << edges.at(1) << " ";
-//   std::cout << edges.at(2) << std::endl;
+int FaceOpen::get_another_edge_id_right(const Realvec& neighbors_edge)
+{
+  int i(matching_edge(neighbors_edge) );
+  return ( (i+1) % 3 );
+}
 
-  bool get_another_vertex_have_invalid_edge_input(false);
-  THROW_UNLESS( std::invalid_argument, get_another_vertex_have_invalid_edge_input );
-
-  Realvec zero;
-  return zero;
+int FaceOpen::get_another_edge_id_left(const Realvec& neighbors_edge)
+{
+  int i(matching_edge(neighbors_edge) );
+  return ((i+2) % 3);
 }
 
 Real FaceOpen::get_max_a(const Realvec& position, bool& vertex_include_flag)
 {
   vertex_include_flag = false;
-  int nearest_face_vertex(-1);
-  int nearest_neighbor_vertex(-1);
 
-  int size( vertexs.size() );
-
+//****** inside this triangle begin*******
   Realvec vertvec( vertexs.at(0) - position );
-  nearest_face_vertex = 0;
-
   Real min_distance( length(vertvec) );
 
-  for(int i(1); i<size; ++i)
+  for(int i(1); i<3; ++i)
   {
     vertvec = vertexs.at(i) - position;
-    if( min_distance > length( vertvec ) )
-    {
-      min_distance = length( vertvec );
-      nearest_face_vertex = i;
-    }
+    if( min_distance > length( vertvec ) ) min_distance = length( vertvec );
   }
-  
-  if( !near_vertexs.empty() )
+//****** inside this triangle end *******
+
+//****** near triangles
+  if( !near_vert_height.empty() )
   {
-    size = near_vertexs.size();
+    int size( near_vert_height.size() );
+
     for(int i(0); i<size; ++i)
     {
-      vertvec = near_vertexs.at(i) - position;
-      // length(vertvec) is distance of the straight line between particle position and near vertex
-      // but it is lesser equal to distance along the surface
-      if( min_distance > length( vertvec ) )
-      {
-        min_distance = length( vertvec );
-        nearest_neighbor_vertex = i;
-      }
+      if( min_distance > near_vert_height.at(i) )
+	  min_distance = near_vert_height.at(i);
     }
   }
 
+  //TODO
   // if minimal distance from particle to vertex is smaller than this threshold
   // this allows the shell to include only one vertex.
-  if(min_distance < 1e-6)
+  if(min_distance < VERTEX_THRESHOLD)
   {
-    vertex_include_flag = true;
-    Real second_distance;
-    size = vertexs.size();
+    vertex_include_flag = true;// <-!
+    Real second_distance(-1e0);
 
-    for(int i(0); i < size; ++i)
+    for(int i(0); i < 3; ++i)
     {
-      if(i == nearest_face_vertex) continue;
-      vertvec = vertexs.at(i) - position;
-      second_distance = length(vertvec);
+      Real len(length(vertexs.at(i) - position));
+
+      if( fabs(min_distance - len) < GLOBAL_TOLERANCE )
+      {
+	continue;
+      }
+      else if(second_distance > len || second_distance < 0e0)
+      {
+	//len is not minimum and shorter than second_distance
+	//.OR.
+	//second_distance is not substituted then
+	second_distance = len;
+      }      
     }
 
+    if(near_vert_height.empty())
+      return second_distance;
+
+    int size(near_vert_height.size());
     for(int i(0); i < size; ++i)
     {
-      if(i == nearest_face_vertex) continue;
-      vertvec = vertexs.at(i) - position;
-      if(second_distance > length(vertvec)) second_distance = length(vertvec);
+      if(fabs(min_distance - near_vert_height.at(i) < GLOBAL_TOLERANCE))
+	continue;
+      if(second_distance > near_vert_height.at(i) )
+	second_distance = near_vert_height.at(i);
     }
 
-    if(near_vertexs.empty()) return second_distance;
-
-    size = near_vertexs.size();
-    for(int i(0); i < size; ++i)
-    {
-      if(i == nearest_neighbor_vertex) continue;
-      vertvec = vertexs.at(i) - position;
-      if(second_distance > length(vertvec)) second_distance = length(vertvec);
-    }
-
-    THROW_UNLESS(std::invalid_argument, second_distance > 1e-6);
+    THROW_UNLESS(std::invalid_argument, second_distance > VERTEX_THRESHOLD);
 
     return second_distance;
+  }else{
+    return min_distance;
+  }
+}
+
+//ecpected to be called by face belinging next to this.
+Real FaceOpen::get_left_angle( const Realvec& neighbors_edge )
+{
+  int id( matching_edge(neighbors_edge) );
+  return angles.at(id);
+}
+
+Real FaceOpen::get_right_angle( const Realvec& neighbors_edge )
+{
+  int id( matching_edge(neighbors_edge) );
+  return angles.at( (id+1) % 3);
+}
+
+int FaceOpen::matching_edge(const Realvec& neighbors_edge )
+{
+  Realvec inverse( neighbors_edge * (-1e0) );
+  for(int i(0); i<3; ++i)
+  {
+    if( fabs(edges.at(i)[0] - inverse[0]) < GLOBAL_TOLERANCE &&
+	fabs(edges.at(i)[1] - inverse[1]) < GLOBAL_TOLERANCE &&
+	fabs(edges.at(i)[2] - inverse[2]) < GLOBAL_TOLERANCE )
+    {
+      return i;
+    }
+  }
+  throw std::invalid_argument( "matching_edge could not find edge that matches argument." );
+}
+
+
+Real FaceOpen::get_minimum_height( const Realvec& neighbors_edge )
+{
+  Real perpendicular(M_PI * 0.5);
+  int edge_id( matching_edge(neighbors_edge) );
+
+  //TODO: depends on the directions of normal vectors of each faces...
+  Real left_angle( this->angles.at(edge_id) );
+  Real right_angle( this->angles.at( (edge_id+1)%3 ) );
+
+  // parallelogram's area( 2 times larger than that of this face )
+  Real area(length(cross_product(edges.at(0), edges.at(2)*(-1e0) ) ) );
+  Real min_height(area / length(neighbors_edge) );
+
+  if(min_height <= 0e0) throw std::invalid_argument("min_height is negative or zero");
+
+//because there are only triangle faces, this cannot be.
+//   if(left_angle >= perpendicular && right_angle >= perpendicular)
+//     return min_height;
+
+//****************************************************************************//
+  FaceBase_sptr right_face( poly_ptr.lock()->get_neighbor(face_id, (edge_id+1)%3 ) );
+  FaceBase_sptr  left_face( poly_ptr.lock()->get_neighbor(face_id, (edge_id+2)%3 ) );
+  Realvec right_edge(edges.at( (edge_id + 1)%3 ) );
+  Realvec  left_edge(edges.at( (edge_id + 2)%3 ) );
+  Real r( (length(neighbors_edge) / 2e0) );
+
+  while( true )
+  {
+    right_angle += right_face->get_right_angle(right_edge);
+    left_angle  +=  left_face->get_left_angle( left_edge );
+    
+    if( left_angle >= perpendicular && right_angle >= perpendicular )
+      break;
+
+    if(left_angle < perpendicular)
+    {
+      int left_edge_id( (left_face->matching_edge(left_edge) + 2) % 3 );
+      left_edge = left_face->get_edges_at(left_edge_id);
+
+      Real max_l(r * sqrt(2e0 * (1e0 + cos(M_PI - 2 * left_angle) ) ) );
+      Real l(length(left_edge) );
+      if(l < max_l)
+      {
+	Real height( l * sin(left_angle) );
+	if(min_height > height)
+	  min_height = height;
+      }
+      left_face = poly_ptr.lock()->get_neighbor( left_face->get_id(), left_edge_id );
+    }
+
+    if(right_angle < perpendicular )
+    {
+      int right_edge_id( (right_face->matching_edge(right_edge) + 1) % 3 );
+      right_edge = right_face->get_edges_at(right_edge_id);
+
+      Real max_l(r * sqrt(2e0 * (1e0 + cos(M_PI - 2 * right_angle) ) ) );
+      Real l(length(right_edge) );
+      if(l < max_l)
+      {
+	Real height( l * sin(right_angle) );
+	if(min_height > height)
+	  min_height = height;
+      }
+      right_face = poly_ptr.lock()->get_neighbor( right_face->get_id(), right_edge_id );
+    }
   }
 
-  return min_distance;
+  return min_height;
 }
 
 void FaceOpen::print_class_name()

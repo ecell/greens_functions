@@ -181,6 +181,7 @@ public:
   virtual void print_class_name();
 
 private:
+
   std::pair<Real, Real> 
   translate_pos(std::pair<Real, Real> pos, int edge, FaceBase_sptr face_ptr);
 
@@ -196,17 +197,9 @@ private:
   //  this func return the vertex that is not shared with the neighbor.
   int get_another_vertex_id(const Realvec& neighbors_edge);
 
-  //return neighbor's non-shared vertex vector
-  Realvec get_another_vertex_right( const Realvec& neighbors_edge);
-  Realvec get_another_vertex_left( const Realvec& neighbors_edge);
-
   //return own edge id
   int get_another_edge_id_right( const Realvec& neighbors_edge);
   int get_another_edge_id_left( const Realvec& neighbors_edge);
-
-  // return neighbor's right angle from pointer pulled from polygon class.
-  Real pull_neighbors_right_angle( const Realvec& neighbors_edge );
-  Real pull_neighbors_left_angle( const Realvec& neighbors_edge );
 
 };
 
@@ -866,22 +859,6 @@ int FaceClose::get_another_edge_id_left(const Realvec& neighbors_edge)
   return ((i+2) % 3);
 }
 
-Realvec FaceClose::get_another_vertex_right( const Realvec& neighbors_edge )
-{
-  int gateway_id( get_another_edge_id_right(neighbors_edge) );
-  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
-  Realvec ret_vertex( ptr->get_another_vertex( edges.at(gateway_id) ) );
-  return ret_vertex;
-}
-
-Realvec FaceClose::get_another_vertex_left( const Realvec& neighbors_edge )
-{
-  int gateway_id( get_another_edge_id_left(neighbors_edge) );
-  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
-  Realvec ret_vertex( ptr->get_another_vertex( edges.at(gateway_id) ) );
-  return ret_vertex;
-}
-
 Real FaceClose::get_max_a(const Realvec& position, bool& vertex_include_flag)
 {
   vertex_include_flag = false;
@@ -965,22 +942,6 @@ Real FaceClose::get_right_angle( const Realvec& neighbors_edge )
 {
   int id( matching_edge(neighbors_edge) );
   return angles.at( (id+1) % 3);
-}
-
-Real FaceClose::pull_neighbors_left_angle( const Realvec& neighbors_edge )
-{
-  int gateway_id( get_another_edge_id_left(neighbors_edge) );
-  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
-  Real neighbor_left_angle( ptr->get_left_angle( edges.at(gateway_id) ) );
-  return neighbor_left_angle;
-}
-
-Real FaceClose::pull_neighbors_right_angle( const Realvec& neighbors_edge )
-{
-  int gateway_id( get_another_edge_id_right(neighbors_edge) );
-  FaceBase_sptr ptr( poly_ptr.lock()->get_neighbor(face_id, gateway_id) );
-  Real neighbor_right_angle( ptr->get_right_angle( edges.at(gateway_id) ) );
-  return neighbor_right_angle;
 }
 
 int FaceClose::matching_edge(const Realvec& neighbors_edge )
