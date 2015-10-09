@@ -554,20 +554,16 @@ Real FaceClose::cross_ratio( const std::pair<Real, Real>& position,
   case 0:
     if( dis_beta == 0e0 )
       throw std::invalid_argument("cannot intersect this edge");
-    if( pos_beta == 0e0)
-//       std::cout << "Warning cross_ratio: pos_beta is zero" << std::endl;
     return (-pos_beta / dis_beta);
 
   case 1:
     if( dis_alpha + dis_beta == 0e0 )
       throw std::invalid_argument("cannot intersect this edge");
-//     std::cout << "Warning cross_ratio: 1e0 - pos_alpha - pos_beta is zero" << std::endl;
     return ( ( 1e0 - pos_alpha - pos_beta ) / ( dis_alpha + dis_beta ) );
 
   case 2:
     if( dis_alpha == 0e0 )
       throw std::invalid_argument("cannot intersect this edge");
-//     std::cout << "Warning cross_ratio: pos_alpha is zero" << std::endl;
     return (-pos_alpha / dis_alpha);
 
   default:
