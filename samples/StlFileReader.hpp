@@ -127,23 +127,28 @@ void StlFileReader::read_file()
   }
 
   polygon_close = detect_connection();
-  std::cout << "polygon close: " << polygon_close << std::endl;
+  std::cout << "polygon state  : ";
+  if(polygon_close)
+    std::cout << "close" << std::endl;
+  else
+    std::cout << "open" << std::endl;
 
   if(polygon_close)
   {
     if(numTriangle * 3 / 2 != connection.size() )
     {
-      std::cout << "Warning: number of edges and number of faces are incorrect." << std::endl;
-      std::cout << "readed faces: " << numTriangle;
-      std::cout << " faces * 1.5: " << (numTriangle * 3 / 2);
-      std::cout << " edges:  " << connection.size() << std::endl;
+      std::cout << "Warning: number of edges or number of faces are incorrect." << std::endl;
+      std::cout << "readed faces   : " << numTriangle << std::endl;
+      std::cout << "faces * 1.5    : " << (numTriangle * 3 / 2) << std::endl;
+      std::cout << "edges          : " << connection.size() << std::endl;
     }else
     {
-      std::cout <<"readed faces: "<< numTriangle <<" edges:  "<< connection.size() << std::endl;
+      std::cout << "readed faces   : "<< numTriangle<< std::endl;
+      std::cout << "       edges   : "<< connection.size() << std::endl;
     }
   }else{
     std::cout << "open polygon has not supported yet." << std::endl;
-    std::cout <<"readed faces: "<< numTriangle <<" edges:  "<< connection.size() << std::endl;
+    std::cout << "readed faces     : "<< numTriangle <<" edges:  "<< connection.size() << std::endl;
     throw std::invalid_argument("open polygon");
   }
 
@@ -176,18 +181,18 @@ void StlFileReader::read_binary()
 
 void StlFileReader::read_ascii()
 {
-  std::cout << "Message: This AsciiFileReader can read only one solid in one file." << std::endl;
+  std::cout << "Note: This AsciiFileReader can read only one solid in one file." << std::endl;
   int numTri(0);
 
-  find_solid(stlfile); //comp
+  find_solid(stlfile);
   do
   {
     Realvec normal;
-    if( find_facet(stlfile, normal) ) //comp
+    if( find_facet(stlfile, normal) )
     {
       std::vector<Realvec> vertexs(3);
 
-      find_outer_loop(stlfile); //comp
+      find_outer_loop(stlfile);
         vertexs.at(0) = find_vertex(stlfile);
         vertexs.at(1) = find_vertex(stlfile);
         vertexs.at(2) = find_vertex(stlfile);
@@ -226,7 +231,6 @@ bool StlFileReader::detect_connection()
   edge_faces face0[3] = {edge0_0, edge0_1, edge0_2};
 
   std::list<edge_faces> edge_face_list(face0, face0+3);
-//   std::vector<edge_faces> 
 
   for(unsigned int face_num(1); face_num<numTriangle; ++face_num)
   {
@@ -497,15 +501,11 @@ void StlFileReader::find_solid( std::ifstream& file )
   {
     std::string line;
     getline(file, line);
-    std::cout << "getline" << std::endl;
     if(line.empty()) continue;
-
-    std::cout << line << std::endl;
 
     std::istringstream linestream(line);
     std::string word;
     linestream >> word;
-    std::cout << word;
     if(word != "solid") continue;
 
     linestream >> word;

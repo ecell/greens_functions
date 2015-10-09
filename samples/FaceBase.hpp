@@ -33,9 +33,9 @@ public:
 
   virtual std::pair<Realvec, boost::shared_ptr<FaceBase> >
   apply_displacement(const Realvec& position, const Realvec& displacement,
-		     const boost::shared_ptr<FaceBase>& p );
+                     const boost::shared_ptr<FaceBase>& p );
 
-  virtual bool in_face(const std::pair<Real, Real>& parameters, const Real tol = 1e-12);
+  virtual bool in_face( const std::pair<Real, Real>& parameters, const Real tol = 1e-12);
 
   virtual bool on_vertex(const std::pair<Real, Real>& parameters, const Real tol = 1e-12);
 
@@ -45,12 +45,12 @@ public:
 
   //return the ratio(0~1) of a displacement segment not cross the edge.
   virtual Real cross_ratio(const std::pair<Real, Real>& position,
-			   const std::pair<Real, Real>& displacement, const int& edge_num );
+                           const std::pair<Real, Real>& displacement, const int& edge_num );
   
   //return whether the place is on the edge and rewrite edge_num to the edge.
   //  if false, edge_num = -1.
   virtual bool on_edge(const std::pair<Real, Real>& position, int& edge_num,
-		       const Real tol = 1e-12);
+                       const Real tol = 1e-12);
 
   virtual bool on_edge(const std::pair<Real, Real>& position, const Real tol = 1e-12);
 
@@ -171,7 +171,7 @@ std::pair<Real, Real> FaceBase::projection(const Realvec& pos)
 }
 
 bool
-FaceBase::in_face(const std::pair<Real, Real>& parameters, const Real tol)
+FaceBase::in_face( const std::pair<Real, Real>& parameters, const Real tol)
 {
 // if(on_vertex(parameters))
 //   throw std::invalid_argument("in_face::particle is on vertex");

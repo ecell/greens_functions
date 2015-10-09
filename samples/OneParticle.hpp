@@ -64,15 +64,15 @@ void OneParticle::move( const Real r, const Real theta )
     Realvec disp_direction( rotation(theta, axis, target) );
     Realvec displacement( disp_direction * r );
 
-    if( fabs(length(displacement) - r) > 1e-12 )
+    if( fabs(length(displacement) - r) > GLOBAL_TOLERANCE )
     {
       std::cerr << "r: " << std::setprecision(16) << r << std::endl;
       std::cerr << "disp_direction length: " << std::setprecision(16)
-		<< length(disp_direction) << std::endl;
+                << length(disp_direction) << std::endl;
       std::cerr << "displacement length: " << std::setprecision(16)
-		<< length(displacement) << std::endl;
+                << length(displacement) << std::endl;
       std::cerr << "fabs(length(displacement) - r)" << std::setprecision(16) 
-		<< fabs(length(displacement) - r) << std::endl;
+                << fabs(length(displacement) - r) << std::endl;
       throw std::invalid_argument("displacement length is not equal to shell size.");
     }
 
@@ -91,15 +91,15 @@ void OneParticle::move( const Real r, const Real theta )
     Realvec disp_direction( rotation(theta, axis, target) );
     Realvec displacement( disp_direction * r );
 
-    if( fabs(length(displacement) - r) > 1e-12 )
+    if( fabs(length(displacement) - r) > GLOBAL_TOLERANCE )
     {
       std::cerr << "r: " << std::setprecision(16) << r << std::endl;
       std::cerr << "disp_direction length: " << std::setprecision(16)
-		<< length(disp_direction) << std::endl;
+                << length(disp_direction) << std::endl;
       std::cerr << "displacement length: " << std::setprecision(16)
-		<< length(displacement) << std::endl;
+                << length(displacement) << std::endl;
       std::cerr << "fabs(length(displacement) - r)" << std::setprecision(16) 
-		<< fabs(length(displacement) - r) << std::endl;
+                << fabs(length(displacement) - r) << std::endl;
       throw std::invalid_argument("displacement length is not equal to shell size.");
     }
 
@@ -117,8 +117,7 @@ void OneParticle::move( const Real r, const Real theta )
 
 Real OneParticle::get_max_a()
 {
-  Real retval( face_ptr->get_max_a(position, shell_includes_vertex) );
-  return retval;
+  return face_ptr->get_max_a(position, shell_includes_vertex);
 }
 
 FaceBase_sptr OneParticle::get_face_sptr()
@@ -128,8 +127,7 @@ FaceBase_sptr OneParticle::get_face_sptr()
 
 int OneParticle::get_face_id()
 {
-  int ret_id(face_ptr->get_id());
-  return ret_id;
+  return face_ptr->get_id();
 }
 
 std::ostream& operator<<( std::ostream& os, const OneParticle& part)

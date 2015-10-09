@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     {
       Real D(1e0);
       a = particle.get_max_a();
-      // in order to treat vertex
+
 //       a = 1e0;
       GreensFunction2DAbsSym gf(D,a);
 

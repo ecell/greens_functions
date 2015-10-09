@@ -90,7 +90,7 @@ public:
   virtual std::pair<Realvec, FaceBase_sptr>
   apply_displacement( const Realvec& position, const Realvec& displacement, const FaceBase_sptr& ptr);
 
-  virtual bool in_face(const std::pair<Real, Real>& parameters, const Real tol = GLOBAL_TOLERANCE);
+  virtual bool in_face( const std::pair<Real, Real>& parameters, const Real tol = GLOBAL_TOLERANCE);
 
   virtual int through_edge(const std::pair<Real, Real>& position,
 			   const std::pair<Real, Real>& newposition, const Real tol = GLOBAL_TOLERANCE);
@@ -259,8 +259,7 @@ FaceOpen::translate_dis(std::pair<Real, Real> dis, const int edge_id, FaceBase_s
   return neighbor_dis;
 }
 
-bool
-FaceOpen::in_face(const std::pair<Real, Real>& parameters, const Real tol )
+bool FaceOpen::in_face( const std::pair<Real, Real>& parameters, const Real tol )
 {
   Real alpha(parameters.first);
   Real beta(parameters.second);
