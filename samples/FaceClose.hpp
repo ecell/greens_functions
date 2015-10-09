@@ -180,6 +180,9 @@ public:
 
   virtual void print_class_name();
 
+  std::pair<Real, Real> put_in_face(const std::pair<Real, Real>& position, const Real tol = GLOBAL_TOLERANCE);
+  std::pair<Real, Real> put_on_edge(const std::pair<Real, Real>& position, const Real tol = GLOBAL_TOLERANCE);
+
 private:
 
   std::pair<Real, Real> 
@@ -235,13 +238,16 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
                 << ", " << dis_para.second << ")" << std::endl;
       throw std::invalid_argument("apply_displacement: position is not in the face");
     }
+    pos_para = put_in_face(pos_para);
 
     std::pair<Real, Real> newpos( sum(pos_para, dis_para) );
 
-    if( in_face( newpos ) )
+    if( in_face( newpos ) || length(face_ptr->to_absolute(dis_para)) < GLOBAL_TOLERANCE )
     {
+      newpos = put_in_face(newpos);
       Realvec renewed_pos( face_ptr->get_para_origin() + face_ptr->to_absolute( newpos ) );
       std::pair<Realvec, FaceBase_sptr> retpos( renewed_pos, face_ptr );
+      std::cout << std::endl;
       return retpos;
     }
 
@@ -254,20 +260,20 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
     std::pair<Real, Real> temppos( sum( pos_para, multiple(ratio, dis_para) ) );
     std::pair<Real, Real> tempdis( multiple( (1e0 - ratio), dis_para ) );
 
-    if(on_vertex(temppos))
-    {
-      std::cout << "on_vertex(temppos)" << std::endl;
-      std::cout << "now renew " << num_renewface << " times." << std::endl;
-      std::cout << "ratio:              " << std::setw(20) << ratio << std::endl;
-      std::cout << "in_face(pos_para):  " << in_face(pos_para) << std::endl;
-      std::cout << "pos_para:          " << std::setprecision(16) << "(" << pos_para.first 
-                << ", " << pos_para.second << ")" << std::endl;
-      std::cout << "dis_para:          " << std::setprecision(16) << "(" << dis_para.first
-                << ", " << dis_para.second << ")" << std::endl;
-      std::cout << "temppos:           " << std::setprecision(16) << "(" << temppos.first
-                << ", " << temppos.second << ")" << std::endl;
-      throw std::invalid_argument("shortened displacement to put the end of vector is on the edge but it is on vertex" );
-    }
+//     if(on_vertex(temppos))
+//     {
+//       std::cout << "on_vertex(temppos)" << std::endl;
+//       std::cout << "now renew " << num_renewface << " times." << std::endl;
+//       std::cout << "ratio:              " << std::setw(20) << ratio << std::endl;
+//       std::cout << "in_face(pos_para):  " << in_face(pos_para) << std::endl;
+//       std::cout << "pos_para:          " << std::setprecision(16) << "(" << pos_para.first 
+//                 << ", " << pos_para.second << ")" << std::endl;
+//       std::cout << "dis_para:          " << std::setprecision(16) << "(" << dis_para.first
+//                 << ", " << dis_para.second << ")" << std::endl;
+//       std::cout << "temppos:           " << std::setprecision(16) << "(" << temppos.first
+//                 << ", " << temppos.second << ")" << std::endl;
+//       throw std::invalid_argument("shortened displacement to put the end of vector is on the edge but it is on vertex" );
+//     }
 //     assert( on_edge(temppos) );
     if( !on_edge(temppos) )
     {
@@ -283,6 +289,8 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
                 << ", "  << std::setprecision(16) << temppos.second << ")" << std::endl;
       throw std::invalid_argument("shortened displacement to put the end of vector is on the edge but it is not on edge");
     }
+
+    temppos = put_on_edge(temppos);
 
     std::pair<Real, Real> neighbor_pos( translate_pos(temppos, gate, face_ptr) );
     std::pair<Real, Real> neighbor_dis( translate_dis(tempdis, gate, face_ptr) );
@@ -305,9 +313,61 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
       throw std::invalid_argument("neighbor_pos is not on edge");
     }
 
+    neighbor_pos = face_ptr->put_on_edge(temppos);
+
+    if(num_renewface == RENEWLOOP_UPPER_LIMIT - 1 || num_renewface == RENEWLOOP_UPPER_LIMIT - 2)
+    {
+      std::cout << "position: ";
+      std::cout << "(" << std::setprecision(16) << pos_para.first << ", " << pos_para.second << ")" << std::endl;
+      std::cout << "absolute pos: ";
+      std::cout << ( face_ptr->get_para_origin() + face_ptr->to_absolute( newpos ) ) << std::endl;
+      std::cout << "displacement: ";
+      std::cout << "(" << std::setprecision(16) << dis_para.first << ", " << dis_para.second << ")" << std::endl;
+      std::cout << "absolute dis: ";
+      std::cout << face_ptr->to_absolute(dis_para);
+      std::cout << " length: ";
+      std::cout << length(face_ptr->to_absolute(dis_para)) << std::endl;
+      std::cout << "ratio : " << ratio << std::endl;
+
+      std::cout << "now face id: " << face_ptr->get_id() << std::endl;
+      std::cout << "vertex 0: " << face_ptr->get_vertex_at(0) << std::endl;
+      std::cout << "vertex 1: " << face_ptr->get_vertex_at(1) << std::endl;
+      std::cout << "vertex 2: " << face_ptr->get_vertex_at(2) << std::endl;
+      std::cout << std::endl;
+    }
+
     pos_para = neighbor_pos;
     dis_para = neighbor_dis;
     face_ptr = next_face;
+    std::cout << "next face id: " << face_ptr->get_id() << std::endl;
+
+    if(num_renewface == RENEWLOOP_UPPER_LIMIT - 1 || num_renewface == RENEWLOOP_UPPER_LIMIT - 2)
+    {
+      std::cout << "next position: ";
+      std::cout << "(" << std::setprecision(16) << pos_para.first << ", " << pos_para.second << ")" << std::endl;
+      std::cout << "absolute pos: ";
+      std::cout << ( face_ptr->get_para_origin() + face_ptr->to_absolute( newpos ) ) << std::endl;
+      std::cout << "next displacement: ";
+      std::cout << "(" << std::setprecision(16) << dis_para.first << ", " << dis_para.second << ")" << std::endl;
+      std::cout << "absolute dis: ";
+      std::cout << face_ptr->to_absolute(dis_para);
+      std::cout << " length: ";
+      std::cout << length(face_ptr->to_absolute(dis_para)) << std::endl;
+
+      std::cout << "next face id: " << face_ptr->get_id() << std::endl;
+      std::cout << "vertex 0: " << face_ptr->get_vertex_at(0) << std::endl;
+      std::cout << "vertex 1: " << face_ptr->get_vertex_at(1) << std::endl;
+      std::cout << "vertex 2: " << face_ptr->get_vertex_at(2) << std::endl;
+
+      std::pair<Real, Real> temp;
+      temp = face_ptr->get_para_a_neighbor_at(gate);
+      std::cout << " n_a_vec: (" << temp.first <<", "<< temp.second << ")" << std::endl;
+      temp = face_ptr->get_para_b_neighbor_at(gate);
+      std::cout << " n_b_vec: (" << temp.first <<", "<< temp.second << ")" << std::endl;
+      temp = face_ptr->get_ori_vec_neighbor_at(gate);
+      std::cout << " n_ori_vec: (" << temp.first <<", "<< temp.second << ")" << std::endl;
+      std::cout << std::endl;
+    }
   }
 
   throw std::invalid_argument("face ptr renewed over RENEWLOOP_UPPER_LIMIT times");
@@ -320,6 +380,13 @@ FaceClose::translate_pos(std::pair<Real, Real> pos, const int edge_id, FaceBase_
   std::pair<Real, Real> n_b_vec( face_ptr->get_para_b_neighbor_at(edge_id) );
   std::pair<Real, Real> n_ori_vec( face_ptr->get_ori_vec_neighbor_at(edge_id) );
 
+  if(in_face(n_a_vec))
+    n_a_vec = put_in_face(n_a_vec);
+  if(in_face(n_b_vec))
+    n_b_vec = put_in_face(n_b_vec);
+  if(in_face(n_ori_vec))
+    n_ori_vec = put_in_face(n_ori_vec);
+
   Real nbr_pos_a( pos.first * n_a_vec.first + pos.second * n_b_vec.first + n_ori_vec.first );
   Real nbr_pos_b( pos.first * n_a_vec.second+ pos.second * n_b_vec.second+ n_ori_vec.second);
  
@@ -331,6 +398,11 @@ FaceClose::translate_dis(std::pair<Real, Real> dis, const int edge_id, FaceBase_
 {
   std::pair<Real, Real> n_a_vec( face_ptr->get_para_a_neighbor_at(edge_id) );
   std::pair<Real, Real> n_b_vec( face_ptr->get_para_b_neighbor_at(edge_id) );
+
+  if(in_face(n_a_vec))
+    n_a_vec = put_in_face(n_a_vec);
+  if(in_face(n_b_vec))
+    n_b_vec = put_in_face(n_b_vec);
 
   Real nbr_dis_a( dis.first * n_a_vec.first + dis.second * n_b_vec.first);
   Real nbr_dis_b( dis.first * n_a_vec.second+ dis.second * n_b_vec.second);
@@ -348,9 +420,9 @@ FaceClose::in_face( const std::pair<Real, Real>& parameters, const Real tol )
   if(just_on_vertex)
   {
 //     std::cout << "Warning: position is just on the vertex." << std::endl;
-    std::cout << "alpha: " << std::setprecision(16) << alpha << ", beta: " << beta << std::endl;
-    throw std::invalid_argument("in_face : particle is just on a vertex");
-//     return true;
+//     std::cout << "alpha: " << std::setprecision(16) << alpha << ", beta: " << beta << std::endl;
+//     throw std::invalid_argument("in_face : particle is just on a vertex");
+    return true;
   }
 
   bool alpha_in_range( -tol <= alpha && alpha <= 1e0 + tol );
@@ -914,7 +986,7 @@ Real FaceClose::get_max_a(const Realvec& position, bool& vertex_include_flag)
     {
       Real len(length(vertexs.at(i) - position));
 
-      if( fabs(min_distance - len) < GLOBAL_TOLERANCE )
+      if( fabs(len - min_distance) < GLOBAL_TOLERANCE )
       {
         continue;
       }
@@ -927,8 +999,7 @@ Real FaceClose::get_max_a(const Realvec& position, bool& vertex_include_flag)
       }
     }
 
-    if(near_vert_height.empty())
-      return second_distance;
+    if(near_vert_height.empty()) return second_distance;
 
     int size(near_vert_height.size());
     for(int i(0); i < size; ++i)
@@ -942,9 +1013,8 @@ Real FaceClose::get_max_a(const Realvec& position, bool& vertex_include_flag)
     THROW_UNLESS(std::invalid_argument, second_distance > VERTEX_THRESHOLD);
 
     return second_distance;
-  }else{
-    return min_distance;
   }
+  return min_distance;
 }
 
 Real FaceClose::get_left_angle( const Realvec& neighbors_edge )
@@ -981,7 +1051,6 @@ Real FaceClose::get_minimum_height( const Realvec& neighbors_edge )
   const Real perpendicular(M_PI * 0.5);
   int edge_id( matching_edge(neighbors_edge) );
 
-  //TODO: depends on the directions of normal vectors of each faces... <- true?
   Real left_angle( this->angles.at(edge_id) );
   Real right_angle( this->angles.at( (edge_id+1)%3 ) );
 
@@ -992,54 +1061,205 @@ Real FaceClose::get_minimum_height( const Realvec& neighbors_edge )
   if(min_height <= 0e0) throw std::invalid_argument("min_height is negative or zero");
 
 //****************************************************************************//
-  FaceBase_sptr right_face( poly_ptr.lock()->get_neighbor(face_id, (edge_id+1)%3 ) );
-  FaceBase_sptr  left_face( poly_ptr.lock()->get_neighbor(face_id, (edge_id+2)%3 ) );
-  Realvec right_edge(edges.at( (edge_id + 1)%3 ) );
-  Realvec  left_edge(edges.at( (edge_id + 2)%3 ) );
+
   Real r( (length(neighbors_edge) / 2e0) );
 
-  while(true)
+  FaceBase_sptr right_face( poly_ptr.lock()->get_neighbor(face_id, (edge_id+1)%3 ) );
+  Realvec right_edge(edges.at( (edge_id + 1)%3 ) );
+  
+  //right side
+  while(right_angle < perpendicular)
   {
     right_angle += right_face->get_right_angle(right_edge);
-    left_angle  +=  left_face->get_left_angle( left_edge );
-    
-    if( left_angle >= perpendicular && right_angle >= perpendicular )
-      break;
-
-    if(left_angle < perpendicular)
+    if(right_angle >= perpendicular)
     {
-      int left_edge_id( (left_face->matching_edge(left_edge) + 2) % 3 );
-      left_edge = left_face->get_edges_at(left_edge_id);
-
-      Real max_l(r * sqrt(2e0 * (1e0 + cos(M_PI - 2 * left_angle) ) ) );
-      Real l(length(left_edge) );
-      if(l < max_l)
-      {
-        Real height( l * sin(left_angle) );
-        if(min_height > height)
-          min_height = height;
-      }
-      left_face = poly_ptr.lock()->get_neighbor( left_face->get_id(), left_edge_id );
+      break;
     }
-
-    if(right_angle < perpendicular )
+    else
     {
       int right_edge_id( (right_face->matching_edge(right_edge) + 1) % 3 );
       right_edge = right_face->get_edges_at(right_edge_id);
 
-      Real max_l(r * sqrt(2e0 * (1e0 + cos(M_PI - 2 * right_angle) ) ) );
+      Real max_l(r * sqrt(2e0 * (1e0 + cos(M_PI - (2 * right_angle)) ) ) );
       Real l(length(right_edge) );
-      if(l < max_l)
+      if(l <= max_l)
       {
         Real height( l * sin(right_angle) );
-        if(min_height > height)
-          min_height = height;
+        if(min_height > height) min_height = height;
       }
       right_face = poly_ptr.lock()->get_neighbor( right_face->get_id(), right_edge_id );
     }
   }
 
+  FaceBase_sptr  left_face( poly_ptr.lock()->get_neighbor(face_id, (edge_id+2)%3 ) );
+  Realvec  left_edge(edges.at( (edge_id + 2)%3 ) );
+
+  //left side
+  while(left_angle < perpendicular)
+  {
+    left_angle  +=  left_face->get_left_angle( left_edge );
+    if(left_angle >= perpendicular)
+    {
+      break;
+    }
+    else
+    {
+      int left_edge_id( (left_face->matching_edge(left_edge) + 2) % 3 );
+      left_edge = left_face->get_edges_at(left_edge_id);
+
+      Real max_l(r * sqrt(2e0 * (1e0 + cos(M_PI - (2 * left_angle)) ) ) );
+      Real l(length(left_edge) );
+      if(l <= max_l)
+      {
+        Real height( l * sin(left_angle) );
+        if(min_height > height) min_height = height;
+      }
+      left_face = poly_ptr.lock()->get_neighbor( left_face->get_id(), left_edge_id );
+    }
+  }
+
   return min_height;
+}
+
+std::pair<Real, Real> FaceClose::put_in_face(const std::pair<Real, Real>& position, const Real tol)
+{
+  if(!in_face(position))
+    throw std::invalid_argument("put_in_face gets position not in the face.");
+
+  bool flag(false);
+  Real alpha(position.first);
+  Real beta(position.second);
+
+  if(fabs(alpha) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes alpha to 0" << std::endl;
+//     std::cout << "alpha = " << alpha << " -> ";
+    alpha = 0e0;
+//     std::cout << "alpha = " << alpha << std::endl;
+    flag = true;
+  }
+  if(fabs(alpha - 1e0) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes alpha to 1" << std::endl;
+//     std::cout << "alpha = " << alpha << " -> ";
+    alpha = 1e0;
+//     std::cout << "alpha = " << alpha << std::endl;
+    flag = true;
+  }
+
+  if(fabs(beta) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes beta to 0" << std::endl;
+//     std::cout << "beta = " << beta << " -> ";
+    beta = 0e0;
+//     std::cout << "beta = " << beta << std::endl;
+    flag = true;
+  }
+  if(fabs(beta - 1e0) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes beta to 1" << std::endl;
+//     std::cout << "beta = " << beta << " -> ";
+    beta = 1e0;
+//     std::cout << "beta = " << beta << std::endl;
+    flag = true;
+  }
+
+  if(fabs(alpha + beta - 0e0) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes sum to 0" << std::endl;
+//     std::cout << "sum = " << alpha + beta << " -> ";
+    Real dif(alpha + beta - 0e0);
+    alpha -= dif/2e0;
+    beta -= dif/2e0;
+//     std::cout << "sum = " << alpha + beta << std::endl;
+    flag = true;
+  }
+  if(fabs(alpha + beta - 1e0) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes sum to 1" << std::endl;
+//     std::cout << "sum = " << alpha + beta << " -> ";
+    Real dif(alpha + beta - 1e0);
+    alpha -= dif/2e0;
+    beta -= dif/2e0;
+//     std::cout << "sum = " << alpha + beta << std::endl;
+    flag = true;
+  }
+  if(!in_face(position))
+    throw std::invalid_argument("put_in_face: internal error");
+
+//   if(flag) std::cout << std::endl;
+  return std::make_pair(alpha, beta);
+}
+
+std::pair<Real, Real> FaceClose::put_on_edge(const std::pair<Real, Real>& position, const Real tol)
+{
+  if(!on_edge(position))
+    throw std::invalid_argument("put_on_edge gets position not on an edge.");
+
+  bool flag(false);
+  Real alpha(position.first);
+  Real beta(position.second);
+
+  if(fabs(alpha) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes alpha to 0" << std::endl;
+//     std::cout << "alpha = " << alpha << " -> ";
+    alpha = 0e0;
+//     std::cout << "alpha = " << alpha << std::endl;
+    flag = true;
+  }
+  if(fabs(alpha - 1e0) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes alpha to 1" << std::endl;
+//     std::cout << "alpha = " << alpha << " -> ";
+    alpha = 1e0;
+//     std::cout << "alpha = " << alpha << std::endl;
+    flag = true;
+  }
+
+  if(fabs(beta) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes beta to 0" << std::endl;
+//     std::cout << "beta = " << beta << " -> ";
+    beta = 0e0;
+//     std::cout << "beta = " << beta << std::endl;
+    flag = true;
+  }
+  if(fabs(beta - 1e0) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes beta to 1" << std::endl;
+//     std::cout << "beta = " << beta << " -> ";
+    beta = 1e0;
+//     std::cout << "beta = " << beta << std::endl;
+    flag = true;
+  }
+
+  if(fabs(alpha + beta - 0e0) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes sum to 0" << std::endl;
+//     std::cout << "sum = " << std::setprecision(16) << alpha + beta << " -> ";
+    Real dif(alpha + beta - 0e0);
+    alpha -= dif/2e0;
+    beta -= dif/2e0;
+//     std::cout << "sum = " << alpha + beta << std::endl;
+    flag = true;
+  }
+  if(fabs(alpha + beta - 1e0) < tol )
+  {
+//     std::cout << "Warning: put_in_face changes sum to 1" << std::endl;
+//     std::cout << "sum = " << std::setprecision(16) << alpha + beta << " -> ";
+    Real dif(alpha + beta - 1e0);
+    alpha -= dif/2e0;
+    beta -= dif/2e0;
+//     std::cout << "sum = " << alpha + beta << std::endl;
+    flag = true;
+  }
+
+  if(!on_edge(position))
+    throw std::invalid_argument("put_on_edge internal error.");
+
+//   if(flag) std::cout << std::endl;
+  return std::make_pair(alpha, beta);
 }
 
 void FaceClose::print_class_name()

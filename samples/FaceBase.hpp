@@ -106,6 +106,9 @@ public:
   virtual void print_class_name();
 
   Real smaller_angle(const Realvec& v1, const Realvec& v2);
+
+  virtual std::pair<Real, Real> put_in_face(const std::pair<Real, Real>& position, const Real tol = GLOBAL_TOLERANCE);
+  virtual std::pair<Real, Real> put_on_edge(const std::pair<Real, Real>& position, const Real tol = GLOBAL_TOLERANCE);
 };
 
 
@@ -322,7 +325,16 @@ Realvec FaceBase::get_para_b()
   print_class_name();
   throw std::invalid_argument("get_para_b: this is not supported");
 }
-
+std::pair<Real, Real> FaceBase::put_in_face(const std::pair<Real, Real>& position, const Real tol)
+{
+  print_class_name();
+  throw std::invalid_argument("put_in_face: this is not supported");
+}
+std::pair<Real, Real> FaceBase::put_on_edge(const std::pair<Real, Real>& position, const Real tol)
+{
+  print_class_name();
+  throw std::invalid_argument("put_on_edge: this is not supported");
+}
 
 Real FaceBase::smaller_angle(const Realvec& v1, const Realvec& v2)
 {
