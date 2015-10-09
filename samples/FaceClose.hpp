@@ -247,7 +247,7 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
       newpos = put_in_face(newpos);
       Realvec renewed_pos( face_ptr->get_para_origin() + face_ptr->to_absolute( newpos ) );
       std::pair<Realvec, FaceBase_sptr> retpos( renewed_pos, face_ptr );
-      std::cout << std::endl;
+//       std::cout << std::endl;
       return retpos;
     }
 
@@ -313,7 +313,7 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
       throw std::invalid_argument("neighbor_pos is not on edge");
     }
 
-    neighbor_pos = face_ptr->put_on_edge(temppos);
+    neighbor_pos = face_ptr->put_on_edge(neighbor_pos);
 
     if(num_renewface == RENEWLOOP_UPPER_LIMIT - 1 || num_renewface == RENEWLOOP_UPPER_LIMIT - 2)
     {
@@ -339,7 +339,7 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
     pos_para = neighbor_pos;
     dis_para = neighbor_dis;
     face_ptr = next_face;
-    std::cout << "next face id: " << face_ptr->get_id() << std::endl;
+//     std::cout << "next face id: " << face_ptr->get_id() << std::endl;
 
     if(num_renewface == RENEWLOOP_UPPER_LIMIT - 1 || num_renewface == RENEWLOOP_UPPER_LIMIT - 2)
     {
@@ -554,16 +554,20 @@ Real FaceClose::cross_ratio( const std::pair<Real, Real>& position,
   case 0:
     if( dis_beta == 0e0 )
       throw std::invalid_argument("cannot intersect this edge");
+    if( pos_beta == 0e0)
+//       std::cout << "Warning cross_ratio: pos_beta is zero" << std::endl;
     return (-pos_beta / dis_beta);
 
   case 1:
     if( dis_alpha + dis_beta == 0e0 )
       throw std::invalid_argument("cannot intersect this edge");
+//     std::cout << "Warning cross_ratio: 1e0 - pos_alpha - pos_beta is zero" << std::endl;
     return ( ( 1e0 - pos_alpha - pos_beta ) / ( dis_alpha + dis_beta ) );
 
   case 2:
     if( dis_alpha == 0e0 )
       throw std::invalid_argument("cannot intersect this edge");
+//     std::cout << "Warning cross_ratio: pos_alpha is zero" << std::endl;
     return (-pos_alpha / dis_alpha);
 
   default:
@@ -1130,7 +1134,7 @@ std::pair<Real, Real> FaceClose::put_in_face(const std::pair<Real, Real>& positi
   Real alpha(position.first);
   Real beta(position.second);
 
-  if(fabs(alpha) < tol )
+  if(alpha < 0e0 && fabs(alpha) < tol )
   {
 //     std::cout << "Warning: put_in_face changes alpha to 0" << std::endl;
 //     std::cout << "alpha = " << alpha << " -> ";
@@ -1138,7 +1142,7 @@ std::pair<Real, Real> FaceClose::put_in_face(const std::pair<Real, Real>& positi
 //     std::cout << "alpha = " << alpha << std::endl;
     flag = true;
   }
-  if(fabs(alpha - 1e0) < tol )
+  if(alpha > 1e0 && fabs(alpha - 1e0) < tol )
   {
 //     std::cout << "Warning: put_in_face changes alpha to 1" << std::endl;
 //     std::cout << "alpha = " << alpha << " -> ";
@@ -1147,7 +1151,7 @@ std::pair<Real, Real> FaceClose::put_in_face(const std::pair<Real, Real>& positi
     flag = true;
   }
 
-  if(fabs(beta) < tol )
+  if(beta < 0e0 && fabs(beta) < tol )
   {
 //     std::cout << "Warning: put_in_face changes beta to 0" << std::endl;
 //     std::cout << "beta = " << beta << " -> ";
@@ -1155,7 +1159,7 @@ std::pair<Real, Real> FaceClose::put_in_face(const std::pair<Real, Real>& positi
 //     std::cout << "beta = " << beta << std::endl;
     flag = true;
   }
-  if(fabs(beta - 1e0) < tol )
+  if(beta > 1e0 && fabs(beta - 1e0) < tol )
   {
 //     std::cout << "Warning: put_in_face changes beta to 1" << std::endl;
 //     std::cout << "beta = " << beta << " -> ";
@@ -1164,7 +1168,7 @@ std::pair<Real, Real> FaceClose::put_in_face(const std::pair<Real, Real>& positi
     flag = true;
   }
 
-  if(fabs(alpha + beta - 0e0) < tol )
+  if((alpha + beta) < 0e0 && fabs(alpha + beta - 0e0) < tol )
   {
 //     std::cout << "Warning: put_in_face changes sum to 0" << std::endl;
 //     std::cout << "sum = " << alpha + beta << " -> ";
@@ -1174,7 +1178,7 @@ std::pair<Real, Real> FaceClose::put_in_face(const std::pair<Real, Real>& positi
 //     std::cout << "sum = " << alpha + beta << std::endl;
     flag = true;
   }
-  if(fabs(alpha + beta - 1e0) < tol )
+  if((alpha + beta) > 1e0 && fabs(alpha + beta - 1e0) < tol )
   {
 //     std::cout << "Warning: put_in_face changes sum to 1" << std::endl;
 //     std::cout << "sum = " << alpha + beta << " -> ";
@@ -1200,7 +1204,7 @@ std::pair<Real, Real> FaceClose::put_on_edge(const std::pair<Real, Real>& positi
   Real alpha(position.first);
   Real beta(position.second);
 
-  if(fabs(alpha) < tol )
+  if( alpha < 0e0 && fabs(alpha) < tol )
   {
 //     std::cout << "Warning: put_in_face changes alpha to 0" << std::endl;
 //     std::cout << "alpha = " << alpha << " -> ";
@@ -1208,7 +1212,7 @@ std::pair<Real, Real> FaceClose::put_on_edge(const std::pair<Real, Real>& positi
 //     std::cout << "alpha = " << alpha << std::endl;
     flag = true;
   }
-  if(fabs(alpha - 1e0) < tol )
+  if(alpha > 1e0 && fabs(alpha - 1e0) < tol )
   {
 //     std::cout << "Warning: put_in_face changes alpha to 1" << std::endl;
 //     std::cout << "alpha = " << alpha << " -> ";
@@ -1217,7 +1221,7 @@ std::pair<Real, Real> FaceClose::put_on_edge(const std::pair<Real, Real>& positi
     flag = true;
   }
 
-  if(fabs(beta) < tol )
+  if(beta < 0e0 && fabs(beta) < tol )
   {
 //     std::cout << "Warning: put_in_face changes beta to 0" << std::endl;
 //     std::cout << "beta = " << beta << " -> ";
@@ -1225,7 +1229,7 @@ std::pair<Real, Real> FaceClose::put_on_edge(const std::pair<Real, Real>& positi
 //     std::cout << "beta = " << beta << std::endl;
     flag = true;
   }
-  if(fabs(beta - 1e0) < tol )
+  if(beta > 1e0 && fabs(beta - 1e0) < tol )
   {
 //     std::cout << "Warning: put_in_face changes beta to 1" << std::endl;
 //     std::cout << "beta = " << beta << " -> ";
@@ -1234,7 +1238,7 @@ std::pair<Real, Real> FaceClose::put_on_edge(const std::pair<Real, Real>& positi
     flag = true;
   }
 
-  if(fabs(alpha + beta - 0e0) < tol )
+  if(alpha + beta < 0e0 && fabs(alpha + beta - 0e0) < tol )
   {
 //     std::cout << "Warning: put_in_face changes sum to 0" << std::endl;
 //     std::cout << "sum = " << std::setprecision(16) << alpha + beta << " -> ";
@@ -1244,7 +1248,7 @@ std::pair<Real, Real> FaceClose::put_on_edge(const std::pair<Real, Real>& positi
 //     std::cout << "sum = " << alpha + beta << std::endl;
     flag = true;
   }
-  if(fabs(alpha + beta - 1e0) < tol )
+  if(alpha + beta > 1e0 && fabs(alpha + beta - 1e0) < tol )
   {
 //     std::cout << "Warning: put_in_face changes sum to 1" << std::endl;
 //     std::cout << "sum = " << std::setprecision(16) << alpha + beta << " -> ";
