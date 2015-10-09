@@ -50,30 +50,25 @@ Realvec rotation(const double angle, const Realvec& axis, const Realvec& target)
 std::pair<Real, Real>
 sum( const std::pair<Real, Real>& lhs, const std::pair<Real, Real>& rhs )
 {
-  std::pair<Real, Real> retpair( lhs.first + rhs.first, lhs.second + rhs.second );
-  return retpair;
+  return std::make_pair(lhs.first + rhs.first, lhs.second + rhs.second);
 }
 
 std::pair<Real, Real>
 subtract(const std::pair<Real, Real>& lhs, const std::pair<Real, Real>& rhs)
 {
-  std::pair<Real, Real> retpair( lhs.first - rhs.first, lhs.second - rhs.second );
-  return retpair;
+  return std::make_pair( lhs.first - rhs.first, lhs.second - rhs.second );
 }
 
 std::pair<Real, Real>
 multiple( const Real lhs, const std::pair<Real, Real>& rhs )
 {
-  std::pair<Real, Real> retpair( lhs * rhs.first, lhs * rhs.second );
-  return retpair;
+  return std::make_pair( lhs * rhs.first, lhs * rhs.second );
 }
 
 std::pair<Real, Real>
 multiple( const std::pair<Real, Real>& lhs, const Real rhs )
 {
-  std::pair<Real, Real> retpair( rhs * lhs.first, rhs * lhs.second );
-  return retpair;
+  return std::make_pair( rhs * lhs.first, rhs * lhs.second );
 }
-
 
 #endif // _DEFS_HPP
