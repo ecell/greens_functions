@@ -43,8 +43,13 @@ public:
   virtual int  through_edge(const std::pair<Real, Real>& position,
                             const std::pair<Real, Real>& newposition, const Real tol=1e-12);
 
-  //return the ratio(0~1) of a displacement segment not cross the edge.
+  //return the ratio(0,1) of a displacement segment not cross the edge.
   virtual Real cross_ratio(const std::pair<Real, Real>& position,
+                           const std::pair<Real, Real>& displacement, const int& edge_num );
+
+  // virtual Real inv_cross_ratio(const std::pair<Real, Real>& position,
+  //                          const std::pair<Real, Real>& displacement, const int& edge_num );
+  virtual std::pair<std::pair<Real, Real>, Real> inv_cross_ratio(const std::pair<Real, Real>& position,
                            const std::pair<Real, Real>& displacement, const int& edge_num );
   
   //return whether the place is on the edge and rewrite edge_num to the edge.
@@ -131,6 +136,15 @@ FaceBase::cross_ratio(const std::pair<Real, Real>& position,
 {
   print_class_name();
   throw std::invalid_argument("cross_ratio: this is not supported");
+}
+
+//Real
+std::pair<std::pair<Real, Real>, Real>
+FaceBase::inv_cross_ratio(const std::pair<Real, Real>& position,
+  const std::pair<Real, Real>& displacement, const int& edge_num )
+{
+  print_class_name();
+  throw std::invalid_argument("inv_cross_ratio: this is not supported");
 }
 
 bool

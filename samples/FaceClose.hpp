@@ -124,6 +124,10 @@ public:
   //return the ratio(0~1) of a displacement segment not cross the edge.
   virtual Real cross_ratio(const std::pair<Real, Real>& position,
                            const std::pair<Real, Real>& displacement, const int& edge_num );
+  // virtual Real inv_cross_ratio(const std::pair<Real, Real>& position,
+  //                          const std::pair<Real, Real>& displacement, const int& edge_num );
+  virtual std::pair<std::pair<Real, Real>, Real> inv_cross_ratio(const std::pair<Real, Real>& position,
+                           const std::pair<Real, Real>& displacement, const int& edge_num );
 
   //return whether the place is on the edge and rewrite edge_num to the edge.
   //  if false, edge_num = -1.
@@ -201,11 +205,13 @@ private:
   int get_another_edge_id_right( const Realvec& neighbors_edge);
   int get_another_edge_id_left( const Realvec& neighbors_edge);
 
+  bool just_on_edge(const std::pair<Real, Real>& position, int& edge_num, const Real tol = GLOBAL_TOLERANCE);
+
 };
 
 std::pair<Realvec, FaceBase_sptr>
 FaceClose::apply_displacement(const Realvec& position, const Realvec& displacement,
-                                const FaceBase_sptr& ptr )
+                              const FaceBase_sptr& ptr )
 {
 // debug
 //   std::cout << position[0] << " " << position[1] << " " << position[2] << " ";
@@ -221,9 +227,12 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
   std::pair<Real, Real> dis_para( to_parametric( displacement ) );
   FaceBase_sptr face_ptr(ptr);
 
+  Real disp_len_tot(length(displacement));
+  Real disp_len(length(displacement));
+
   for(int num_renewface(0); num_renewface < RENEWLOOP_UPPER_LIMIT; ++num_renewface )
   {
-    if(!in_face(pos_para))
+    if(!in_face(pos_para, 0.0))
 //       throw std::invalid_argument("apply_displacement: position is not in the face");
     {
       std::cout << "in_face(pos_para)" << std::endl;
@@ -238,8 +247,17 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
 
     std::pair<Real, Real> newpos( sum(pos_para, dis_para) );
 
-    if( in_face( newpos ) )
+    if( in_face( newpos, 0.0) )
     {
+      Real last_dis( length(face_ptr->to_absolute(dis_para) ) );
+      if(fabs(disp_len - last_dis) > GLOBAL_TOLERANCE )
+      {
+        std::cout << "left displacement: " << disp_len - last_dis << std::endl;
+        std::cout << "(disp_len - last_dis) / disp_len_tot: " << (disp_len - last_dis) / disp_len_tot << std::endl;
+        throw std::invalid_argument("apply_displacement: sum of subdisplacement is not total displacement");
+      }
+      std::cout << fabs(disp_len - last_dis) << std::endl;
+
       Realvec renewed_pos( face_ptr->get_para_origin() + face_ptr->to_absolute( newpos ) );
       std::pair<Realvec, FaceBase_sptr> retpos( renewed_pos, face_ptr );
       return retpos;
@@ -249,47 +267,76 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
 
     FaceBase_sptr next_face( poly_ptr.lock()->get_neighbor(face_ptr->get_id(), gate) );
 
-    Real ratio( face_ptr->cross_ratio( pos_para, dis_para, gate) );
+    std::pair<Real, Real> neighbor_pos( translate_pos(pos_para, gate, face_ptr) );
+    std::pair<Real, Real> neighbor_dis( translate_dis(dis_para, gate, face_ptr) );
 
-    std::pair<Real, Real> temppos( sum( pos_para, multiple(ratio, dis_para) ) );
-    std::pair<Real, Real> tempdis( multiple( (1e0 - ratio), dis_para ) );
+//     Real ratio( face_ptr->cross_ratio( pos_para, dis_para, gate) );
+//
+//     std::pair<Real, Real> temppos( sum( pos_para, multiple(ratio, dis_para) ) );
+//     std::pair<Real, Real> tempdis( multiple( (1e0 - ratio), dis_para ) );
 
-    if(on_vertex(temppos))
-    {
-      std::cout << "on_vertex(temppos)" << std::endl;
-      std::cout << "now renew " << num_renewface << " times." << std::endl;
-      std::cout << "ratio:              " << std::setw(20) << ratio << std::endl;
-      std::cout << "in_face(pos_para):  " << in_face(pos_para) << std::endl;
-      std::cout << "pos_para:          " << std::setprecision(16) << "(" << pos_para.first 
-                << ", " << pos_para.second << ")" << std::endl;
-      std::cout << "dis_para:          " << std::setprecision(16) << "(" << dis_para.first
-                << ", " << dis_para.second << ")" << std::endl;
-      std::cout << "temppos:           " << std::setprecision(16) << "(" << temppos.first
-                << ", " << temppos.second << ")" << std::endl;
-      throw std::invalid_argument("shortened displacement to put the end of vector is on the edge but it is on vertex" );
-    }
-//     assert( on_edge(temppos) );
-    if( !on_edge(temppos) )
-    {
-      std::cout << "!on_edge(temppos)" << std::endl;
-      std::cout << "now renew " << num_renewface << " times." << std::endl;
-      std::cout << "ratio:              " << ratio << std::endl;
-      std::cout << "in_face(pos_para):  " << in_face(pos_para) << std::endl;
-      std::cout << "pos_para:          " << "(" << std::setprecision(16) << pos_para.first
-                << ", " << std::setprecision(16) << pos_para.second << ")" << std::endl;
-      std::cout << "dis_para:          " << "(" << std::setprecision(16) << dis_para.first
-                << ", " << std::setprecision(16) << dis_para.second << ")" << std::endl;
-      std::cout << "temppos:           " << "(" << std::setprecision(16) << temppos.first 
-                << ", "  << std::setprecision(16) << temppos.second << ")" << std::endl;
-      throw std::invalid_argument("shortened displacement to put the end of vector is on the edge but it is not on edge");
-    }
+    int neighbor_gate(next_face->matching_edge( face_ptr->get_edges_at(gate) ) );
+    // Real ratio( next_face->inv_cross_ratio( neighbor_pos, neighbor_dis, neighbor_gate) );
+    // std::pair<Real, Real> neighbor_newpos( sum(neighbor_pos, multiple(ratio, neighbor_dis)));
+    // std::pair<Real, Real> neighbor_newdis( multiple( (1e0-ratio), neighbor_dis));
+    std::pair<std::pair<Real, Real>, Real> const retval
+        = inv_cross_ratio(neighbor_pos, neighbor_dis, neighbor_gate);
+    std::pair<Real, Real> neighbor_newpos = retval.first;
+    Real ratio = retval.second;
+    std::pair<Real, Real> neighbor_newdis = multiple((1e0 - ratio), neighbor_dis);
 
-    std::pair<Real, Real> neighbor_pos( translate_pos(temppos, gate, face_ptr) );
-    std::pair<Real, Real> neighbor_dis( translate_dis(tempdis, gate, face_ptr) );
-    if( !on_edge(neighbor_pos) )
+    Real subdisp_len(length(next_face->to_absolute(multiple(ratio, neighbor_dis))));
+    disp_len -= subdisp_len;
+
+//     if(on_vertex(temppos))
+//     {
+//       std::cout << "on_vertex(temppos)" << std::endl;
+//       std::cout << "now renew " << num_renewface << " times." << std::endl;
+//       std::cout << "ratio:              " << std::setw(20) << ratio << std::endl;
+//       std::cout << "in_face(pos_para):  " << in_face(pos_para) << std::endl;
+//       std::cout << "pos_para:          " << std::setprecision(16) << "(" << pos_para.first 
+//                 << ", " << pos_para.second << ")" << std::endl;
+//       std::cout << "dis_para:          " << std::setprecision(16) << "(" << dis_para.first
+//                 << ", " << dis_para.second << ")" << std::endl;
+//       std::cout << "temppos:           " << std::setprecision(16) << "(" << temppos.first
+//                 << ", " << temppos.second << ")" << std::endl;
+//       throw std::invalid_argument("shortened displacement to put the end of vector is on the edge but it is on vertex" );
+//     }
+// //     assert( on_edge(temppos) );
+//     if( !on_edge(temppos) )
+//     {
+//       std::cout << "!on_edge(temppos)" << std::endl;
+//       std::cout << "now renew " << num_renewface << " times." << std::endl;
+//       std::cout << "ratio:              " << ratio << std::endl;
+//       std::cout << "in_face(pos_para):  " << in_face(pos_para) << std::endl;
+//       std::cout << "pos_para:          " << "(" << std::setprecision(16) << pos_para.first
+//                 << ", " << std::setprecision(16) << pos_para.second << ")" << std::endl;
+//       std::cout << "dis_para:          " << "(" << std::setprecision(16) << dis_para.first
+//                 << ", " << std::setprecision(16) << dis_para.second << ")" << std::endl;
+//       std::cout << "temppos:           " << "(" << std::setprecision(16) << temppos.first 
+//                 << ", "  << std::setprecision(16) << temppos.second << ")" << std::endl;
+//       throw std::invalid_argument("shortened displacement to put the end of vector is on the edge but it is not on edge");
+//     }
+
+//     std::pair<Real, Real> neighbor_pos( translate_pos(temppos, gate, face_ptr) );
+//     std::pair<Real, Real> neighbor_dis( translate_dis(tempdis, gate, face_ptr) );
+    if( !on_edge(neighbor_newpos, 0.0) )
     {
+      std::cout << "neighbor_newpos gamma: ";
+      std::cout << std::setprecision(16) << neighbor_newpos.first + neighbor_newpos.second << std::endl;
+      std::cout << "neighbor_newpos: ";
+      std::cout << "(" << std::setprecision(16) << neighbor_newpos.first << ", " << neighbor_newpos.second << ")" << std::endl;
       std::cout << "neighbor_pos: ";
       std::cout << "(" << std::setprecision(16) << neighbor_pos.first << ", " << neighbor_pos.second << ")" << std::endl;
+      std::cout << "neighbor_dis: ";
+      std::cout << "(" << std::setprecision(16) << neighbor_dis.first << ", " << neighbor_dis.second << ")" << std::endl;
+      std::cout << "pos_para: ";
+      std::cout << "(" << std::setprecision(16) << pos_para.first << ", " << pos_para.second << ")" << std::endl;
+      std::cout << "dis_para: ";
+      std::cout << "(" << std::setprecision(16) << dis_para.first << ", " << dis_para.second << ")" << std::endl;
+
+      std::cout << "ratio: " << std::setprecision(16) << ratio << std::endl;
+
       std::cout << "face id: " << next_face->get_id() << std::endl;
       std::cout << "vertex 0: " << next_face->get_vertex_at(0) << std::endl;
       std::cout << "vertex 1: " << next_face->get_vertex_at(1) << std::endl;
@@ -302,11 +349,41 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
       std::cout << " n_b_vec: (" << temp.first <<", "<< temp.second << ")" << std::endl;
       temp = face_ptr->get_ori_vec_neighbor_at(gate);
       std::cout << " n_ori_vec: (" << temp.first <<", "<< temp.second << ")" << std::endl;
-      throw std::invalid_argument("neighbor_pos is not on edge");
+      throw std::invalid_argument("neighbor_newpos is not on edge");
     }
 
-    pos_para = neighbor_pos;
-    dis_para = neighbor_dis;
+    if( !in_face(neighbor_newpos, 0.0) )
+    {
+        std::cout << "in_face [END]" << std::endl;
+      std::cout << "neighbor_newpos: ";
+      std::cout << "(" << std::setprecision(16) << neighbor_newpos.first << ", " << neighbor_newpos.second << ")" << std::endl;
+      std::cout << "neighbor_pos: ";
+      std::cout << "(" << std::setprecision(16) << neighbor_pos.first << ", " << neighbor_pos.second << ")" << std::endl;
+      std::cout << "neighbor_dis: ";
+      std::cout << "(" << std::setprecision(16) << neighbor_dis.first << ", " << neighbor_dis.second << ")" << std::endl;
+      std::cout << "pos_para: ";
+      std::cout << "(" << std::setprecision(16) << pos_para.first << ", " << pos_para.second << ")" << std::endl;
+      std::cout << "dis_para: ";
+      std::cout << "(" << std::setprecision(16) << dis_para.first << ", " << dis_para.second << ")" << std::endl;
+
+      std::cout << "ratio: " << std::setprecision(16) << ratio << std::endl;
+
+      std::cout << "face id: " << next_face->get_id() << std::endl;
+      std::cout << "vertex 0: " << next_face->get_vertex_at(0) << std::endl;
+      std::cout << "vertex 1: " << next_face->get_vertex_at(1) << std::endl;
+      std::cout << "vertex 2: " << next_face->get_vertex_at(2) << std::endl;
+
+      std::pair<Real, Real> temp;
+      temp = face_ptr->get_para_a_neighbor_at(gate);
+      std::cout << " n_a_vec: (" << temp.first <<", "<< temp.second << ")" << std::endl;
+      temp = face_ptr->get_para_b_neighbor_at(gate);
+      std::cout << " n_b_vec: (" << temp.first <<", "<< temp.second << ")" << std::endl;
+      temp = face_ptr->get_ori_vec_neighbor_at(gate);
+      std::cout << " n_ori_vec: (" << temp.first <<", "<< temp.second << ")" << std::endl;
+      throw std::invalid_argument("neighbor_newpos is not on edge");
+    }
+    pos_para = neighbor_newpos;
+    dis_para = neighbor_newdis;
     face_ptr = next_face;
   }
 
@@ -372,7 +449,7 @@ int FaceClose::through_edge( const std::pair<Real, Real>& position,
 
   //case::first position is on the edge
   int edge_num(-1);
-  if( on_edge( position, edge_num ) )
+  if( just_on_edge( position, edge_num ) )
   {
     switch(edge_num)
     {
@@ -502,6 +579,87 @@ Real FaceClose::cross_ratio( const std::pair<Real, Real>& position,
 //     throw std::invalid_argument("ratio is not in range");
 }
 
+std::pair<std::pair<Real, Real> , Real> FaceClose::inv_cross_ratio( const std::pair<Real, Real>& position,
+                             const std::pair<Real, Real>& displacement,
+                             const int& edge_num )
+{
+  //outside of this face -> inside of this face
+  Real pos_alpha( position.first );
+  Real pos_beta( position.second );
+  Real dis_alpha( displacement.first );
+  Real dis_beta( displacement.second );
+
+  switch(edge_num)
+  {
+  case 0:
+      {
+    if( dis_beta == 0e0 )
+      throw std::invalid_argument("cannot intersect this edge");
+    const Real ratio = -pos_beta / dis_beta;
+    const Real new_alpha = pos_alpha + dis_alpha * ratio;
+    assert(new_alpha >= 0);
+    const Real new_beta = 0.0;
+    return std::make_pair(std::make_pair(new_alpha, new_beta), ratio);
+      }
+  case 1:
+      {
+    if( dis_alpha + dis_beta == 0e0 )
+      throw std::invalid_argument("cannot intersect this edge");
+    const Real ratio = (1e0 - pos_alpha - pos_beta ) / ( dis_alpha + dis_beta );
+    const Real new_alpha = pos_alpha + dis_alpha * ratio;
+    assert(new_alpha >= 0);
+    const Real new_beta = 1.0 - new_alpha;
+    return std::make_pair(std::make_pair(new_alpha, new_beta), ratio);
+      }
+  case 2:
+      {
+    if( dis_alpha == 0e0 )
+      throw std::invalid_argument("cannot intersect this edge");
+    const Real ratio = -pos_alpha / dis_alpha;
+    const Real new_beta = pos_beta + dis_beta * ratio;
+    assert(new_beta >= 0);
+    const Real new_alpha = 0.0;
+    return std::make_pair(std::make_pair(new_alpha, new_beta), ratio);
+      }
+  default:
+    throw std::invalid_argument("invalid edge_num");
+  }
+}
+
+// Real FaceClose::inv_cross_ratio( const std::pair<Real, Real>& position,
+//                              const std::pair<Real, Real>& displacement,
+//                              const int& edge_num )
+// {
+//   //outside of this face -> inside of this face
+//   Real pos_alpha( position.first );
+//   Real pos_beta( position.second );
+//   Real dis_alpha( displacement.first );
+//   Real dis_beta( displacement.second );
+// 
+//   switch(edge_num)
+//   {
+//   case 0:
+//     if( dis_beta == 0e0 )
+//       throw std::invalid_argument("cannot intersect this edge");
+//     return (-pos_beta / dis_beta);
+// 
+//   case 1:
+//     if( dis_alpha + dis_beta == 0e0 )
+//       throw std::invalid_argument("cannot intersect this edge");
+//     return ( ( 1e0 - pos_alpha - pos_beta ) / ( dis_alpha + dis_beta ) );
+// 
+//   case 2:
+//     if( dis_alpha == 0e0 )
+//       throw std::invalid_argument("cannot intersect this edge");
+//     return (-pos_alpha / dis_alpha);
+// 
+//   default:
+//     throw std::invalid_argument("invalid edge_num");
+//   }
+// }
+
+
+
 /*     2
 //    /\
 // b /  \
@@ -551,11 +709,39 @@ FaceClose::on_edge(const std::pair<Real, Real>& position,
   {
     return true;
   }
-  else if( fabs( alpha + beta - 1e0 ) < tol && (-tol < alpha && -tol < beta) )
+  else if( fabs( alpha + beta - 1e0 ) <= tol && (-tol <= alpha && -tol <= beta) )
   {
     return true;
   }else
   {
+    return false;
+  }
+}
+
+bool
+FaceClose::just_on_edge(const std::pair<Real, Real>& position,
+                     int& edge_num, const Real tol)
+{
+  Real alpha(position.first);
+  Real beta(position.second);
+
+  if( alpha == 0e0 && (-tol <= beta && beta <= 1e0+tol) )
+  {
+    edge_num = 2;
+    return true;
+  }
+  else if( beta == 0e0 && ( -tol <= alpha && alpha <= 1e0+tol ) )
+  {
+    edge_num = 0;
+    return true;
+  }
+  else if( alpha + beta == 1e0 && (-tol < alpha && -tol < beta) )
+  {
+    edge_num = 1;
+    return true;
+  }else
+  {
+    edge_num = -1;
     return false;
   }
 }
@@ -578,7 +764,7 @@ std::pair<Real, Real> FaceClose::to_parametric( const Realvec& pos )
     if( fabs(alpha * para_a[2] + beta * para_b[2] - parametric_pos[2]) > GLOBAL_TOLERANCE )
     {
       for(int i(0); i<3; ++i)
-      std::cout <<"vertexs.at(" << i << "): " << vertexs.at(i) << std::endl;
+      std::cout << "vertexs.at(" << i << "): " << vertexs.at(i) << std::endl;
       std::cout << "alpha: " << alpha << " beta: " << beta << std::endl;
       std::cout << "position: " << pos << std::endl;
       std::cout << "value: " << alpha * para_a[2] + beta * para_b[2] - parametric_pos[2] << std::endl;
@@ -637,10 +823,14 @@ std::pair<Real, Real> FaceClose::to_parametric( const Realvec& pos )
 
 std::pair<Real, Real> FaceClose::projection(const Realvec& pos)
 {
-  Realvec _pos(pos);
-  Real alpha, beta, gamma;
-  Real det_term1( para_a[0] * para_b[1] * normal[2] + para_a[1] * para_b[2] * normal[0] + para_a[2] * para_b[0] * normal[1] );
-  Real det_term2( para_a[0] * para_b[2] * normal[1] + para_a[1] * para_b[0] * normal[2] + para_a[2] * para_b[1] * normal[0] );
+  Real det_term1( para_a[0] * para_b[1] * normal[2]
+                + para_a[1] * para_b[2] * normal[0]
+                + para_a[2] * para_b[0] * normal[1] );
+
+  Real det_term2( para_a[0] * para_b[2] * normal[1]
+                + para_a[1] * para_b[0] * normal[2]
+                + para_a[2] * para_b[1] * normal[0] );
+
   Real determinant(det_term1 - det_term2);
 
   if(determinant == 0e0)
@@ -652,17 +842,26 @@ std::pair<Real, Real> FaceClose::projection(const Realvec& pos)
     std::cout << "vertexs.at(0)" << vertexs.at(0) << std::endl;
     std::cout << "vertexs.at(1)" << vertexs.at(1) << std::endl;
     std::cout << "vertexs.at(2)" << vertexs.at(2) << std::endl;
+    throw std::invalid_argument("projection: determinant is NaN.");
   }
-//     throw std::invalid_argument("projection: determinant is NaN.");
  
-  alpha = (para_b[1]*normal[2] - normal[1]*para_b[2])*_pos[0] + (para_b[2]*normal[0] - para_b[0]*normal[2])*_pos[1] + (para_b[0]*normal[1] - para_b[1]*normal[0])*_pos[2];
-   beta = (para_a[2]*normal[1] - normal[2]*para_a[1])*_pos[0] + (para_a[0]*normal[2] - para_a[2]*normal[0])*_pos[1] + (para_a[1]*normal[0] - para_a[0]*normal[1])*_pos[2];
-  gamma = (para_a[1]*para_b[2] - para_a[2]*para_b[1])*_pos[0] + (para_a[2]*para_b[0] - para_a[0]*para_b[2])*_pos[1] + (para_a[0]*para_b[1] - para_a[1]*para_b[0])*_pos[2];
+  Real alpha( (para_b[1]*normal[2] - normal[1]*para_b[2])*pos[0]
+            + (para_b[2]*normal[0] - para_b[0]*normal[2])*pos[1]
+            + (para_b[0]*normal[1] - para_b[1]*normal[0])*pos[2] );
+
+  Real beta( (para_a[2]*normal[1] - normal[2]*para_a[1])*pos[0]
+           + (para_a[0]*normal[2] - para_a[2]*normal[0])*pos[1]
+           + (para_a[1]*normal[0] - para_a[0]*normal[1])*pos[2] );
+
+  Real gamma( (para_a[1]*para_b[2] - para_a[2]*para_b[1])*pos[0]
+            + (para_a[2]*para_b[0] - para_a[0]*para_b[2])*pos[1]
+            + (para_a[0]*para_b[1] - para_a[1]*para_b[0])*pos[2] );
 
   alpha = alpha / determinant;
    beta = beta / determinant;
   gamma = gamma / determinant;
 
+  //gamma is parameter of normal direction.
   if(gamma > 1e-4)
     throw std::invalid_argument("projection: gamma > 1e-4");
 
@@ -707,7 +906,7 @@ void FaceClose::set_neighbors_edge()
     {
       rot_angle = (-1e0) * acos( dot_product(normal, neighbor_normal) );
     }
-    else if(dot_product(normal, neighbor_normal) > 0e0)
+    else if(dot_product(normal, neighbor_normal) > 1e0)
     {
       std::cout << "Warning: dot product of neighbor normal vectors is : 1 + ";
       std::cout << std::scientific << std::setprecision(16) << (dot_product(normal, neighbor_normal) - 1e0) << std::endl;
@@ -715,7 +914,9 @@ void FaceClose::set_neighbors_edge()
       std::cout << "face id is " << get_id() << std::endl;
       std::cout << std::endl;
       rot_angle = 0e0;
-    }else{
+    }
+    else
+    {
       std::cout << "Warning: dot product of neighbor normal vectors is : -1 + ";
       std::cout << std::scientific << std::setprecision(16) << (dot_product(normal, neighbor_normal) + 1e0) << std::endl;;
       std::cout << "This treats as just -1. acos(dot product) is M_PI." << std::endl;
