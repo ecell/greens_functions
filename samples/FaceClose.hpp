@@ -148,9 +148,6 @@ public:
   virtual void set_near_vertexs();
 
 //************************************************************//
-  //return the vertex such that input edge does not include.
-  virtual Realvec get_another_vertex(const Realvec& neighbors_edge);
-
   //return an id of edge that matches argument neighbors_edge
   int matching_edge(const Realvec& neighbors_edge );
 
@@ -195,15 +192,6 @@ private:
   // parametrize para_a & para_b using neighbor's apara_b
   void set_neighbors_edge();
   void set_neighbors_ori_vtx();
-
-  //return vertex id that is not on the edge. 
-  //  when neighboring face execute this function through ptr, 
-  //  this func return the vertex that is not shared with the neighbor.
-  int get_another_vertex_id(const Realvec& neighbors_edge);
-
-  //return own edge id
-  int get_another_edge_id_right( const Realvec& neighbors_edge);
-  int get_another_edge_id_left( const Realvec& neighbors_edge);
 
   bool just_on_edge(const std::pair<Real, Real>& position, int& edge_num, const Real tol = GLOBAL_TOLERANCE);
 
@@ -256,7 +244,6 @@ FaceClose::apply_displacement(const Realvec& position, const Realvec& displaceme
         std::cout << "(disp_len - last_dis) / disp_len_tot: " << (disp_len - last_dis) / disp_len_tot << std::endl;
         throw std::invalid_argument("apply_displacement: sum of subdisplacement is not total displacement");
       }
-      std::cout << fabs(disp_len - last_dis) << std::endl;
 
       Realvec renewed_pos( face_ptr->get_para_origin() + face_ptr->to_absolute( newpos ) );
       std::pair<Realvec, FaceBase_sptr> retpos( renewed_pos, face_ptr );
@@ -1047,36 +1034,6 @@ void FaceClose::set_neighbors_ori_vtx()
     ori_vec_neighbor.at(i) = ori;
   }
   return;
-}
-
-/*    <- return this vertex
- *  /\
- * /->\
- * ---- <-input edge(neighbors).
- * \<-/
- *  \/ <-call this func using ptr
-*/
-Realvec FaceClose::get_another_vertex(const Realvec& neighbors_edge)
-{
-  return vertexs.at( get_another_vertex_id(neighbors_edge) );
-}
-
-int FaceClose::get_another_vertex_id(const Realvec& neighbors_edge)
-{
-  int i(matching_edge(neighbors_edge));
-  return (i+2) % 3;
-}
-
-int FaceClose::get_another_edge_id_right(const Realvec& neighbors_edge)
-{
-  int i(matching_edge(neighbors_edge) );
-  return ( (i+1) % 3 );
-}
-
-int FaceClose::get_another_edge_id_left(const Realvec& neighbors_edge)
-{
-  int i(matching_edge(neighbors_edge) );
-  return ((i+2) % 3);
 }
 
 Real FaceClose::get_max_a(const Realvec& position, bool& vertex_include_flag)
