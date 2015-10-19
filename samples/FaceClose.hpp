@@ -204,7 +204,7 @@ private:
  
     // parametrize para_a & para_b using neighbor's apara_b
     void set_neighbors_edge();
-    void set_neighbors_ori_vtx();
+//     void set_neighbors_ori_vtx();
  
     bool just_on_edge(const std::pair<Real, Real>& position, int& edge_num, const Real tol = GLOBAL_TOLERANCE);
 
@@ -902,7 +902,7 @@ void FaceClose::set_near_vertexs()
         near_vert_height.push_back( ptr->get_minimum_height( edges.at(i) ) );
     }
     set_neighbors_edge();
-    set_neighbors_ori_vtx();
+//     set_neighbors_ori_vtx();
     return;
 }
 
@@ -915,6 +915,7 @@ void FaceClose::set_neighbors_edge()
        
         Realvec neighbor_para_a( ptr->get_para_a() );
         Realvec neighbor_para_b( ptr->get_para_b() );
+        Realvec vi_nbr_ori( ptr->get_para_origin() - vertexs.at(i) );
        
         Realvec neighbor_normal( ptr->get_normal_vector() );
        
@@ -945,14 +946,13 @@ void FaceClose::set_neighbors_edge()
         }
        
         Realvec axis( cross_product(normal, neighbor_normal) );
-        if( length(axis) == 0e0 || rot_angle == 0e0 )
-        {
-            ;//do nothing
-        }
-        else
+
+//         if( length(axis) == 0e0 || rot_angle == 0e0 )
+        if( length(axis) != 0e0 && rot_angle != 0e0 )
         {
             neighbor_para_a = rotation( rot_angle, axis/length(axis), neighbor_para_a );
             neighbor_para_b = rotation( rot_angle, axis/length(axis), neighbor_para_b );
+            vi_nbr_ori = rotation( rot_angle, axis/length(axis), vi_nbr_ori );
         }
 
 //     if( fabs( dot_product( neighbor_para_a, normal ) ) > GLOBAL_TOLERANCE )
@@ -969,6 +969,8 @@ void FaceClose::set_neighbors_edge()
 
         std::pair<Real, Real> neighbor_a( projection( neighbor_para_a ) );
         std::pair<Real, Real> neighbor_b( projection( neighbor_para_b ) );
+        Realvec nbrori_ori( para_origin - vertexs.at(i) - vi_nbr_ori );
+        std::pair<Real, Real> neighbor_ori_this_ori( projection( nbrori_ori ) );
 
         // ( neighbor_a.first neighbor_a.second ) (para_a) = (neighbor_para_a)
         // ( neighbor_b.first neighbor_b.second ) (para_b)   (neighbor_para_b)
@@ -1010,71 +1012,81 @@ void FaceClose::set_neighbors_edge()
             std::cout << "determinant: " << determinant << std::endl;
         }
 
+        // ******* parametric vector ***********************************************//
         para_a_neighbor.at(i) = nbr_a;
         para_b_neighbor.at(i) = nbr_b;
-    }
-    return;
-}
 
-void FaceClose::set_neighbors_ori_vtx()
-{
-    for(int i(0); i<3; ++i)
-    {
-        FaceBase_sptr ptr(poly_ptr.lock()->get_neighbor(face_id, i));
-        Realvec vi_nbr_ori( ptr->get_para_origin() - vertexs.at(i) );
-       
-        Realvec neighbor_normal( ptr->get_normal_vector() );
-       
-        Real rot_angle;
-        if(fabs(dot_product(normal, neighbor_normal) <= 1e0) )
-        {
-            rot_angle = (-1e0) * acos( dot_product(normal, neighbor_normal) );
-        }
-        else if(dot_product(normal, neighbor_normal) > 0e0)
-        {
-            std::cout << "Warning: dot product of neighbor normal vectors is : 1 + ";
-            std::cout << std::scientific << std::setprecision(16);
-            std::cout << (dot_product(normal, neighbor_normal) - 1e0) << std::endl;
-            std::cout << "This treats as just 1. acos(dot product) is 0e0." << std::endl;
-            std::cout << "face id is " << get_id() << std::endl;
-            std::cout << std::endl;
-            rot_angle = 0e0;
-        }
-        else
-        {
-            std::cout << "Warning: dot product of neighbor normal vectors is : -1 + ";
-            std::cout << std::scientific << std::setprecision(16);
-            std::cout << (dot_product(normal, neighbor_normal) + 1e0) << std::endl;
-            std::cout << "This treats as just -1. acos(dot product) is M_PI." << std::endl;
-            std::cout << "face id is " << get_id() << std::endl;
-            std::cout << std::endl;
-            rot_angle = M_PI;
-        }
-       
-       
-        Realvec axis( cross_product(normal, neighbor_normal) );
-        if( length(axis) == 0e0 )
-        {
-          //do nothing
-        }
-        else
-        {
-            vi_nbr_ori = rotation( rot_angle, axis/length(axis), vi_nbr_ori );
-        }
-       
-        Realvec nbrori_ori( para_origin - vertexs.at(i) - vi_nbr_ori );
-        std::pair<Real, Real> neighbor_ori_this_ori( projection( nbrori_ori ) );
-       
+        // ******* origin vertex ***************************************************//
         Real nbr_alpha( neighbor_ori_this_ori.first  * para_a_neighbor.at(i).first 
                       + neighbor_ori_this_ori.second * para_b_neighbor.at(i).first );
         Real nbr_beta( neighbor_ori_this_ori.first   * para_a_neighbor.at(i).second
                       + neighbor_ori_this_ori.second * para_b_neighbor.at(i).second );
         std::pair<Real, Real> ori( nbr_alpha, nbr_beta );
-       
         ori_vec_neighbor.at(i) = ori;
+
     }
     return;
 }
+
+// void FaceClose::set_neighbors_ori_vtx()
+// {
+//     for(int i(0); i<3; ++i)
+//     {
+//         FaceBase_sptr ptr(poly_ptr.lock()->get_neighbor(face_id, i));
+//         Realvec vi_nbr_ori( ptr->get_para_origin() - vertexs.at(i) );
+//
+//         Realvec neighbor_normal( ptr->get_normal_vector() );
+//
+//         Real rot_angle;
+//         if(fabs(dot_product(normal, neighbor_normal) <= 1e0) )
+//         {
+//             rot_angle = (-1e0) * acos( dot_product(normal, neighbor_normal) );
+//         }
+//         else if(dot_product(normal, neighbor_normal) > 0e0)
+//         {
+//             std::cout << "Warning: dot product of neighbor normal vectors is : 1 + ";
+//             std::cout << std::scientific << std::setprecision(16);
+//             std::cout << (dot_product(normal, neighbor_normal) - 1e0) << std::endl;
+//             std::cout << "This treats as just 1. acos(dot product) is 0e0." << std::endl;
+//             std::cout << "face id is " << get_id() << std::endl;
+//             std::cout << std::endl;
+//             rot_angle = 0e0;
+//         }
+//         else
+//         {
+//             std::cout << "Warning: dot product of neighbor normal vectors is : -1 + ";
+//             std::cout << std::scientific << std::setprecision(16);
+//             std::cout << (dot_product(normal, neighbor_normal) + 1e0) << std::endl;
+//             std::cout << "This treats as just -1. acos(dot product) is M_PI." << std::endl;
+//             std::cout << "face id is " << get_id() << std::endl;
+//             std::cout << std::endl;
+//             rot_angle = M_PI;
+//         }
+//
+//
+//         Realvec axis( cross_product(normal, neighbor_normal) );
+//         if( length(axis) == 0e0 )
+//         {
+//           //do nothing
+//         }
+//         else
+//         {
+//             vi_nbr_ori = rotation( rot_angle, axis/length(axis), vi_nbr_ori );
+//         }
+//
+//         Realvec nbrori_ori( para_origin - vertexs.at(i) - vi_nbr_ori );
+//         std::pair<Real, Real> neighbor_ori_this_ori( projection( nbrori_ori ) );
+//
+//         Real nbr_alpha( neighbor_ori_this_ori.first  * para_a_neighbor.at(i).first 
+//                       + neighbor_ori_this_ori.second * para_b_neighbor.at(i).first );
+//         Real nbr_beta( neighbor_ori_this_ori.first   * para_a_neighbor.at(i).second
+//                       + neighbor_ori_this_ori.second * para_b_neighbor.at(i).second );
+//         std::pair<Real, Real> ori( nbr_alpha, nbr_beta );
+//
+//         ori_vec_neighbor.at(i) = ori;
+//     }
+//     return;
+// }
 
 Real FaceClose::get_max_a(const Realvec& position, bool& vertex_include_flag)
 {
