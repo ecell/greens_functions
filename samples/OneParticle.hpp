@@ -55,10 +55,37 @@ public:
 void OneParticle::move( const Real r, const Real theta )
 {
 
-  if(shell_includes_vertex)
-  {
-    //TODO
-    ++times_shell_include_vertex;
+//   if(shell_includes_vertex)
+//   {
+//     //TODO
+//     ++times_shell_include_vertex;
+//     Realvec axis( face_ptr->get_normal_vector() );
+//     Realvec target( face_ptr->get_represent_vector() );
+//     Realvec disp_direction( rotation(theta, axis, target) );
+//     Realvec displacement( disp_direction * r );
+//
+//     if( fabs(length(displacement) - r) > GLOBAL_TOLERANCE )
+//     {
+//       std::cerr << "r: " << std::setprecision(16) << r << std::endl;
+//       std::cerr << "disp_direction length: " << std::setprecision(16)
+//                 << length(disp_direction) << std::endl;
+//       std::cerr << "displacement length: " << std::setprecision(16)
+//                 << length(displacement) << std::endl;
+//       std::cerr << "fabs(length(displacement) - r)" << std::setprecision(16) 
+//                 << fabs(length(displacement) - r) << std::endl;
+//       throw std::invalid_argument("displacement length is not equal to shell size.");
+//     }
+//
+//     std::pair<Realvec, FaceBase_sptr> pos_ptr;
+//     pos_ptr = face_ptr->apply_displacement(position, displacement, face_ptr);
+//
+//     position = pos_ptr.first;
+//     face_ptr = pos_ptr.second;
+//
+//     return;
+//
+//   }else{
+
     Realvec axis( face_ptr->get_normal_vector() );
     Realvec target( face_ptr->get_represent_vector() );
     Realvec disp_direction( rotation(theta, axis, target) );
@@ -83,34 +110,7 @@ void OneParticle::move( const Real r, const Real theta )
     face_ptr = pos_ptr.second;
 
     return;
-
-  }else{
-
-    Realvec axis( face_ptr->get_normal_vector() );
-    Realvec target( face_ptr->get_represent_vector() );
-    Realvec disp_direction( rotation(theta, axis, target) );
-    Realvec displacement( disp_direction * r );
-
-    if( fabs(length(displacement) - r) > GLOBAL_TOLERANCE )
-    {
-      std::cerr << "r: " << std::setprecision(16) << r << std::endl;
-      std::cerr << "disp_direction length: " << std::setprecision(16)
-                << length(disp_direction) << std::endl;
-      std::cerr << "displacement length: " << std::setprecision(16)
-                << length(displacement) << std::endl;
-      std::cerr << "fabs(length(displacement) - r)" << std::setprecision(16) 
-                << fabs(length(displacement) - r) << std::endl;
-      throw std::invalid_argument("displacement length is not equal to shell size.");
-    }
-
-    std::pair<Realvec, FaceBase_sptr> pos_ptr;
-    pos_ptr = face_ptr->apply_displacement(position, displacement, face_ptr);
-
-    position = pos_ptr.first;
-    face_ptr = pos_ptr.second;
-
-    return;
-  }
+//   }
 }
 
 // std::pair<Realvec, FaceBase_sptr>

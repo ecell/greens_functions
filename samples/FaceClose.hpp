@@ -1114,43 +1114,43 @@ Real FaceClose::get_max_a(const Realvec& position, bool& vertex_include_flag)
  
     // if minimal distance from particle to vertex is smaller than this threshold
     // this allows the shell to include only one vertex.
-    if(min_distance < VERTEX_THRESHOLD)
-    {
-        vertex_include_flag = true;
-        Real second_distance(-1e0);
-       
-        for(std::vector<Realvec>::iterator iter = vertexs.begin();
-            iter != vertexs.end(); ++iter)
-        {
-            Real len(length(*iter - position));
-           
-            if( fabs(min_distance - len) < GLOBAL_TOLERANCE )
-            {
-                continue;
-            }
-            else if(second_distance > len || second_distance < 0e0)
-            {
-                second_distance = len;
-            }
-        }
-       
-        if(near_vert_height.empty()) return second_distance;
-       
-        for(std::vector<Real>::iterator iter = near_vert_height.begin();
-            iter != near_vert_height.end(); ++iter)
-        {
-            if(fabs(min_distance - *iter) < GLOBAL_TOLERANCE) continue;
-
-            if(second_distance > *iter ) second_distance = *iter;
-        }
-       
-        THROW_UNLESS(std::invalid_argument, second_distance > VERTEX_THRESHOLD);
-        return second_distance;
-    }
-    else
-    {
+//     if(min_distance < VERTEX_THRESHOLD)
+//     {
+//         vertex_include_flag = true;
+//         Real second_distance(-1e0);
+//
+//         for(std::vector<Realvec>::iterator iter = vertexs.begin();
+//             iter != vertexs.end(); ++iter)
+//         {
+//             Real len(length(*iter - position));
+//
+//             if( fabs(min_distance - len) < GLOBAL_TOLERANCE )
+//             {
+//                 continue;
+//             }
+//             else if(second_distance > len || second_distance < 0e0)
+//             {
+//                 second_distance = len;
+//             }
+//         }
+//
+//         if(near_vert_height.empty()) return second_distance;
+//
+//         for(std::vector<Real>::iterator iter = near_vert_height.begin();
+//             iter != near_vert_height.end(); ++iter)
+//         {
+//             if(fabs(min_distance - *iter) < GLOBAL_TOLERANCE) continue;
+//
+//             if(second_distance > *iter ) second_distance = *iter;
+//         }
+//
+//         THROW_UNLESS(std::invalid_argument, second_distance > VERTEX_THRESHOLD);
+//         return second_distance;
+//     }
+//     else
+//     {
         return min_distance;
-    }
+//     }
 }
 
 Real FaceClose::get_left_angle( const Realvec& neighbors_edge )
