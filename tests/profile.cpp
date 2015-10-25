@@ -28,7 +28,7 @@ void test_drawTime(T_ gf, std::string const name, Real* randomarray)
     start = clock();
     for (int i=0; i < loopnum; i++)
     {
-	bufT = gf.drawTime(randomarray[i]);
+    bufT = gf.drawTime(randomarray[i]);
     }
     end = clock();
 
@@ -69,7 +69,7 @@ void test_theta(T_ gf, std::string const name, Real* randomarray)
     start = clock();
     for (int i=0; i < loopnum; i++)
     {
-	bufTheta = gf.drawTheta(randomarray[i], r, t);
+    bufTheta = gf.drawTheta(randomarray[i], r, t);
     }
     end = clock();
 
@@ -89,7 +89,7 @@ void test_event(T_ gf, std::string const name, Real* randomarray)
     start = clock();
     for (int i=0; i < loopnum; i++)
     {
-	eventType = gf.drawEventType(randomarray[i], t);
+    eventType = gf.drawEventType(randomarray[i], t);
     }
     end = clock();
 
@@ -114,7 +114,7 @@ int main()
     boost::random::uniform_real_distribution<Real> rand(0.0, 1.0);
     for(int i=0; i < loopnum; i++)
     {
-	randomarray[i] = rand(rng);
+    randomarray[i] = rand(rng);
     }
 
     test_drawTime(greens_functions::GreensFunction1DAbsAbs(D, r0, sigma, a), "GreensFunction1DAbsAbs", randomarray); //drawEventType
