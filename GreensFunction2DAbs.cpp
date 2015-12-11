@@ -492,9 +492,6 @@ namespace greens_functions
 
         if(t == 0e0 || D == 0e0)
             return 0e0;
-        
-//         Real p_surv(p_survival(t));
-//         assert(p_surv > 0e0);
 
         p_theta_params params = {this, t, r, rnd};
 

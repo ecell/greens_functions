@@ -71,7 +71,8 @@ namespace greens_functions
             const Real t;
             const Real r;
             const Real rnd;
-            // p_int_theta is already normalized.
+            /* p_int_theta returns [0,1) because that is already normalized.*
+             * so this use rnd, not p_surv(t) * rnd.                        */
         };
 
         static const Real p_survival_F(const Real t,
@@ -91,6 +92,5 @@ namespace greens_functions
         const Real a;
         const Real r0;
     };
-
 }
 #endif//GREENS_FUNCTION_2D_ABS
