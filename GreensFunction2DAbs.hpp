@@ -59,7 +59,7 @@ namespace greens_functions
         {
             const GreensFunction2DAbs* const gf;
             const Real t;
-            const Real r_target;
+            const Real target;
             /* when time = t, probability of there is particle is p_surv(t). *
              * to seek the r, the random value that satisfy the equation     *
              * must be in [0, p_surv). the value, rnd * p_surv(t) is target. */
@@ -80,7 +80,7 @@ namespace greens_functions
         static const Real p_r_F(const Real r,
                                 const p_r_params* params);
 
-        static const Real p_theta_F(const Real t,
+        static const Real p_theta_F(const Real theta,
                                     const p_theta_params* params);
 
     private:

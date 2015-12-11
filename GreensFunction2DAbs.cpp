@@ -407,6 +407,18 @@ namespace greens_functions
     }
 
 //********************************* drawR ************************************//
+    const Real
+        GreensFunction2DAbs::p_r_F(const Real r, const p_r_params* params)
+    {
+        const GreensFunction2DAbs* const gf(params->gf);
+        const Real t(params->t);
+        const Real target(params->target);
+
+        return gf->p_int_r(r, t) - target;
+    }
+
+
+
     const Real GreensFunction2DAbs::drawR(const Real rnd, const Real t) const
     {
         THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
@@ -416,6 +428,17 @@ namespace greens_functions
 
 
 //********************************* drawTheta ********************************//
+    const Real GreensFunction2DAbs::p_theta_F(const Real theta,
+                                              const p_theta_params* params)
+    {
+        const GreensFunction2DAbs* const gf(params->gf);
+        const Real t(params->t);
+        const Real r(params->r);
+        const Real target(params->target);
+
+        return gf->p_int_theta(r, theta, t) - target;
+    }
+
     const Real GreensFunction2DAbs::drawTheta(const Real rnd, const Real r, const Real t) const
     {
         THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
