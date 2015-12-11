@@ -73,6 +73,9 @@ namespace greens_functions
 
     const Real GreensFunction2DAbs::p_int_r(const Real r, const Real t) const
     {
+        //speed of convergence is too slow
+        if(r == 0e0) return 0e0;
+
         const Real r_0(this->getr0());
         const Real a(this->geta());
         const Real Dt(this->getD() * t);
@@ -134,6 +137,9 @@ namespace greens_functions
         {
             return 0e0;
         }
+
+        if(theta == 0e0) return 0e0;
+        if((theta - 2*M_PI) < CUTOFF) return 1e0;
 
         const Real first_term(p_int_theta_first(r, theta, t));
         const Real second_term(p_int_theta_second(r, theta, t));
@@ -354,7 +360,7 @@ namespace greens_functions
         THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
         if(D == 0e0 || a == INFINITY)
             return INFINITY;
-        if(a == 0e0)
+        if(a == r0)
             return 0e0;
 
         p_survival_params params = {this, rnd};
@@ -403,6 +409,9 @@ namespace greens_functions
 
         const Real t(findRoot(F, solver, low, high, 1e-18, 1e-12,
                               "GreensFunction2DAbs::drawTime"));
+
+        gsl_root_fsolver_free(solver);
+
         return t;
     }
 
@@ -417,13 +426,35 @@ namespace greens_functions
         return gf->p_int_r(r, t) - target;
     }
 
-
-
     const Real GreensFunction2DAbs::drawR(const Real rnd, const Real t) const
     {
         THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
-        Real dummy(0e0);
-        return dummy;
+
+        if(a == r0 || t == 0e0 || D == 0e0)
+            return 0e0;
+        
+        Real p_surv(p_survival(t));
+        assert(p_surv > 0e0);
+
+        p_r_params params = {this, t, rnd * p_surv};
+
+        gsl_function F = 
+        {
+            reinterpret_cast<typeof(F.function)>(&p_r_F), &params
+        };
+
+        const Real low(0e0);
+        const Real high(a);
+
+        const gsl_root_fsolver_type* solverType(gsl_root_fsolver_brent);
+        gsl_root_fsolver* solver(gsl_root_fsolver_alloc(solverType));
+
+        const Real r(findRoot(F, solver, low, high, 1e-18, 1e-12,
+                              "GreensFunction2DAbsSym::drawR"));
+
+        gsl_root_fsolver_free(solver);
+
+        return r;
     }
 
 
@@ -442,20 +473,46 @@ namespace greens_functions
     const Real GreensFunction2DAbs::drawTheta(const Real rnd, const Real r, const Real t) const
     {
         THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
-        if(fabs(r) < CUTOFF)
-        {
-            throw std::invalid_argument(
-                    (boost::format("2DAbs::drawTheta r is too small: r=%f10") % r).str());
-        }
 
         if(fabs(r) < CUTOFF)
         {
-            throw std::invalid_argument(
-                    (boost::format("2DAbs::drawTheta r is nealy a: r=%f10, a=%f10") % r % a).str());
+            return 0e0;
+//             throw std::invalid_argument(
+//                     (boost::format("2DAbs::drawTheta r is too small: r=%f10") % r).str());
         }
 
-        Real dummy(0e0);
-        return dummy;
+        if(fabs(r-a) < CUTOFF)
+        {
+            return 0e0;
+//             throw std::invalid_argument(
+//                     (boost::format("2DAbs::drawTheta r is nealy a: r=%f10, a=%f10") % r % a).str());
+        }
+
+        if(t == 0e0 || D == 0e0)
+            return 0e0;
+        
+        Real p_surv(p_survival(t));
+        assert(p_surv > 0e0);
+
+        p_theta_params params = {this, t, r, rnd * p_surv};
+
+        gsl_function F = 
+        {
+            reinterpret_cast<typeof(F.function)>(&p_theta_F), &params
+        };
+
+        const Real low(0e0);
+        const Real high(2e0 * M_PI);
+
+        const gsl_root_fsolver_type* solverType(gsl_root_fsolver_brent);
+        gsl_root_fsolver* solver(gsl_root_fsolver_alloc(solverType));
+
+        const Real theta(findRoot(F, solver, low, high, 1e-18, 1e-12,
+                                  "GreensFunction2DAbsSym::drawTheta"));
+
+        gsl_root_fsolver_free(solver);
+
+        return theta;
     }
 
 }
