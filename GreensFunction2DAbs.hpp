@@ -70,8 +70,8 @@ namespace greens_functions
             const GreensFunction2DAbs* const gf;
             const Real t;
             const Real r;
-            const Real target;
-            // the same reason above.
+            const Real rnd;
+            // p_int_theta is already normalized.
         };
 
         static const Real p_survival_F(const Real t,

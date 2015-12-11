@@ -139,7 +139,7 @@ namespace greens_functions
         }
 
         if(theta == 0e0) return 0e0;
-        if((theta - 2*M_PI) < CUTOFF) return 1e0;
+        if(fabs(theta - 2*M_PI) < CUTOFF) return 1e0;
 
         const Real first_term(p_int_theta_first(r, theta, t));
         const Real second_term(p_int_theta_second(r, theta, t));
@@ -352,7 +352,7 @@ namespace greens_functions
         const Real rnd(params->rnd);
 
         //seek certain t that satisfies 1 - p_survival(t) = rnd.
-        return 1 - gf->p_survival(t) - rnd;
+        return 1e0 - gf->p_survival(t) - rnd;
     }
 
     const Real GreensFunction2DAbs::drawTime(const Real rnd) const
@@ -432,13 +432,13 @@ namespace greens_functions
 
         if(a == r0 || t == 0e0 || D == 0e0)
             return 0e0;
-        
+
         Real p_surv(p_survival(t));
         assert(p_surv > 0e0);
 
         p_r_params params = {this, t, rnd * p_surv};
 
-        gsl_function F = 
+        gsl_function F =
         {
             reinterpret_cast<typeof(F.function)>(&p_r_F), &params
         };
@@ -465,12 +465,14 @@ namespace greens_functions
         const GreensFunction2DAbs* const gf(params->gf);
         const Real t(params->t);
         const Real r(params->r);
-        const Real target(params->target);
+        const Real rnd(params->rnd);
 
-        return gf->p_int_theta(r, theta, t) - target;
+        return gf->p_int_theta(r, theta, t) - rnd;
     }
 
-    const Real GreensFunction2DAbs::drawTheta(const Real rnd, const Real r, const Real t) const
+    const Real GreensFunction2DAbs::drawTheta(const Real rnd,
+                                              const Real r,
+                                              const Real t) const
     {
         THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
 
@@ -491,12 +493,12 @@ namespace greens_functions
         if(t == 0e0 || D == 0e0)
             return 0e0;
         
-        Real p_surv(p_survival(t));
-        assert(p_surv > 0e0);
+//         Real p_surv(p_survival(t));
+//         assert(p_surv > 0e0);
 
-        p_theta_params params = {this, t, r, rnd * p_surv};
+        p_theta_params params = {this, t, r, rnd};
 
-        gsl_function F = 
+        gsl_function F =
         {
             reinterpret_cast<typeof(F.function)>(&p_theta_F), &params
         };
@@ -514,5 +516,4 @@ namespace greens_functions
 
         return theta;
     }
-
 }
