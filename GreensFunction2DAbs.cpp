@@ -122,6 +122,18 @@ namespace greens_functions
                                                 const Real theta,
                                                 const Real t) const
     {
+        if(fabs(r) < 1e-12)
+        {
+            // when r=0, theta does not have any meaning.
+            throw std::invalid_argument("too small r in p_int_theta");
+        }
+
+        if(fabs(r-a) < 1e-12)
+        {
+            // when r=a, value of this function become 0 in everywhere.
+            throw std::invalid_argument("too big r(nearly equal a) in p_int_theta");
+        }
+
         const Real first_term(p_int_theta_first(r, theta, t));
         const Real second_term(p_int_theta_second(r, theta, t));
         const Real denominator(p_int_2pi(r, t));
@@ -251,6 +263,11 @@ namespace greens_functions
 
             if(fabs(in_sum / (n_real * sum)) < threshold)
             {
+                /* if n * theta is a multiple of \pi, the term may be zero and *
+                 * term/sum become also zero. this is a problem. sin is in a   *
+                 * regeon [-1, 1], so the order of term does not depend on     *
+                 * value of sin, so this considers only in_sum / n_real.       */
+
 //                 std::cout << "normal exit. n = " << n << " second term" << std::endl;
                 break;
             }
