@@ -17,9 +17,9 @@ namespace greens_functions
         GreensFunction2DAbs(const Real D, const Real r0, const Real a);
         virtual ~GreensFunction2DAbs();
 
-//         const Real drawTime(const Real rnd) const;
-//         const Real drawR(const Real rnd, const Real t) const;
-//         const Real drawTheta(const Real rnd, const Real r, const Real t) const;
+        const Real drawTime(const Real rnd) const;
+        const Real drawR(const Real rnd, const Real t) const;
+        const Real drawTheta(const Real rnd, const Real r, const Real t) const;
 
         const Real p_survival(const Real t) const;
         const Real p_int_r(const Real r, const Real t) const;
@@ -35,7 +35,7 @@ namespace greens_functions
             return "GreensFunction2DAbs";
         }
 
-//     private:
+    private:
 
         //calculate the first term of p_int_theta
         const Real p_int_theta_first(const Real r,
@@ -49,7 +49,43 @@ namespace greens_functions
 
     private:
 
-        static const Real CUTOFF;
+        struct p_survival_params
+        {
+            const GreensFunction2DAbs* const gf;
+            const Real rnd;
+        };
+
+        struct p_r_params
+        {
+            const GreensFunction2DAbs* const gf;
+            const Real t;
+            const Real r_target;
+            /* when time = t, probability of there is particle is p_surv(t). *
+             * to seek the r, the random value that satisfy the equation     *
+             * must be in [0, p_surv). the value, rnd * p_surv(t) is target. */
+        };
+
+        struct p_theta_params
+        {
+            const GreensFunction2DAbs* const gf;
+            const Real t;
+            const Real r;
+            const Real target;
+            // the same reason above.
+        };
+
+        static const Real p_survival_F(const Real t,
+                                       const p_survival_params* params);
+
+        static const Real p_r_F(const Real r,
+                                const p_r_params* params);
+
+        static const Real p_theta_F(const Real t,
+                                    const p_theta_params* params);
+
+    private:
+
+        static const Real CUTOFF;//1e-10, provisionally.
 
         const Real D;
         const Real a;

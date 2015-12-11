@@ -1,7 +1,10 @@
-#include "GreensFunction2DAbs.hpp"
-#include <cmath>
 #include <iomanip>
+#include <cmath>
+#include <boost/format.hpp>
 #include <gsl/gsl_sf_bessel.h>
+#include <gsl/gsl_roots.h>
+#include "GreensFunction2DAbs.hpp"
+#include "findRoot.hpp"
 
 namespace greens_functions
 {
@@ -122,21 +125,20 @@ namespace greens_functions
                                                 const Real theta,
                                                 const Real t) const
     {
-        if(fabs(r) < 1e-12)
+        if(fabs(r) < CUTOFF)
         {
-            // when r=0, theta does not have any meaning.
-            throw std::invalid_argument("too small r in p_int_theta");
+            return theta * 0.5 / M_PI;
         }
 
-        if(fabs(r-a) < 1e-12)
+        if(fabs(r-a) < CUTOFF)
         {
-            // when r=a, value of this function become 0 in everywhere.
-            throw std::invalid_argument("too big r(nearly equal a) in p_int_theta");
+            return 0e0;
         }
 
         const Real first_term(p_int_theta_first(r, theta, t));
         const Real second_term(p_int_theta_second(r, theta, t));
         const Real denominator(p_int_2pi(r, t));
+
         return (first_term + second_term) / denominator;
     }
 
@@ -266,7 +268,7 @@ namespace greens_functions
                 /* if n * theta is a multiple of \pi, the term may be zero and *
                  * term/sum become also zero. this is a problem. sin is in a   *
                  * regeon [-1, 1], so the order of term does not depend on     *
-                 * value of sin, so this considers only in_sum / n_real.       */
+                 * value of sin, so this considers only (in_sum / n_real).     */
 
 //                 std::cout << "normal exit. n = " << n << " second term" << std::endl;
                 break;
@@ -334,4 +336,103 @@ namespace greens_functions
            << ", = " << this->getr0() << std::endl;
         return ss.str();
     }
+
+//******************************* drawTime ***********************************//
+    const Real
+        GreensFunction2DAbs::p_survival_F(const Real t,
+                                          const p_survival_params* params)
+    {
+        const GreensFunction2DAbs* const gf(params->gf);
+        const Real rnd(params->rnd);
+
+        //seek certain t that satisfies 1 - p_survival(t) = rnd.
+        return 1 - gf->p_survival(t) - rnd;
+    }
+
+    const Real GreensFunction2DAbs::drawTime(const Real rnd) const
+    {
+        THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
+        if(D == 0e0 || a == INFINITY)
+            return INFINITY;
+        if(a == 0e0)
+            return 0e0;
+
+        p_survival_params params = {this, rnd};
+
+        gsl_function F = 
+        {
+            reinterpret_cast<typeof(F.function)>(&p_survival_F), &params
+        };
+
+        // this is not so accurate because
+        // initial position is not the center of this system.
+        const Real t_guess(a * a * 0.25 / D);
+        Real value(GSL_FN_EVAL(&F, t_guess));
+        Real low(t_guess);
+        Real high(t_guess);
+
+        // to determine high and low border
+        if(value < 0.0)
+        {
+            do
+            {
+                high *= 1e1;
+                value = GSL_FN_EVAL(&F, high);
+                if(fabs(high) > t_guess * 1e6)
+                    throw std::invalid_argument("could not adjust higher border");
+            }
+            while(value <= 0e0);
+        }
+        else
+        {
+            Real value_prev = value;
+            do
+            {
+                low *= 1e-1;
+                value = GSL_FN_EVAL(&F, low);
+                if(fabs(low) <= t_guess * 1e-6 || fabs(value - value_prev) < CUTOFF)
+                    throw std::invalid_argument("could not adjust lower border");
+                value_prev = value;
+            }
+            while(value >= 0e0);
+        }
+
+        //find the root
+        const gsl_root_fsolver_type* solverType(gsl_root_fsolver_brent);
+        gsl_root_fsolver* solver(gsl_root_fsolver_alloc(solverType));
+
+        const Real t(findRoot(F, solver, low, high, 1e-18, 1e-12,
+                              "GreensFunction2DAbs::drawTime"));
+        return t;
+    }
+
+//********************************* drawR ************************************//
+    const Real GreensFunction2DAbs::drawR(const Real rnd, const Real t) const
+    {
+        THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
+        Real dummy(0e0);
+        return dummy;
+    }
+
+
+//********************************* drawTheta ********************************//
+    const Real GreensFunction2DAbs::drawTheta(const Real rnd, const Real r, const Real t) const
+    {
+        THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
+        if(fabs(r) < CUTOFF)
+        {
+            throw std::invalid_argument(
+                    (boost::format("2DAbs::drawTheta r is too small: r=%f10") % r).str());
+        }
+
+        if(fabs(r) < CUTOFF)
+        {
+            throw std::invalid_argument(
+                    (boost::format("2DAbs::drawTheta r is nealy a: r=%f10, a=%f10") % r % a).str());
+        }
+
+        Real dummy(0e0);
+        return dummy;
+    }
+
 }
