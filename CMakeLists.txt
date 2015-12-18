@@ -3,17 +3,19 @@ enable_testing()
 
 set (CPP_FILES
     GreensFunction1DAbsAbs.cpp GreensFunction1DAbsSinkAbs.cpp GreensFunction1DRadAbs.cpp
-    GreensFunction2DAbsSym.cpp GreensFunction2DRadAbs.cpp GreensFunction3D.cpp
-    GreensFunction3DAbs.cpp GreensFunction3DAbsSym.cpp GreensFunction3DRadAbs.cpp
-    GreensFunction3DRadAbsBase.cpp GreensFunction3DRadInf.cpp GreensFunction3DSym.cpp
-    SphericalBesselGenerator.cpp findRoot.cpp funcSum.cpp freeFunctions.cpp
+    GreensFunction2DAbsSym.cpp GreensFunction2DRadAbs.cpp GreensFunction2DAbs.cpp
+    GreensFunction3D.cpp GreensFunction3DAbs.cpp GreensFunction3DAbsSym.cpp 
+    GreensFunction3DRadAbs.cpp GreensFunction3DRadAbsBase.cpp GreensFunction3DRadInf.cpp
+    GreensFunction3DSym.cpp SphericalBesselGenerator.cpp
+    findRoot.cpp funcSum.cpp freeFunctions.cpp
 )
 
 set (HPP_FILES
     factorial.hpp Defs.hpp GreensFunction.hpp GreensFunction1DAbsAbs.hpp
-    GreensFunction1DAbsSinkAbs.hpp GreensFunction1DRadAbs.hpp GreensFunction2DAbsSym.hpp
-    GreensFunction2DRadAbs.hpp GreensFunction3D.hpp GreensFunction3DAbs.hpp
-    GreensFunction3DAbsSym.hpp GreensFunction3DRadAbs.hpp GreensFunction3DRadAbsBase.hpp
+    GreensFunction1DAbsSinkAbs.hpp GreensFunction1DRadAbs.hpp
+    GreensFunction2DAbsSym.hpp GreensFunction2DRadAbs.hpp GreensFunction2DAbs.hpp
+    GreensFunction3D.hpp GreensFunction3DAbs.hpp GreensFunction3DAbsSym.hpp
+    GreensFunction3DRadAbs.hpp GreensFunction3DRadAbsBase.hpp
     GreensFunction3DRadInf.hpp GreensFunction3DSym.hpp SphericalBesselGenerator.hpp
     findRoot.hpp funcSum.hpp freeFunctions.hpp PairGreensFunction.hpp
 )

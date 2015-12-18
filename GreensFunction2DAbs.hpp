@@ -37,12 +37,10 @@ namespace greens_functions
 
     private:
 
-        //calculate the first term of p_int_theta
         const Real p_int_theta_first(const Real r,
                                      const Real theta,
                                      const Real t) const;
 
-        //calculate the second term of p_int_theta
         const Real p_int_theta_second(const Real r,
                                       const Real theta,
                                       const Real t) const;
@@ -60,7 +58,7 @@ namespace greens_functions
             const GreensFunction2DAbs* const gf;
             const Real t;
             const Real target;
-            /* when time = t, probability of there is particle is p_surv(t). *
+            /* when time = t, probability of existence is p_surv(t).         *
              * to seek the r, the random value that satisfy the equation     *
              * must be in [0, p_surv). the value, rnd * p_surv(t) is target. */
         };
@@ -71,8 +69,6 @@ namespace greens_functions
             const Real t;
             const Real r;
             const Real rnd;
-            /* p_int_theta returns [0,1) because that is already normalized.*
-             * so this use rnd, not p_surv(t) * rnd.                        */
         };
 
         static const Real p_survival_F(const Real t,

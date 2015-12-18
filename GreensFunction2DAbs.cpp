@@ -139,13 +139,13 @@ namespace greens_functions
         }
 
         if(theta == 0e0) return 0e0;
-        if(fabs(theta - 2*M_PI) < CUTOFF) return 1e0;
+//         if(fabs(theta - 2*M_PI) < CUTOFF) return 1e0;
 
         const Real first_term(p_int_theta_first(r, theta, t));
         const Real second_term(p_int_theta_second(r, theta, t));
-        const Real denominator(p_int_2pi(r, t));
+//         const Real denominator(p_int_2pi(r, t));
 
-        return (first_term + second_term) / denominator;
+        return (first_term + second_term);
     }
 
     const Real GreensFunction2DAbs::p_int_theta_first(const Real r,
@@ -357,10 +357,10 @@ namespace greens_functions
 
     const Real GreensFunction2DAbs::drawTime(const Real rnd) const
     {
-        THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
-        if(D == 0e0 || a == INFINITY)
+        THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd <= 1.0);
+        if(D == 0e0 || a == INFINITY || rnd == 1e0)
             return INFINITY;
-        if(a == r0)
+        if(a == r0 || rnd == 0e0)
             return 0e0;
 
         p_survival_params params = {this, rnd};
@@ -428,10 +428,16 @@ namespace greens_functions
 
     const Real GreensFunction2DAbs::drawR(const Real rnd, const Real t) const
     {
-        THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
+        THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd <= 1.0);
 
-        if(a == r0 || t == 0e0 || D == 0e0)
-            return 0e0;
+        if(a == r0)
+            throw std::invalid_argument("a equal r0");
+
+        if(t == 0e0 || D == 0e0)
+            return r0;
+
+        if(rnd == 1e0)
+            return a;//!?
 
         Real p_surv(p_survival(t));
         assert(p_surv > 0e0);
@@ -474,26 +480,42 @@ namespace greens_functions
                                               const Real r,
                                               const Real t) const
     {
-        THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd < 1.0);
+        THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd <= 1.0);
 
-        if(fabs(r) < CUTOFF)
+        if(rnd == 1e0)
+            return 2e0 * M_PI;
+
+        if(fabs(r) < CUTOFF)// r == 0e0 ?
         {
-            return 0e0;
-//             throw std::invalid_argument(
-//                     (boost::format("2DAbs::drawTheta r is too small: r=%f10") % r).str());
+            throw std::invalid_argument(
+                    (boost::format("2DAbs::drawTheta r is too small: r=%f10") % r).str());
         }
 
-        if(fabs(r-a) < CUTOFF)
+        if(fabs(r-a) < CUTOFF)// r == a ?
         {
-            return 0e0;
-//             throw std::invalid_argument(
-//                     (boost::format("2DAbs::drawTheta r is nealy a: r=%f10, a=%f10") % r % a).str());
+            //when R equal a, p_int_theta is zero at any theta
+            throw std::invalid_argument(
+                    (boost::format("2DAbs::drawTheta r is nealy a: r=%f10, a=%f10") % r % a).str());
         }
 
         if(t == 0e0 || D == 0e0)
             return 0e0;
 
-        p_theta_params params = {this, t, r, rnd};
+        Real int_2pi = p_int_2pi(r, t);
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+         * When t is too large, int_2pi become zero and drawR returns 2pi    *
+         * at any value of rnd. To avoid this,  return rnd * theta / 2pi     *
+         * because when t -> \infty the probability density function of theta*
+         * become uniform distribution                                       *
+         * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        if(int_2pi == 0e0)
+        {
+            std::cout << dump();
+            std::cout << "Warning: t is too large. t = " << t << std::endl;
+        }
+
+        p_theta_params params = {this, t, r, rnd * int_2pi};
 
         gsl_function F =
         {
