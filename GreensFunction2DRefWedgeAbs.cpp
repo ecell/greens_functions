@@ -30,6 +30,10 @@ namespace greens_functions
         // but the speed of convergence is too slow.
         if(t == 0.0) return 1.0;
 
+        // FIXME: for (relative to other value D or a) large t,
+        //        the exponential term exp(-alpha_m0^2 * Dt) become zero
+        //        so comvergence will be slow.
+
         const Real r_0(this->getr0());
         const Real a(this->geta());
         const Real Dt(this->getD() * t);
@@ -73,7 +77,9 @@ namespace greens_functions
             }
         }
         if(n == num_term_use)
-            std::cout << "warning: use term over num_term_use" << std::endl;
+            std::cout << "warning: too slow convergence in p_surv: t = "
+                      << t << ", " << this->dump();
+
         return (2e0 * sum / a);
     }
 
@@ -134,7 +140,8 @@ namespace greens_functions
             }
         }
         if(n == num_term_use)
-            std::cout << "warning: use term over num_term_use" << std::endl;
+            std::cout << "warning: too slow convergence in p_int_r: r = "
+                      << r << ", t = " << t << ", " << this->dump();
 
         return (2e0 * r * sum / (a*a));
     }
@@ -226,7 +233,9 @@ namespace greens_functions
             }
         }
         if(n == num_term_use)
-            std::cout << "warning: use term over num_term_use" << std::endl;
+            std::cout << "warning: too slow convergence in p_int_theta_1st: r = "
+                      << r << ", theta = " << theta << ", t = " << t << ", "
+                      << this->dump();
 
         return (2e0 * theta * sum / (this->phi * a * a));
     }
@@ -236,6 +245,11 @@ namespace greens_functions
                                                         const Real theta,
                                                         const Real t) const
     {
+        // in these case, second term become zero
+        // because of sin(2n * pi * theta / phi)
+        if(theta == 0e0 || theta == phi * 0.5 || theta == phi)
+            return 0e0;
+
         const Real r_0(this->getr0());
         const Real a(this->geta());
         const Real minusDt(-1e0 * this->getD() * t);
@@ -315,8 +329,9 @@ namespace greens_functions
                 }
             }
             if(m == num_in_term_use)
-                std::cout << "warning: too slow convergence in p_int_theta_2nd m."
-                          << std::endl;
+                std::cout << "warning: too slow convergence in p_int_theta_2nd m: "
+                          << "r = " << r << ", theta = " << theta << ", t = "
+                          << t << ", " << this->dump();
 
             term = sgn * in_sum * sin(bessel_order * theta) / n;
             sum += term;
@@ -337,8 +352,9 @@ namespace greens_functions
             }
         }
         if(n == num_out_term_use)
-            std::cout << "warning: too slow convergence in p_int_theta_2nd n."
-                      << std::endl;
+            std::cout << "warning: too slow convergence in p_int_theta_2nd n: "
+                      << "r = " << r << ", theta = " << theta << ", t = " << t
+                      << ", " << this->dump();
 
         return (8e0 * sum / (M_PI * a * a));
     }
@@ -391,8 +407,9 @@ namespace greens_functions
                 break;
             }
         }
-        if(n == num_term_use)std::cout << "warning: use term over num_term_use" << std::endl;
-            std::cout << "warning: use term over num_term_use" << std::endl;
+        if(n == num_term_use)
+            std::cout << "warning: too slow convergence in p_int_phi: r = "
+                      << r << ", t = " << t << ", " << this->dump();
 
         return (2e0 * sum / (a * a));
     }
@@ -550,7 +567,7 @@ namespace greens_functions
         if(rnd == 0e0)
             return 0e0;
 
-        if(fabs(r) < CUTOFF)// r == 0e0 ?
+        if(fabs(r / a) < CUTOFF)// r == 0e0 ?
         {
             throw std::invalid_argument(
                     (boost::format(
