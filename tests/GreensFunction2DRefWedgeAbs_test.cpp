@@ -25,9 +25,16 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTime)
     Real D(1e-12), a(1e-7), r0(5e-8), phi(M_PI);
     GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
  
-    Real t(gf.drawTime(/*rnd = */0.5));
-    BOOST_CHECK(0.0 < t && t < INFINITY);
- 
+    int resolution = 50;
+    Real t, drandom(1e0 / resolution), randomnum(drandom);
+    for(int i=1; i < resolution; ++i)
+    {
+        t = gf.drawTime(randomnum);
+        BOOST_CHECK(0.0 < t && t < INFINITY);
+        randomnum += drandom;
+    }
+
+    // boundary value
     t = gf.drawTime(/*rnd = */0.0);
     BOOST_CHECK_EQUAL(t, 0e0);
 
@@ -40,9 +47,15 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTime_r0_equal_a)
 {
     Real D(1e-12), a(1e-7), r0(a), phi(M_PI);
     GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
- 
-    Real t(gf.drawTime(0.5));
-    BOOST_CHECK_EQUAL(0.0, t);
+
+    int resolution = 50;
+    Real t, drandom(1e0 / resolution), randomnum(0e0);
+    for(int i=0; i < resolution; ++i)
+    {
+        t = gf.drawTime(randomnum);
+        BOOST_CHECK_EQUAL(0.0, t);
+        randomnum += drandom;
+    }
 }
 
 // return value of drawR is in range 0 to a
@@ -51,10 +64,15 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawR)
     Real D(1e-12), a(1e-7), r0(2e-8), phi(M_PI);
     GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
  
-    Real t(1e-3);
- 
-    Real r(gf.drawR(/*rnd = */0.5, t));
-    BOOST_CHECK(0.0 <= r && r <= a);
+    int resolution = 50;
+    Real t(1e-3), drandom(1e0 / resolution), randomnum(drandom);
+    Real r;
+    for(int i=1; i < resolution; ++i)
+    {
+        r = gf.drawR(randomnum, t);
+        BOOST_CHECK(0.0 <= r && r <= a);
+        randomnum += drandom;
+    }
  
     Real r1(gf.drawR(/*rnd = */0.0, t));
     Real r2(gf.drawR(/*rnd = */1.0, t));
@@ -71,10 +89,15 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawR_zerot)
     Real D(1e-12), a(1e-7), r0(2e-8), phi(M_PI);
     GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
  
-    Real t(0.0);
- 
-    Real r(gf.drawR(/*rnd = */0.5, t));
-    BOOST_CHECK_EQUAL(r0, r);
+    int resolution = 50;
+    Real t(0e0), drandom(1e0 / resolution), randomnum(drandom);
+    Real r;
+    for(int i=1; i < resolution; ++i)
+    {
+        r = gf.drawR(randomnum, t);
+        BOOST_CHECK_EQUAL(r0, r);
+        randomnum += drandom;
+    }
 }
 
 // if initial r is near zero or a, drawR return value being positive and lesser than a
@@ -102,6 +125,8 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawR_squeezed)
     BOOST_CHECK(0.0 <= r && r <= a);
 }
 
+// ******************************* Draw Theta *********************************
+
 // draw theta return value that is in range 0 to phi.
 BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTheta)
 {
@@ -122,6 +147,30 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTheta)
     theta = gf.drawTheta(1.0, r, t);
     BOOST_CHECK(0.0 <= theta && theta <= phi);
     BOOST_CHECK_CLOSE(theta, phi, 0.0001);
+}
+
+// test drawtheta for some phi
+BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTheta_for_Phi)
+{
+    Real D(1e-12), a(1e-7), r0(5e-8);
+
+    int resolution = 50;
+    Real phi, r, t;
+    Real dtheta = M_PI * 2e0 / resolution;
+
+    for(int i=1; i < resolution; ++i)
+    {
+        for(int j=0; j<10; ++j)
+        {
+            phi = i * dtheta;
+            GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
+            t = gf.drawTime(0.5);
+            r = gf.drawR(0.5, t);
+
+            Real theta = gf.drawTheta(/*rand = */ 0.5, r, t);
+            BOOST_CHECK(0.0 <= theta && theta <= phi);
+        }
+    }
 }
 
 // if t == zero, drawtheta returns zero.
