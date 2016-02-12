@@ -401,7 +401,8 @@ namespace greens_functions
     {
         std::ostringstream ss;
         ss << "D = " << this->getD() << ", a = " << this->geta()
-           << ", = " << this->getr0() << std::endl;
+           << ", r_0 = " << this->getr0() << ", phi = " << this->getphi()
+           << std::endl;
         return ss.str();
     }
 

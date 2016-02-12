@@ -30,6 +30,7 @@ namespace greens_functions
         const Real getD()  const {return this->D;}
         const Real geta()  const {return this->a;}
         const Real getr0() const {return this->r0;}
+        const Real getphi() const {return this->phi;}
         const std::string dump() const;
         const char* getName() const
         {
@@ -88,7 +89,7 @@ namespace greens_functions
         const Real D;
         const Real a;
         const Real r0;
-        const Real phi;// the angle of apical. theta_0 = \phi / 2
+        const Real phi;// the angle of apical. initial theta = \phi / 2
     };
 }
 #endif//GREENS_FUNCTION_2D_ABS
