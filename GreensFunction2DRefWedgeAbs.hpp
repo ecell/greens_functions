@@ -1,5 +1,5 @@
-#ifndef GREENS_FUNCTION_2D_ABS
-#define GREENS_FUNCTION_2D_ABS
+#ifndef GREENS_FUNCTION_2D_REF_WEDGE_ABS
+#define GREENS_FUNCTION_2D_REF_WEDGE_ABS
 #include <vector>
 #include <string>
 #include <iostream>
@@ -92,4 +92,4 @@ namespace greens_functions
         const Real phi;// the angle of apical. initial theta = \phi / 2
     };
 }
-#endif//GREENS_FUNCTION_2D_ABS
+#endif//GREENS_FUNCTION_2D_REF_WEDGE_ABS
