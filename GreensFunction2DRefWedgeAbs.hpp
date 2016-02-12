@@ -34,7 +34,7 @@ namespace greens_functions
         const std::string dump() const;
         const char* getName() const
         {
-            return "GreensFunction2DAbs";
+            return "GreensFunction2DRefWedgeAbs";
         }
 
     private:
