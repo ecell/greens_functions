@@ -529,7 +529,7 @@ namespace greens_functions
 
 //********************************* drawTheta ********************************//
     const Real GreensFunction2DRefWedgeAbs::p_theta_F(const Real theta,
-                                              const p_theta_params* params)
+                                                      const p_theta_params* params)
     {
         const GreensFunction2DRefWedgeAbs* const gf(params->gf);
         const Real t(params->t);
@@ -540,13 +540,15 @@ namespace greens_functions
     }
 
     const Real GreensFunction2DRefWedgeAbs::drawTheta(const Real rnd,
-                                              const Real r,
-                                              const Real t) const
+                                                      const Real r,
+                                                      const Real t) const
     {
-        THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd <= 1.0);
+        THROW_UNLESS(std::invalid_argument, 0.0 <= rnd && rnd <= 1.0);
 
         if(rnd == 1e0)
             return phi;
+        if(rnd == 0e0)
+            return 0e0;
 
         if(fabs(r) < CUTOFF)// r == 0e0 ?
         {
@@ -558,17 +560,18 @@ namespace greens_functions
 
         if(fabs(r-a) < CUTOFF)// r == a ?
         {
-            //when R equal a, p_int_theta is zero at any theta
+            //when R equal a(abs boundary), particle cannot go anywhere.
             throw std::invalid_argument(
                     (boost::format(
                          "2DAbs::drawTheta r is nealy a: r=%f10, a=%f10"
                          ) % r % a).str());
         }
 
+        // time or diffusion speed is equal to zero, particle doesn't move.
         if(t == 0e0 || D == 0e0)
             return 0e0;
 
-        Real int_2pi = p_int_phi(r, t);
+        const Real int_phi = p_int_phi(r, t);
 
         /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
          * When t is too large, int_2pi become zero and drawR returns 2pi    *
@@ -576,13 +579,16 @@ namespace greens_functions
          * because when t -> \infty the probability density function of theta*
          * become uniform distribution                                       *
          * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        if(int_2pi == 0e0)
+        if(int_phi == 0e0)
         {
             std::cout << dump();
-            std::cout << "Warning: t is too large. t = " << t << std::endl;
+            std::cout << "Warning: p_int_phi become zero because t is too large."
+                      << " t = " << t << std::endl;
+            // throw invalid argument or return 0?
         }
 
-        p_theta_params params = {this, t, r, rnd * int_2pi};
+        // p_int_theta / int_phi = rnd <=> p_int_theta = rnd * int_phi
+        p_theta_params params = {this, t, r, rnd * int_phi};
 
         gsl_function F =
         {
@@ -590,16 +596,22 @@ namespace greens_functions
         };
 
         const Real low(0e0);
-        const Real high(2e0 * M_PI);
+        const Real high(phi);
 
         const gsl_root_fsolver_type* solverType(gsl_root_fsolver_brent);
-        gsl_root_fsolver* solver(gsl_root_fsolver_alloc(solverType));
+              gsl_root_fsolver*      solver(gsl_root_fsolver_alloc(solverType));
 
         const Real theta(findRoot(F, solver, low, high, 1e-18, 1e-12,
                                   "GreensFunction2DRefWedgeAbsSym::drawTheta"));
 
         gsl_root_fsolver_free(solver);
 
-        return theta;
+        // to make initial position zero
+        if(theta * 2e0 < phi)
+            // theta < phi / 2
+            return theta + (phi * 0.5);
+        else
+            // phi / 2 < theta
+            return theta - (phi * 0.5);
     }
 }
