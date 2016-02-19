@@ -18,18 +18,18 @@ namespace greens_functions
                                     const Real phi);
         virtual ~GreensFunction2DRefWedgeAbs();
 
-        const Real drawTime(const Real rnd) const;
-        const Real drawR(const Real rnd, const Real t) const;
+        const Real drawTime (const Real rnd) const;
+        const Real drawR    (const Real rnd, const Real t) const;
         const Real drawTheta(const Real rnd, const Real r, const Real t) const;
 
-        const Real p_survival(const Real t) const;
-        const Real p_int_r(const Real r, const Real t) const;
+        const Real p_survival (const Real t) const;
+        const Real p_int_r    (const Real r, const Real t) const;
+        const Real p_int_phi  (const Real r, const Real t) const;
         const Real p_int_theta(const Real r, const Real theta, const Real t) const;
-        const Real p_int_phi(const Real r, const Real t) const;
 
-        const Real getD()  const {return this->D;}
-        const Real geta()  const {return this->a;}
-        const Real getr0() const {return this->r0;}
+        const Real getD()   const {return this->D;  }
+        const Real geta()   const {return this->a;  }
+        const Real getr0()  const {return this->r0; }
         const Real getphi() const {return this->phi;}
         const std::string dump() const;
         const char* getName() const
