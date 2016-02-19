@@ -539,11 +539,11 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_int_theta_extreme)
         Real r = gf.drawR(0.5, t);
         for(int j=1; j < 10; ++j)
         {
-            Real theta = phi * 0.1 * j;
+            Real theta = phi * 0.05 * j;
             std::cout << "theta = " << theta << std::endl;
             Real pinttheta = gf.p_int_theta(r, theta, t);
             Real pintphi = gf.p_int_phi(r, t);
-            BOOST_CHECK(0e0 < pinttheta && pinttheta < pintphi);
+            BOOST_CHECK(0e0 <= pinttheta && pinttheta <= pintphi);
         }
         phi_ratio *= 1e-1;
     }
