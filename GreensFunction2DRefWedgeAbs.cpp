@@ -162,9 +162,9 @@ namespace greens_functions
             return theta / this->phi;
         }
 
-        if(theta > this->phi)
+        if(theta > this->phi * 0.5)
         {
-            throw std::invalid_argument("too large theta > phi.");
+            throw std::invalid_argument("too large theta > phi/2.");
         }
 
         if(theta < 0e0)
@@ -272,9 +272,6 @@ namespace greens_functions
         const Real tau_phi = 2e0 * M_PI / this->phi;
 //         const Real tau_theta_phi = tau_phi * theta;
 
-        // for (-1)^n
-        Real sgn = -1e0;
-
         // calculating 
         // 8 / (pi * a^2) * 
         // sum_n^inf [
@@ -344,10 +341,8 @@ namespace greens_functions
                           << "r = " << r << ", theta = " << theta << ", t = "
                           << t << ", " << this->dump();
 
-            term = sgn * in_sum * sin(bessel_order * theta) / n;
+            term = in_sum * sin(bessel_order * theta) / n;
             sum += term;
-
-            sgn *= -1e0;
 
 //             std::cout << "outer sum " << sum << ", term" << term << std::endl;
 
@@ -367,7 +362,7 @@ namespace greens_functions
                       << "r = " << r << ", theta = " << theta << ", t = " << t
                       << ", " << this->dump();
 
-        return (8e0 * sum / (M_PI * a * a));
+        return (16e0 * sum / (M_PI * a * a));
     }
 
     const Real GreensFunction2DRefWedgeAbs::p_int_phi(const Real r, const Real t) const
