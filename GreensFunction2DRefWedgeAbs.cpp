@@ -578,11 +578,6 @@ namespace greens_functions
     {
         THROW_UNLESS(std::invalid_argument, 0.0 <= rnd && rnd <= 1.0);
 
-        if(rnd == 1e0)
-            return phi;
-        if(rnd == 0e0)
-            return 0e0;
-
         if(fabs(r / a) < CUTOFF)// r == 0e0 ?
         {
             throw std::invalid_argument(
@@ -623,6 +618,15 @@ namespace greens_functions
         // whether theta is positive(true) or negative(false)
         bool direction(rnd > 0.5);
         const Real new_random_number(direction ? rnd * 2e0 - 1e0 : rnd * 2e0);
+
+        if(new_random_number == 1e0)
+        {
+            return phi;
+        }
+        if(new_random_number == 0e0)
+        {
+            return 0e0;
+        }
 
         // p_int_theta / int_phi = rnd <=> p_int_theta = rnd * int_phi
         p_theta_params params = {this, t, r, new_random_number * int_phi};
