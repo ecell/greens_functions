@@ -179,6 +179,20 @@ namespace greens_functions
             return 0e0;
         }
 
+        // when t is too large comparing to phi, the theta probability
+        // become uniform distribution.
+        Real first_bessel_order = 2e0 * M_PI / this->phi;
+        Real alpha = gsl_sf_bessel_zero_Jnu(first_bessel_order, 1) / this->a;
+
+        if(alpha * alpha * this->D * t >= maximum_alpha2_Dt)
+        {
+            std::cout << "Warning: too large Dt (or too small phi)."
+                      << " return uniform distribution."
+                      << std::endl;
+            // theta distributes uniformly! return theta / 2pi.
+            return (theta * 0.5 / this->phi) * this->p_int_phi(r, t);
+        }
+
         // this returns accumurate probability distribution,
 //         if(theta == phi) return 0e0; // theta == 0e0?
 //         if(fabs(theta - 2*M_PI) < CUTOFF) return 1e0;
@@ -317,7 +331,7 @@ namespace greens_functions
                  * (not simplly break)                                      */
 
                 in_term1 = std::exp(alpha_mn * alpha_mn * minusDt);
-                if(in_term1 == 0e0) break;
+//                 if(in_term1 == 0e0) break;
 
 //                 std::cout << "a alpha mn = " << a_alpha_mn << std::endl;
 //                 std::cout << "r alpha mn = " << r * alpha_mn << std::endl;
@@ -348,8 +362,8 @@ namespace greens_functions
                           << "r = " << r << ", theta = " << theta << ", t = "
                           << t << ", " << this->dump();
 
-            if(in_sum == 0e0)
-                break;
+//             if(in_sum == 0e0)
+//                 break;
 
             term = in_sum * sin(bessel_order * theta) / n;
             sum += term;
