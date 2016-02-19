@@ -40,6 +40,13 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTime)
 
     t = gf.drawTime(/*rnd = */1.0);
     BOOST_CHECK_EQUAL(t, INFINITY);
+
+    Real drand = 0.01;
+    for(int i=1; i < 100; ++i)
+    {
+        Real t = gf.drawTime(drand * i);
+        BOOST_CHECK(0e0 <= t && t <= 1e0);
+    }
 }
 
 //if initial r is on abs boundary, particle doesn't move.
@@ -81,6 +88,13 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawR)
  
     BOOST_CHECK_CLOSE(r1, 0e0, 0.0001);
     BOOST_CHECK_CLOSE(r2,  a,  0.0001);
+
+    Real drand = 0.01;
+    for(int i=1; i<100; ++i)
+    {
+        Real r = gf.drawR(drand * i, t);
+        BOOST_CHECK(0e0 <= r && r <= a);
+    }
 }
 
 // after zero sec, particle is on the initial position.
@@ -147,6 +161,13 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTheta)
     theta = gf.drawTheta(1.0, r, t);
     BOOST_CHECK(0.0 <= theta && theta <= phi);
     BOOST_CHECK_CLOSE(theta, phi, 0.0001);
+
+    Real drand = 0.01;
+    for(int i=1; i<100; ++i)
+    {
+        theta = gf.drawTheta(drand * i, r, t);
+        BOOST_CHECK(0e0 <= theta && theta <= phi);
+    }
 }
 
 // test drawtheta for some phi
