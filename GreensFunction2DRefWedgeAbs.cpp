@@ -310,6 +310,15 @@ namespace greens_functions
                 a_alpha_mn = gsl_sf_bessel_zero_Jnu(bessel_order, m);
                 alpha_mn = a_alpha_mn / a;
 
+                /* In the case of large Dt compared with the phi value,     *
+                 * theta distribution become uniform distribution.          *
+                 * When the case, exp(-alpha^2Dt) become zero so break here.*
+                 * later, revice this treatment as uniform distribution     *
+                 * (not simplly break)                                      */
+
+                in_term1 = std::exp(alpha_mn * alpha_mn * minusDt);
+                if(in_term1 == 0e0) break;
+
 //                 std::cout << "a alpha mn = " << a_alpha_mn << std::endl;
 //                 std::cout << "r alpha mn = " << r * alpha_mn << std::endl;
 //                 std::cout << "r0 alpha mn = " << r_0 * alpha_mn << std::endl;
@@ -322,7 +331,6 @@ namespace greens_functions
                 Jnpp_p_1_a_alpha_mn
                     = gsl_sf_bessel_Jnu(bessel_order + 1e0, a_alpha_mn);
 
-                in_term1 = std::exp(alpha_mn * alpha_mn * minusDt);
                 in_term2 = Jnpp_r_alpha_mn * Jnpp_r0_alpha_mn;
                 in_term3 = Jnpp_d_1_a_alpha_mn - Jnpp_p_1_a_alpha_mn;
 
@@ -339,6 +347,9 @@ namespace greens_functions
                 std::cout << "warning: too slow convergence in p_int_theta_2nd m: "
                           << "r = " << r << ", theta = " << theta << ", t = "
                           << t << ", " << this->dump();
+
+            if(in_sum == 0e0)
+                break;
 
             term = in_sum * sin(bessel_order * theta) / n;
             sum += term;
