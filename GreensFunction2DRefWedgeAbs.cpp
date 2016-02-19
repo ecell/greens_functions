@@ -164,7 +164,7 @@ namespace greens_functions
 
         // when the initial r equals the abs boundary,
         // particle cannot go anywhere.
-        if(fabs(r-a) < CUTOFF)
+        if(fabs(1e0 - r/a) < CUTOFF)
         {
             return 0e0;
         }
@@ -298,20 +298,24 @@ namespace greens_functions
             Real Jnpp_p_1_a_alpha_mn(0e0);// J_n+1(a alpha_mn)
 
             Real bessel_order(n * tau_phi);
+//             std::cout << "bessel order" << bessel_order << std::endl;
 
             Integer m(1);
             for(/*unsigned int m = 1*/; m < num_in_term_use; ++m)
             {
                 a_alpha_mn = gsl_sf_bessel_zero_Jnu(bessel_order, m);
                 alpha_mn = a_alpha_mn / a;
+//                 std::cout << "a alpha mn = " << a_alpha_mn << std::endl;
+//                 std::cout << "r alpha mn = " << r * alpha_mn << std::endl;
+//                 std::cout << "r0 alpha mn = " << r_0 * alpha_mn << std::endl;
                 Jnpp_r_alpha_mn
                     = gsl_sf_bessel_Jnu(bessel_order, r * alpha_mn);
                 Jnpp_r0_alpha_mn
                     = gsl_sf_bessel_Jnu(bessel_order, r_0 * alpha_mn);
                 Jnpp_d_1_a_alpha_mn
-                    = gsl_sf_bessel_Jnu(bessel_order - 1, a_alpha_mn);
+                    = gsl_sf_bessel_Jnu(bessel_order - 1e0, a_alpha_mn);
                 Jnpp_p_1_a_alpha_mn
-                    = gsl_sf_bessel_Jnu(bessel_order + 1, a_alpha_mn);
+                    = gsl_sf_bessel_Jnu(bessel_order + 1e0, a_alpha_mn);
 
                 in_term1 = std::exp(alpha_mn * alpha_mn * minusDt);
                 in_term2 = Jnpp_r_alpha_mn * Jnpp_r0_alpha_mn;
