@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTime)
     for(int i=1; i < 100; ++i)
     {
         Real t = gf.drawTime(drand * i);
-        BOOST_CHECK(0e0 <= t && t <= 1e0);
+        BOOST_CHECK(0e0 < t && t < INFINITY);
     }
 }
 
@@ -336,14 +336,15 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTheta_larget)
 {
     Real D(1e-12), a(1e-7), r0(5e-8), phi(M_PI);
     GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
- 
+
     Real r(5e-8);
-    Real t(0.15);
+    Real time_random = 1e0;
     for(int i(0); i<15; ++i)
     {
+        Real t = gf.drawTime(1e0 - time_random);
         Real theta(gf.drawTheta(0.5, r, t));
         BOOST_CHECK(0.0 <= theta && theta <= phi);
-        t += 0.01;
+        time_random *= 1e-1;
     }
 }
 
@@ -407,16 +408,17 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_survival_never_negative)
     Real D(1e-12), a(1e-7), r0(5e-8), phi(M_PI);
     GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
  
-    Real t(1e0);
+    Real t(1e-5);
     Real psurv(gf.p_survival(0e0));
-    int resolution(20);
+    int resolution(16);
 
-    // for t = 2^n for n = 1 to 20
+    Real time_random = 1e0;
     for(int i(0); i<resolution; ++i)
     {
-        t *= 2e0;
+        t = gf.drawTime(1e0 - time_random);
         psurv = gf.p_survival(t);
         BOOST_CHECK(0e0 <= psurv);
+        time_random *= 1e-1;
     }
 }
 
@@ -437,6 +439,31 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_survival_never_increase)
         psurv = gf.p_survival(t);
         BOOST_CHECK(psurv <= psurv_before);
         psurv_before = psurv;
+    }
+}
+
+BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTime_large_a)
+{
+    Real D(1e-12), a(1e-7), r0(5e-8), phi;
+
+    for(int phi_iter = 1; phi_iter < 300; ++phi_iter)
+    {
+        phi = 2e0 * M_PI * phi_iter * 1e-2 / 3e0;
+        a = 1e-7;
+        for(int i=1; i < 100; ++i)
+        {
+            std::cout << "phi : " << phi << ", a = r_0 * 2^" << i << std::endl; 
+            GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
+            Real smalltime=1e-1;
+            for(int j=1; j<16;++j)
+            {
+                Real t = gf.drawTime(1e0 - smalltime);
+                Real p_surv = gf.p_survival(t);
+                BOOST_CHECK(0e0 <= p_surv && p_surv <= 1e0);
+                smalltime *= 1e-1;
+            }
+            a *= 2e0;
+        }
     }
 }
 
