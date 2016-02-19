@@ -309,6 +309,7 @@ namespace greens_functions
             {
                 a_alpha_mn = gsl_sf_bessel_zero_Jnu(bessel_order, m);
                 alpha_mn = a_alpha_mn / a;
+
 //                 std::cout << "a alpha mn = " << a_alpha_mn << std::endl;
 //                 std::cout << "r alpha mn = " << r * alpha_mn << std::endl;
 //                 std::cout << "r0 alpha mn = " << r_0 * alpha_mn << std::endl;
@@ -327,8 +328,6 @@ namespace greens_functions
 
                 in_term = in_term1 * in_term2 / (in_term3 * in_term3);
                 in_sum += in_term;
-
-//                 std::cout << "inner sum " << in_sum << ", term" << in_term << std::endl;
 
                 if(fabs(in_term/in_sum) < threshold)
                 {
@@ -610,8 +609,12 @@ namespace greens_functions
             // throw invalid argument or return 0?
         }
 
+        // whether theta is positive(true) or negative(false)
+        bool direction(rnd > 0.5);
+        const Real new_random_number(direction ? rnd * 2e0 - 1e0 : rnd * 2e0);
+
         // p_int_theta / int_phi = rnd <=> p_int_theta = rnd * int_phi
-        p_theta_params params = {this, t, r, rnd * int_phi};
+        p_theta_params params = {this, t, r, new_random_number * int_phi};
 
         gsl_function F =
         {
@@ -630,11 +633,13 @@ namespace greens_functions
         gsl_root_fsolver_free(solver);
 
         // to make initial position zero
-        if(theta * 2e0 < phi)
-            // theta < phi / 2
-            return theta + (phi * 0.5);
+        if(direction)
+        {
+            return theta;
+        }
         else
-            // phi / 2 < theta
-            return theta - (phi * 0.5);
+        {
+            return this->phi - theta;
+        }
     }
 }
