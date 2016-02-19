@@ -162,6 +162,16 @@ namespace greens_functions
             return theta / this->phi;
         }
 
+        if(theta > this->phi)
+        {
+            throw std::invalid_argument("too large theta > phi.");
+        }
+
+        if(theta < 0e0)
+        {
+            throw std::invalid_argument("negative theta");
+        }
+
         // when the initial r equals the abs boundary,
         // particle cannot go anywhere.
         if(fabs(1e0 - r/a) < CUTOFF)
@@ -173,10 +183,7 @@ namespace greens_functions
 //         if(theta == phi) return 0e0; // theta == 0e0?
 //         if(fabs(theta - 2*M_PI) < CUTOFF) return 1e0;
 
-        const Real first_term(p_int_theta_first(r, theta, t));
-        const Real second_term(p_int_theta_second(r, theta, t));
-
-        return (first_term + second_term);
+        return p_int_theta_first(r, theta, t) + p_int_theta_second(r, theta, t);
     }
 
     const Real GreensFunction2DRefWedgeAbs::p_int_theta_first(const Real r,
