@@ -517,8 +517,8 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_int_theta)
     pinttheta = gf.p_int_theta(r, 0e0, t);
     BOOST_CHECK_EQUAL(pinttheta, 0e0);
 
-    // if theta == phi, return p_int_phi.
-    pinttheta = gf.p_int_theta(r, phi, t);
+    // if theta == phi/2, return p_int_phi.
+    pinttheta = gf.p_int_theta(r, phi * 0.5, t);
     BOOST_CHECK_EQUAL(pinttheta, pintphi);
 
 //     // where r = a, return 0e0??
@@ -528,23 +528,24 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_int_theta)
 
 BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_int_theta_extreme)
 {
-    Real D(1e0), a(1e0), r0(0.5), phi(1e0);
+    Real D(1e0), a(1e0), r0(0.5), phi_ratio(1e0);
 
     for(int i = 1; i < 10; ++i)
     {
+        Real phi = phi_ratio * M_PI;
         std::cout << "phi = " << phi << std::endl;
-        GreensFunction2DRefWedgeAbs gf(D, r0, a, phi * M_PI);
+        GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
         Real t = gf.drawTime(0.5);
         Real r = gf.drawR(0.5, t);
         for(int j=1; j < 10; ++j)
         {
-            Real theta = phi * M_PI * 0.1 * j;
+            Real theta = phi * 0.1 * j;
             std::cout << "theta = " << theta << std::endl;
             Real pinttheta = gf.p_int_theta(r, theta, t);
             Real pintphi = gf.p_int_phi(r, t);
             BOOST_CHECK(0e0 < pinttheta && pinttheta < pintphi);
         }
-        phi *= 1e-1;
+        phi_ratio *= 1e-1;
     }
 }
 
@@ -562,7 +563,7 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_int_theta_never_negative)
  
     for(int i(0); i<resolution; i++)
     {
-        theta = i * phi / resolution;
+        theta = i * phi * 0.5 / resolution;
         p = gf.p_int_theta(r, theta, t);
         BOOST_CHECK(0.0 <= p && p <= pintphi);
     }
@@ -580,7 +581,7 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_theta_never_decrease)
  
     for(int i(0); i<resolution; i++)
     {
-        theta = i * phi / resolution;
+        theta = i * phi * 0.5 / resolution;
         pint = gf.p_int_theta(r, theta, t);
         BOOST_CHECK(pint >= pint_prev);
         pint_prev = pint;
