@@ -153,7 +153,7 @@ namespace greens_functions
         /* XXX: Theta definition isn't same as other GF. The initial position *
          *      is not zero but phi/2. Compensation will be done by drawTheta.*
          *      This function asserts the accepting value theta is in the     *
-         *      range [0, phi]                                                */
+         *      range [0, phi/2]                                                */
 
         // where the r is zero, theta is not defined.
         // return linearly incleasing function(integrated uniform distribution).
@@ -633,7 +633,7 @@ namespace greens_functions
         };
 
         const Real low(0e0);
-        const Real high(phi);
+        const Real high(phi * 0.5);
 
         const gsl_root_fsolver_type* solverType(gsl_root_fsolver_brent);
               gsl_root_fsolver*      solver(gsl_root_fsolver_alloc(solverType));
