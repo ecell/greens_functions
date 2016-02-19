@@ -173,6 +173,120 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTheta_for_Phi)
     }
 }
 
+BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTheta_extreme)
+{
+    Real D(1e0), a(1e0), r0(5e-1);
+
+    Real phi, r, t, theta;
+
+    // ordinary r, small phi
+    phi = 1e-9;
+    r = 5e-1;
+    GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
+    t = gf.drawTime(0.5);
+    theta = gf.drawTheta(/*rand = */ 0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+    phi = 1.999999 * M_PI;
+    r = 5e-1;
+    GreensFunction2DRefWedgeAbs gf1(D, r0, a, phi);
+    t = gf1.drawTime(0.5);
+    theta = gf1.drawTheta(/*rand = */0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+    // small r
+    phi = 1.999999 * M_PI;
+    r = 1e-10;
+    GreensFunction2DRefWedgeAbs gf2(D, r0, a, phi);
+    t = gf2.drawTime(0.5);
+    theta = gf2.drawTheta(/*rand = */ 0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+    phi = 1e-9;
+    r = 1e-9;
+    GreensFunction2DRefWedgeAbs gf3(D, r0, a, phi);
+    t = gf3.drawTime(0.5);
+    theta = gf3.drawTheta(/*rand = */0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+    // r ~ a
+    phi = 1.999999 * M_PI;
+    r = a - 1e-9;
+    GreensFunction2DRefWedgeAbs gf4(D, r0, a, phi);
+    t = gf4.drawTime(0.5);
+    theta = gf4.drawTheta(/*rand = */ 0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+    phi = 1e-9;
+    r = a - 1e-9;
+    GreensFunction2DRefWedgeAbs gf5(D, r0, a, phi);
+    t = gf5.drawTime(0.5);
+    theta = gf5.drawTheta(/*rand = */0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+// extreme t
+{
+    phi = 1e-9;
+    r = 1e-9;
+    GreensFunction2DRefWedgeAbs gf6(D, r0, a, phi);
+    t = 1e-9;
+    theta = gf6.drawTheta(/*rand = */ 0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+    phi = 1e-9;
+    r = 1e-9;
+    GreensFunction2DRefWedgeAbs gf7(D, r0, a, phi);
+    t = 1e9;
+    theta = gf7.drawTheta(/*rand = */0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+    phi = 1.999999 * M_PI;
+    r = 1e-9;
+    GreensFunction2DRefWedgeAbs gf8(D, r0, a, phi);
+    t = 1e-9;
+    theta = gf8.drawTheta(/*rand = */ 0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+    phi = 1.999999 * M_PI;
+    r = 1e-9;
+    GreensFunction2DRefWedgeAbs gf9(D, r0, a, phi);
+    t = 1e9;
+    theta = gf9.drawTheta(/*rand = */0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+}
+
+{
+    phi = 1e-9;
+    r = a - 1e-9;
+    GreensFunction2DRefWedgeAbs gf6(D, r0, a, phi);
+    t = 1e-9;
+    theta = gf6.drawTheta(/*rand = */ 0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+    phi = 1e-9;
+    r = a - 1e-9;
+    GreensFunction2DRefWedgeAbs gf7(D, r0, a, phi);
+    t = 1e9;
+    theta = gf7.drawTheta(/*rand = */0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+    phi = 1.999999 * M_PI;
+    r = a - 1e-9;
+    GreensFunction2DRefWedgeAbs gf8(D, r0, a, phi);
+    t = 1e-9;
+    theta = gf8.drawTheta(/*rand = */ 0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+
+    phi = 1.999999 * M_PI;
+    r = a - 1e-9;
+    GreensFunction2DRefWedgeAbs gf9(D, r0, a, phi);
+    t = 1e9;
+    theta = gf9.drawTheta(/*rand = */0.5, r, t);
+    BOOST_CHECK(0.0 <= theta && theta <= phi);
+}
+
+}
+
 // if t == zero, drawtheta returns zero.
 BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTheta_zerot)
 {
@@ -411,6 +525,29 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_int_theta)
 //     pinttheta = gf.p_int_theta(a, theta, t);
 //     BOOST_CHECK_EQUAL(pinttheta, 0e0);
 }
+
+BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_int_theta_extreme)
+{
+    Real D(1e0), a(1e0), r0(0.5), phi(1e0);
+
+    for(int i = 1; i < 10; ++i)
+    {
+        std::cout << "phi = " << phi << std::endl;
+        GreensFunction2DRefWedgeAbs gf(D, r0, a, phi * M_PI);
+        Real t = gf.drawTime(0.5);
+        Real r = gf.drawR(0.5, t);
+        for(int j=1; j < 10; ++j)
+        {
+            Real theta = phi * M_PI * 0.1 * j;
+            std::cout << "theta = " << theta << std::endl;
+            Real pinttheta = gf.p_int_theta(r, theta, t);
+            Real pintphi = gf.p_int_phi(r, t);
+            BOOST_CHECK(0e0 < pinttheta && pinttheta < pintphi);
+        }
+        phi *= 1e-1;
+    }
+}
+
 
 // never be negative
 BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_int_theta_never_negative)
