@@ -194,6 +194,32 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTheta_for_Phi)
     }
 }
 
+// Escape case (r is just a) for some phi value
+BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTheta_escape_case)
+{
+    Real D(1e-12), a(1e-7), r0(5e-8);
+
+    int resolution = 50;
+    Real phi, r(a), t;
+    Real dtheta = M_PI * 2e0 / resolution;
+
+    for(int i=1; i < resolution; ++i)
+    {
+        for(int j=0; j<10; ++j)
+        {
+            phi = i * dtheta;
+            GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
+            t = gf.drawTime(0.5);
+
+            for(int k=0; k<resolution; ++k)
+            {
+                Real theta = gf.drawTheta(/*rand = */ 1e0 * k / resolution, r, t);
+                BOOST_CHECK(0.0 <= theta && theta <= phi);
+            }
+        }
+    }
+}
+
 BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTheta_extreme)
 {
     Real D(1e0), a(1e0), r0(5e-1);
@@ -452,7 +478,7 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTime_large_a)
         a = 1e-7;
         for(int i=1; i < 100; ++i)
         {
-            std::cout << "phi : " << phi << ", a = r_0 * 2^" << i << std::endl; 
+//             std::cout << "phi : " << phi << ", a = r_0 * 2^" << i << std::endl; 
             GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
             Real smalltime=1e-1;
             for(int j=1; j<16;++j)
@@ -581,14 +607,14 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_int_theta_extreme)
     for(int i = 1; i < 10; ++i)
     {
         Real phi = phi_ratio * M_PI;
-        std::cout << "phi = " << phi << std::endl;
+//         std::cout << "phi = " << phi << std::endl;
         GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
         Real t = gf.drawTime(0.5);
         Real r = gf.drawR(0.5, t);
         for(int j=1; j < 10; ++j)
         {
             Real theta = phi * 0.05 * j;
-            std::cout << "theta = " << theta << std::endl;
+//             std::cout << "theta = " << theta << std::endl;
             Real pinttheta = gf.p_int_theta(r, theta, t);
             Real pintphi = gf.p_int_phi(r, t);
             BOOST_CHECK(0e0 <= pinttheta && pinttheta <= pintphi);
