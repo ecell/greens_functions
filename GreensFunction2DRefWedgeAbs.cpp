@@ -10,17 +10,17 @@ namespace greens_functions
 {
     const Real GreensFunction2DRefWedgeAbs::CUTOFF = 1e-10;
 
-    GreensFunction2DRefWedgeAbs::GreensFunction2DRefWedgeAbs(const Real D_,
-                                                             const Real r0_,
-                                                             const Real a_,
-                                                             const Real phi_)
-        : D(D_), a(a_), r0(r0_), phi(phi_)
+    GreensFunction2DRefWedgeAbs::GreensFunction2DRefWedgeAbs(const Real D,
+                                                             const Real r0,
+                                                             const Real a,
+                                                             const Real phi)
+        : D_(D), a_(a), r0_(r0), phi_(phi)
     {
-        if(phi < 0 && 2e0 * M_PI < phi)
+        if(phi_ < 0 && 2e0 * M_PI < phi_)
             throw std::invalid_argument((
                     boost::format(
                         "GreensFunction2DRefWedgeAbs: 0 < phi < 2pi: phi=%.16g")
-                    % phi).str());
+                    % phi_).str());
     }
 
     GreensFunction2DRefWedgeAbs::~GreensFunction2DRefWedgeAbs()
@@ -33,10 +33,6 @@ namespace greens_functions
         // when t == 0.0, return value become eventually 1.0,
         // but the speed of convergence is too slow.
         if(t == 0.0) return 1.0;
-
-        // FIXME: for (relative to other value D or a) large t,
-        //        the exponential term exp(-alpha_m0^2 * Dt) become zero
-        //        so comvergence will be slow.
 
         const Real r_0(this->getr0());
         const Real a(this->geta());
@@ -163,10 +159,10 @@ namespace greens_functions
         // return linearly incleasing function(integrated uniform distribution).
         if(fabs(r) < CUTOFF)
         {
-            return theta / this->phi;
+            return theta / this->phi_;
         }
 
-        if(theta > this->phi * 0.5)
+        if(theta > this->phi_ * 0.5)
         {
             throw std::invalid_argument("too large theta > phi/2.");
         }
@@ -178,23 +174,23 @@ namespace greens_functions
 
         // when the initial r equals the abs boundary,
         // particle cannot go anywhere.
-        if(fabs(1e0 - r/a) < CUTOFF)
+        if(fabs(1e0 - r/this->a_) < CUTOFF)
         {
             return 0e0;
         }
 
         // when t is too large comparing to phi, the theta probability
         // become uniform distribution.
-        Real first_bessel_order = 2e0 * M_PI / this->phi;
-        Real alpha = gsl_sf_bessel_zero_Jnu(first_bessel_order, 1) / this->a;
+        Real first_bessel_order = 2e0 * M_PI / this->phi_;
+        Real alpha = gsl_sf_bessel_zero_Jnu(first_bessel_order, 1) / this->a_;
 
-        if(alpha * alpha * this->D * t >= maximum_alpha2_Dt)
+        if(alpha * alpha * this->D_ * t >= maximum_alpha2_Dt)
         {
             std::cout << "Warning: too large Dt (or too small phi)."
                       << " return uniform distribution."
                       << std::endl;
             // theta distributes uniformly! return theta / 2pi.
-            return (theta * 0.5 / this->phi) * this->p_int_phi(r, t);
+            return (theta * 0.5 / this->phi_) * this->p_int_phi(r, t);
         }
 
         // this returns accumurate probability distribution,
@@ -262,7 +258,7 @@ namespace greens_functions
                       << r << ", theta = " << theta << ", t = " << t << ", "
                       << this->dump();
 
-        return (4e0 * theta * sum / (this->phi * a * a));
+        return (4e0 * theta * sum / (this->phi_ * a * a));
     }
 
     const Real
@@ -272,12 +268,12 @@ namespace greens_functions
     {
         // in these case, second term become zero
         // because of sin(2n * pi * theta / phi)
-        if(theta == 0e0 || theta == phi * 0.5 || theta == phi)
+        if(theta == 0e0 || theta == this->phi_ * 0.5 || theta == this->phi_)
             return 0e0;
 
-        const Real r_0(this->getr0());
-        const Real a(this->geta());
-        const Real minusDt(-1e0 * this->getD() * t);
+        const Real r_0(this->r0_);
+        const Real a(this->a_);
+        const Real minusDt(-1e0 * this->D_ * t);
 
         const Integer num_in_term_use(100);
         const Integer num_out_term_use(100);
@@ -287,7 +283,7 @@ namespace greens_functions
         Real term(0e0);
 
         // prepair (2pi / phi) and (2pi theta / phi). using tau = 2pi.
-        const Real tau_phi = 2e0 * M_PI / this->phi;
+        const Real tau_phi = 2e0 * M_PI / this->phi_;
 //         const Real tau_theta_phi = tau_phi * theta;
 
         // calculating 
@@ -393,11 +389,202 @@ namespace greens_functions
         return (16e0 * sum / (M_PI * a * a));
     }
 
+    const Real GreensFunction2DRefWedgeAbs::dp_int_theta(const Real theta,
+                                                         const Real t) const
+    {
+        /* When particle escape, p_int_theta is always zero. So drawTheta *
+         * uses probability flax to determine where particle goes.        */
+        if(theta > this->phi_ * 0.5)
+        {
+            throw std::invalid_argument("too large theta > phi/2.");
+        }
+
+        if(theta < 0e0)
+        {
+            throw std::invalid_argument("negative theta");
+        }
+
+        return dp_int_theta_first(theta, t) + dp_int_theta_second(theta, t);
+    }
+
+    const Real GreensFunction2DRefWedgeAbs::dp_int_theta_first(const Real theta,
+                                                               const Real t) const
+    {
+        const Real r_0(this->r0_);
+        const Real a(this->a_);
+        const Real minusDt(-1e0 * this->D_ * t);
+
+        const Integer num_term_use(100);
+        const Real threshold(CUTOFF);
+
+        Real sum(0e0);
+        Real term(0e0);
+        Real term1(0e0);
+        Real term2(0e0);
+
+        Real a_alpha_n(0e0);
+        Real alpha_n(0e0);
+        Real J0_r0_alpha_n(0e0);
+        Real J1_a_alpha_n(0e0);
+
+        // calculating
+        // 2 * theta / (phi * a^2) *
+        // sum_m[ exp(-alpha_m0^2 * Dt) *         <= term 1
+        //        -alpha_m0 * J0(r0 * alpha_m0) / <= term 2
+        //        J1(a * alpha_m0)                <= term 3
+
+        Integer n(1);
+        for(/*Integer n = 1*/; n < num_term_use; ++n)
+        {
+            a_alpha_n = gsl_sf_bessel_zero_J0(n);
+            alpha_n = a_alpha_n / a;
+            J0_r0_alpha_n = gsl_sf_bessel_J0(r_0 * alpha_n);
+            J1_a_alpha_n  = gsl_sf_bessel_J1(a_alpha_n);
+
+            term1 = std::exp(alpha_n * alpha_n * minusDt);
+            term2 = -alpha_n * J0_r0_alpha_n;
+
+            term = term1 * term2 / J1_a_alpha_n;
+            sum += term;
+
+//             std::cout << "sum " << sum << ", term" << term << std::endl;
+
+            if(fabs(term/sum) < threshold)
+            {
+//                 std::cout << "normal exit. n = " << n << " first term" << std::endl;
+                break;
+            }
+        }
+        if(n == num_term_use)
+            std::cout << "warning: too slow convergence in p_int_theta_1st: theta = "
+                      << theta << ", t = " << t << ", "
+                      << this->dump();
+
+        return (4e0 * theta * sum / (this->phi_ * a * a));
+    }
+
+    const Real GreensFunction2DRefWedgeAbs::dp_int_theta_second(const Real theta,
+                                                                const Real t) const
+    {
+        // in these case, second term become zero
+        // because of sin(2n * pi * theta / phi)
+        if(theta == 0e0 || theta == this->phi_ * 0.5 || theta == this->phi_)
+            return 0e0;
+
+        const Real r_0(this->r0_);
+        const Real a(this->a_);
+        const Real minusDt(-1e0 * this->D_ * t);
+
+        const Integer num_in_term_use(100);
+        const Integer num_out_term_use(100);
+        const Real threshold(CUTOFF);
+
+        Real sum(0e0);
+        Real term(0e0);
+
+        // prepair (2pi / phi) and (2pi theta / phi). using tau = 2pi.
+        const Real tau_phi = 2e0 * M_PI / this->phi_;
+//         const Real tau_theta_phi = tau_phi * theta;
+
+        // calculating 
+        // 8 / (pi * a^2) * 
+        // sum_n^inf [
+        //     (1/n) * sin(n * 2 * pi * theta / phi) * 
+        //     sum_m [
+        //         exp(-alpha_mn^2 * Dt) *
+        //         alpha_mn * J_{n * 2pi / phi}(r0 * alpha_mn) /
+        //        (J_{n * 2pi / phi - 1}(a * alpha_mn) -
+        //         J_{n * 2pi / phi + 1}(a * alpha_mn)) 
+        //     ]
+        // ]
+
+        Integer n(1);
+        for(/*unsigned int n = 1*/; n < num_out_term_use; ++n)
+        {
+            Real in_sum(0e0);
+            Real in_term(0e0);
+            Real in_term1(0e0);
+            Real in_term2(0e0);
+            Real in_term3(0e0);
+
+            Real a_alpha_mn(0e0);
+            Real alpha_mn(0e0);
+            Real Jnpp_r0_alpha_mn(0e0);
+            Real Jnpp_d_1_a_alpha_mn(0e0);// J_n-1(a alpha_mn)
+            Real Jnpp_p_1_a_alpha_mn(0e0);// J_n+1(a alpha_mn)
+
+            Real bessel_order(n * tau_phi);
+//             std::cout << "bessel order" << bessel_order << std::endl;
+
+            Integer m(1);
+            for(/*unsigned int m = 1*/; m < num_in_term_use; ++m)
+            {
+                a_alpha_mn = gsl_sf_bessel_zero_Jnu(bessel_order, m);
+                alpha_mn = a_alpha_mn / a;
+
+                /* In the case of large Dt compared with the phi value, *
+                 * theta distribution become uniform distribution.      *
+                 * When the case, exp(-alpha^2Dt) become zero.          */
+
+                in_term1 = std::exp(alpha_mn * alpha_mn * minusDt);
+                if(in_term1 == 0e0) break;
+
+                Jnpp_r0_alpha_mn
+                    = gsl_sf_bessel_Jnu(bessel_order, r_0 * alpha_mn);
+                Jnpp_d_1_a_alpha_mn
+                    = gsl_sf_bessel_Jnu(bessel_order - 1e0, a_alpha_mn);
+                Jnpp_p_1_a_alpha_mn
+                    = gsl_sf_bessel_Jnu(bessel_order + 1e0, a_alpha_mn);
+
+                in_term2 = alpha_mn * Jnpp_r0_alpha_mn;
+                in_term3 = Jnpp_d_1_a_alpha_mn - Jnpp_p_1_a_alpha_mn;
+
+                in_term = in_term1 * in_term2 / in_term3;
+                in_sum += in_term;
+
+                if(fabs(in_term/in_sum) < threshold)
+                {
+//                     std::cout << "normal exit. m = " << m << " second term" << std::endl;
+                    break;
+                }
+            }
+            if(m == num_in_term_use)
+                std::cout << "warning: too slow convergence in p_int_theta_2nd m: "
+                          << "theta = " << theta << ", t = "
+                          << t << ", " << this->dump();
+
+//             if(in_sum == 0e0)
+//                 break;
+
+            term = in_sum * sin(bessel_order * theta) / n;
+            sum += term;
+
+//             std::cout << "outer sum " << sum << ", term" << term << std::endl;
+
+            if(fabs(in_sum / (n * sum)) < threshold)
+            {
+//                 std::cout << "normal exit. n = " << n << " second term" << std::endl;
+                break;
+                /* if bessel_order * theta = product of natural number and pi,*
+                 * term become zero and this code breaks loop too early.      *
+                 * Therefore, consider the difference between sum and         *
+                 * in_sum / n only. sin is always in range(-1,1). the effect  *
+                 * is small.                                                  */
+            }
+        }
+        if(n == num_out_term_use)
+            std::cout << "warning: too slow convergence in p_int_theta_2nd n: theta = "
+                      << theta << ", t = " << t
+                      << ", " << this->dump();
+
+        return (8e0 * sum / (M_PI * a * a));
+    }
+
     const Real GreensFunction2DRefWedgeAbs::p_int_phi(const Real r, const Real t) const
     {
-        const Real r_0(this->getr0());
-        const Real a(this->geta());
-        const Real minusDt(-1e0 * this->getD() * t);
+        const Real r_0(this->r0_);
+        const Real a(this->a_);
+        const Real minusDt(-1e0 * this->D_ * t);
         const Integer num_term_use(100);
         const Real threshold(CUTOFF);
 
@@ -437,13 +624,64 @@ namespace greens_functions
 
             if(fabs(term/sum) < threshold)
             {
-//                 std::cout << "normal exit. n = " << n << " denominator" << std::endl;
+//                 std::cout << "normal exit. n = " << n << std::endl;
                 break;
             }
         }
         if(n == num_term_use)
             std::cout << "warning: too slow convergence in p_int_phi: r = "
                       << r << ", t = " << t << ", " << this->dump();
+
+        return (2e0 * sum / (a * a));
+    }
+
+    const Real GreensFunction2DRefWedgeAbs::dp_int_phi(const Real t) const
+    {
+        const Real r_0(this->getr0());
+        const Real a(this->geta());
+        const Real minusDt(-1e0 * this->getD() * t);
+        const Integer num_term_use(100);
+        const Real threshold(CUTOFF);
+
+        Real sum(0e0);
+        Real term(0e0);
+        Real term1(0e0);
+        Real term2(0e0);
+
+        Real a_alpha_n(0e0);
+        Real alpha_n(0e0);
+        Real J0_r0_alpha_n(0e0);
+        Real J1_a_alpha_n(0e0);
+
+        // calculating
+        // 2 / a^2 sum_n[ exp(-alpha_n^2 * Dt) *        <= term 1
+        //                -alpha_n * J0(r0 * alpha_n) / <= term 2
+        //                J1(a * alpha_n)               <= term 3
+        Integer n(1);
+        for(/*Integer n = 1*/; n < num_term_use; ++n)
+        {
+            a_alpha_n = gsl_sf_bessel_zero_J0(n);
+              alpha_n = a_alpha_n / a;
+            J0_r0_alpha_n = gsl_sf_bessel_J0(r_0 * alpha_n);
+            J1_a_alpha_n  = gsl_sf_bessel_J1(a_alpha_n);
+
+            term1 = std::exp(alpha_n * alpha_n * minusDt);
+            term2 = -alpha_n * J0_r0_alpha_n;
+
+            term  = term1 * term2 / J1_a_alpha_n;
+            sum  += term;
+
+//             std::cout << "sum " << sum << ", term" << term << std::endl;
+
+            if(fabs(term/sum) < threshold)
+            {
+//                 std::cout << "normal exit. n = " << n << std::endl;
+                break;
+            }
+        }
+        if(n == num_term_use)
+            std::cout << "warning: too slow convergence in dp_int_phi: t = "
+                      << t << ", " << this->dump();
 
         return (2e0 * sum / (a * a));
     }
@@ -472,9 +710,13 @@ namespace greens_functions
     const Real GreensFunction2DRefWedgeAbs::drawTime(const Real rnd) const
     {
         THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd <= 1.0);
+
+        const Real a = this->a_;
+        const Real D = this->D_;
+
         if(D == 0e0 || a == INFINITY || rnd == 1e0)
             return INFINITY;
-        if(a == r0 || rnd == 0e0)
+        if(a == this->r0_ || rnd == 0e0)
             return 0e0;
 
         p_survival_params params = {this, rnd};
@@ -544,6 +786,10 @@ namespace greens_functions
     {
         THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd <= 1.0);
 
+        const Real a = this->a_;
+        const Real D = this->D_;
+        const Real r0 = this->r0_;
+
         if(a == r0)
             throw std::invalid_argument("a equal r0");
 
@@ -595,6 +841,9 @@ namespace greens_functions
                                                       const Real t) const
     {
         THROW_UNLESS(std::invalid_argument, 0.0 <= rnd && rnd <= 1.0);
+        const Real a = this->a_;
+        const Real D = this->D_;
+        const Real phi = this->phi_;
 
         if(fabs(r / a) < CUTOFF)// r == 0e0 ?
         {
@@ -672,7 +921,7 @@ namespace greens_functions
         }
         else
         {
-            return this->phi - theta;
+            return phi - theta;
         }
     }
 }

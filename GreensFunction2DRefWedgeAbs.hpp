@@ -21,16 +21,19 @@ namespace greens_functions
         const Real drawTime (const Real rnd) const;
         const Real drawR    (const Real rnd, const Real t) const;
         const Real drawTheta(const Real rnd, const Real r, const Real t) const;
+        const Real drawEscTheta(const Real rnd, const Real r, const Real t) const;
 
-        const Real p_survival (const Real t) const;
-        const Real p_int_r    (const Real r, const Real t) const;
-        const Real p_int_phi  (const Real r, const Real t) const;
-        const Real p_int_theta(const Real r, const Real theta, const Real t) const;
+        const Real p_survival  (const Real t) const;
+        const Real p_int_r     (const Real r, const Real t) const;
+        const Real p_int_phi   (const Real r, const Real t) const;
+        const Real dp_int_phi  (const Real t) const;
+        const Real p_int_theta (const Real r, const Real theta, const Real t) const;
+        const Real dp_int_theta(const Real theta, const Real t) const;
 
-        const Real getD()   const {return this->D;  }
-        const Real geta()   const {return this->a;  }
-        const Real getr0()  const {return this->r0; }
-        const Real getphi() const {return this->phi;}
+        const Real getD()   const {return this->D_;  }
+        const Real geta()   const {return this->a_;  }
+        const Real getr0()  const {return this->r0_; }
+        const Real getphi() const {return this->phi_;}
         const std::string dump() const;
         const char* getName() const
         {
@@ -46,6 +49,13 @@ namespace greens_functions
         const Real p_int_theta_second(const Real r,
                                       const Real theta,
                                       const Real t) const;
+
+        const Real dp_int_theta_first(const Real theta,
+                                      const Real t) const;
+
+        const Real dp_int_theta_second(const Real theta,
+                                       const Real t) const;
+
 
     private:
 
@@ -86,10 +96,10 @@ namespace greens_functions
 
         static const Real CUTOFF;//1e-10, provisionally.
 
-        const Real D;
-        const Real a;
-        const Real r0;
-        const Real phi;// the angle of apical. initial theta = \phi / 2
+        const Real D_;
+        const Real a_;
+        const Real r0_;
+        const Real phi_;// the angle of apical. initial theta = \phi / 2
     };
 }
 #endif//GREENS_FUNCTION_2D_REF_WEDGE_ABS
