@@ -594,10 +594,6 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_int_theta)
     // if theta == phi/2, return p_int_phi.
     pinttheta = gf.p_int_theta(r, phi * 0.5, t);
     BOOST_CHECK_EQUAL(pinttheta, pintphi);
-
-//     // where r = a, return 0e0??
-//     pinttheta = gf.p_int_theta(a, theta, t);
-//     BOOST_CHECK_EQUAL(pinttheta, 0e0);
 }
 
 BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_int_theta_extreme)
@@ -659,5 +655,87 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_theta_never_decrease)
         pint = gf.p_int_theta(r, theta, t);
         BOOST_CHECK(pint >= pint_prev);
         pint_prev = pint;
+    }
+}
+
+// ************************** dp_int_theta ****************************//
+
+// p_int_theta returns value in range 0 to phi
+BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_dp_int_theta)
+{
+    Real D(1e-12), a(1e-7), r0(5e-8), phi(M_PI);
+    GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
+
+    Real t(1e-3), theta(5e-1);
+    Real dpinttheta = gf.dp_int_theta(theta, t);
+    Real dpintphi = gf.dp_int_phi(t);
+    BOOST_CHECK(dpintphi <= dpinttheta && dpinttheta <= 0e0);
+
+    // if theta == 0, return 0e0
+    dpinttheta = gf.dp_int_theta(0e0, t);
+    BOOST_CHECK_EQUAL(dpinttheta, 0e0);
+
+    // if theta == phi/2, return p_int_phi.
+    dpinttheta = gf.dp_int_theta(phi * 0.5, t);
+    BOOST_CHECK_EQUAL(dpinttheta, dpintphi);
+}
+
+BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_dp_int_theta_extreme)
+{
+    Real D(1e0), a(1e0), r0(0.5), phi_ratio(1e0);
+
+    for(int i = 1; i < 10; ++i)
+    {
+        Real phi = phi_ratio * M_PI;
+//         std::cout << "phi = " << phi << std::endl;
+        GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
+        Real t = gf.drawTime(0.5);
+        for(int j=1; j < 10; ++j)
+        {
+            Real theta = phi * 0.05 * j;
+//             std::cout << "theta = " << theta << std::endl;
+            const Real dpinttheta = gf.dp_int_theta(theta, t);
+            const Real dpintphi = gf.dp_int_phi(t);
+            BOOST_CHECK(dpintphi <= dpinttheta && dpinttheta <= 0e0);
+        }
+        phi_ratio *= 1e-1;
+    }
+}
+
+// never be positive
+BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_dp_int_theta_never_positive)
+{
+    Real D(1e-12), a(1e-7), r0(5e-8), phi(M_PI);
+    GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
+ 
+    Real t( 1e-3 );
+    Real dpinttheta, theta;
+    Real dpintphi = gf.dp_int_phi(t);
+    int resolution(50);
+ 
+    for(int i(0); i<resolution; i++)
+    {
+        theta = i * phi * 0.5 / resolution;
+        dpinttheta = gf.dp_int_theta(theta, t);
+        BOOST_CHECK(dpintphi <= dpinttheta && dpinttheta <= 0e0);
+    }
+}
+
+// monomeric declease
+BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_p_theta_never_increase)
+{
+    Real D(1e-12), a(1e-7), r0(5e-8), phi(M_PI);
+    GreensFunction2DRefWedgeAbs gf(D, r0, a, phi);
+ 
+    Real t(1e-3);
+    Real dpint_prev(0e0), dpint(0e0), theta;
+    int resolution(50);
+ 
+    for(int i(0); i<resolution; i++)
+    {
+        theta = i * phi * 0.5 / resolution;
+        dpint = gf.dp_int_theta(theta, t);
+        BOOST_CHECK(dpint <= dpint_prev);
+        dpint_prev = dpint;
     }
 }
