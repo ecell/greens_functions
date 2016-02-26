@@ -16,7 +16,11 @@ namespace greens_functions
                                                              const Real phi_)
         : D(D_), a(a_), r0(r0_), phi(phi_)
     {
-        ;
+        if(phi < 0 && 2e0 * M_PI < phi)
+            throw std::invalid_argument((
+                    boost::format(
+                        "GreensFunction2DRefWedgeAbs: 0 < phi < 2pi: phi=%.16g")
+                    % phi).str());
     }
 
     GreensFunction2DRefWedgeAbs::~GreensFunction2DRefWedgeAbs()
