@@ -21,7 +21,6 @@ namespace greens_functions
         const Real drawTime (const Real rnd) const;
         const Real drawR    (const Real rnd, const Real t) const;
         const Real drawTheta(const Real rnd, const Real r, const Real t) const;
-        const Real drawEscTheta(const Real rnd, const Real r, const Real t) const;
 
         const Real p_survival  (const Real t) const;
         const Real p_int_r     (const Real r, const Real t) const;
@@ -83,6 +82,13 @@ namespace greens_functions
             const Real rnd;
         };
 
+        struct dp_theta_params
+        {
+            const GreensFunction2DRefWedgeAbs* const gf;
+            const Real t;
+            const Real rnd;
+        };
+
         static const Real p_survival_F(const Real t,
                                        const p_survival_params* params);
 
@@ -91,6 +97,10 @@ namespace greens_functions
 
         static const Real p_theta_F(const Real theta,
                                     const p_theta_params* params);
+
+        static const Real dp_theta_F(const Real theta,
+                                     const dp_theta_params* params);
+
 
     private:
 

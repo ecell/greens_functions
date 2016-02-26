@@ -172,8 +172,7 @@ namespace greens_functions
             throw std::invalid_argument("negative theta");
         }
 
-        // when the initial r equals the abs boundary,
-        // particle cannot go anywhere.
+        // r=a is abs boundary
         if(fabs(1e0 - r/this->a_) < CUTOFF)
         {
             return 0e0;
@@ -836,6 +835,16 @@ namespace greens_functions
         return gf->p_int_theta(r, theta, t) - rnd;
     }
 
+    const Real GreensFunction2DRefWedgeAbs::dp_theta_F(const Real theta,
+                                                       const dp_theta_params* params)
+    {
+        const GreensFunction2DRefWedgeAbs* const gf(params->gf);
+        const Real t(params->t);
+        const Real rnd(params->rnd);
+
+        return gf->dp_int_theta(theta, t) - rnd;
+    }
+
     const Real GreensFunction2DRefWedgeAbs::drawTheta(const Real rnd,
                                                       const Real r,
                                                       const Real t) const
@@ -845,7 +854,8 @@ namespace greens_functions
         const Real D = this->D_;
         const Real phi = this->phi_;
 
-        if(fabs(r / a) < CUTOFF)// r == 0e0 ?
+        // r == 0e0, theta is not defined
+        if(fabs(r / a) < CUTOFF)
         {
             throw std::invalid_argument(
                     (boost::format(
@@ -853,20 +863,11 @@ namespace greens_functions
                          ) % r).str());
         }
 
-        if(fabs(r-a) < CUTOFF)// r == a ?
-        {
-            //when R equal a(abs boundary), particle cannot go anywhere.
-            throw std::invalid_argument(
-                    (boost::format(
-                         "2DAbs::drawTheta r is nealy a: r=%f10, a=%f10"
-                         ) % r % a).str());
-        }
-
         // time or diffusion speed is equal to zero, particle doesn't move.
         if(t == 0e0 || D == 0e0)
             return 0e0;
 
-        const Real int_phi = p_int_phi(r, t);
+        const Real int_phi = ((r == a) ? dp_int_phi(t) : p_int_phi(r, t));
 
         /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
          * When t is too large, int_2pi become zero and drawR returns 2pi    *
@@ -895,22 +896,36 @@ namespace greens_functions
             return 0e0;
         }
 
-        // p_int_theta / int_phi = rnd <=> p_int_theta = rnd * int_phi
-        p_theta_params params = {this, t, r, new_random_number * int_phi};
-
-        gsl_function F =
-        {
-            reinterpret_cast<typeof(F.function)>(&p_theta_F), &params
-        };
-
+        Real theta(0e0);
         const Real low(0e0);
         const Real high(phi * 0.5);
 
         const gsl_root_fsolver_type* solverType(gsl_root_fsolver_brent);
               gsl_root_fsolver*      solver(gsl_root_fsolver_alloc(solverType));
 
-        const Real theta(findRoot(F, solver, low, high, 1e-18, 1e-12,
-                                  "GreensFunction2DRefWedgeAbsSym::drawTheta"));
+        if(r == a)
+        {
+            dp_theta_params params = {this, t, new_random_number * int_phi};
+
+            gsl_function F = {
+                reinterpret_cast<typeof(F.function)>(&dp_theta_F), &params
+            };
+
+            theta = findRoot(F, solver, low, high, 1e-18, 1e-12,
+                             "GreensFunction2DRefWedgeAbsSym::drawTheta");
+        }
+        else
+        {
+            // p_int_theta / int_phi = rnd <=> p_int_theta = rnd * int_phi
+            p_theta_params params = {this, t, r, new_random_number * int_phi};
+
+            gsl_function F = {
+                reinterpret_cast<typeof(F.function)>(&p_theta_F), &params
+            };
+
+            theta = findRoot(F, solver, low, high, 1e-18, 1e-12,
+                             "GreensFunction2DRefWedgeAbsSym::drawTheta");
+        }
 
         gsl_root_fsolver_free(solver);
 
