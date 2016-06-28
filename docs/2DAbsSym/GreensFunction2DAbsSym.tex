@@ -1,0 +1,493 @@
+\documentclass{article}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+
+\begin{document}
+
+\title{GreensFunction2DAbsSym}
+\maketitle
+
+\section{Overview}
+
+System contains only one particle.
+Initial position of the particle is center of the system, $r=0$
+(Position is descrived by the cylindorical coordinate,
+ $x = r\cos\theta, y = r\sin\theta$).
+
+Thus the solution of the diffusion equation does not depend on $\theta$.
+
+Boundary condition is Absorbance boundary $P(a,t) = 0$.
+$P(r, t)$ is the probability dencity function.
+
+\subsection{Green's Function}
+
+In the case of absorbing boundary condition with cylindorical surface source
+$r = r'$,
+the Green's function can be descrived as below.
+
+\begin{equation}
+    G(r, t | r', \tau) = \frac{1}{\pi a^2}\sum^{\infty}_{n=1}
+                         \frac{J_0(r\alpha_n)J_0(r'\alpha_n)}{J^2_1(a\alpha_n)}
+                         \mathrm{e}^{-D\alpha^2_n (t - \tau)} \nonumber \\
+\end{equation}
+where $J_0$ is 1st kind Bessel's function
+and $\alpha_n$ causes $J_0$ to be zero that is $J_0(\alpha_n) = 0$.
+
+and the initial condition $F$ is
+
+\begin{equation}
+    F(r) = \delta(r)
+\end{equation}
+at $t=0$.
+
+thus the probability function is
+
+\begin{eqnarray}
+    P &=& \int^a_0 \int^{2\pi}_0 F(r') G(r, t | r', 0) r'dr'd\theta'
+          \nonumber \\
+      &=& \frac{1}{\pi a^2}\sum^{\infty}_{n=1}
+          \frac{J_0(r\alpha_n)}{J^2_1(a\alpha_n)}\mathrm{e}^{-D\alpha^2_n t}
+          \nonumber
+\end{eqnarray}
+
+\subsection{derivation of the Green's function}
+
+This derivation process is based on
+"Conduction of Heat in Solids"(Carslaw and Jaeger, 1959, p.368, section 14.8).
+
+the diffusion equation is
+\begin{eqnarray}
+    D\nabla^2 P(r, t) &=& \frac{\partial P(r,t)}{\partial t} \nonumber \\
+    P(a,t) &=& 0 \nonumber \\
+    P(r,0) &=& \delta(r)
+\end{eqnarray}
+
+First, consider the case that a line source of strength
+$1/2\pi r'$ is destributed round the circle of radius $r'$ in infinite medium.
+Then $u(r, t)$, the probability at the point $(r, t)$, is
+
+\begin{eqnarray}
+  u &=& \frac{1}{4\pi Dt}
+    \int^{2\pi}_0 \mathrm{e}^{(r^2+r'^2-2rr'\cos(\theta'))/4Dt} d\theta'
+        \nonumber \\
+    &=& \frac{1}{4\pi Dt} \mathrm{e}^{(r^2+r'^2)/4Dt}
+        \int^{2\pi}_0 \mathrm{e}^{rr'\cos(\theta')/4Dt} d\theta'
+        \nonumber \\
+    &=& \frac{1}{4\pi Dt} \mathrm{e}^{(r^2+r'^2)/4Dt}
+        I_0 \left( \frac{rr'}{2Dt} \right)
+        \nonumber \\
+\end{eqnarray}
+and using Laplace transformation,
+
+\[
+    \mathscr{L}\left( \frac{1}{2t}\mathrm{e}^{(x^2+x'^2)/4Dt}
+    I_k\left(\frac{xx'}{2Dt}\right) \right) (p)
+    = \begin{cases}
+          I_k(qx')K_k(qx) & (x > x') \\
+          I_k(qx)K_k(qx') & (x' > x)
+      \end{cases}
+\]
+where $q = \sqrt{\cfrac{p}{D}}$,
+
+$\bar{u}$ can be obtained(k = 0 case).
+
+\[
+\bar{u} = \begin{cases}
+    \cfrac{1}{2 \pi D} I_0(qr')K_0(qr) & (r > r') \\
+    \cfrac{1}{2 \pi D} I_0(qr)K_0(qr') & (r' > r)
+\end{cases}
+\]
+
+In order to satisfy boundary condition, let the solution $v$,
+this can be written as the form $v = u + w$.
+
+Here, $w$ is also the solution of the equation, so $\bar{w}$ satisfies the laplace transformed($t \rightarrow p$) equation,
+
+\begin{equation}
+    \frac{d^2 \bar{w}}{dr^2} + \frac{1}{r}\frac{d\bar{w}}{dr} - q^2 \bar{w} = 0
+    \label{LTequation}
+\end{equation}
+where $q = \sqrt{\cfrac{p}{D}}$.\\
+
+And $w$ is selected to make $v$ to satisfy the boundary condition.
+
+the solution of (\ref{LTequation}) which has finite value at the origin
+$r \rightarrow 0$ is $AI_0(qr)$ where $A$ is arbitrary constant.
+
+Then the boundary condition can be written as
+
+\begin{equation}
+    AI_0(qa) + \frac{1}{2 \pi D} I_0(qr') K_0(qa) = 0
+\end{equation}
+so the value of A is
+
+\begin{equation}
+    A = - \frac{1}{2 \pi D} \frac{I_0(qr') K_0(qa)}{I_0(qa)}
+\end{equation}
+using this value, $\bar{v}$ can be written as
+
+\begin{eqnarray}
+    \bar{v} &=& \bar{u} + \bar{w} \nonumber \\
+            &=& \frac{1}{2\pi D} I_0(qr')K_0(qr)
+                - \frac{1}{2 \pi D} \frac{I_0(qr') K_0(qa)}{I_0(qa)}I_0(qr)
+                \nonumber \\
+            &=& \frac{I_0(qr')}{2 \pi D}
+                \left( -\frac{K_0(qa)I_0(qr)}{I_0(qa)} + K_0(qr) \right)
+                \nonumber \\
+            &=& \frac{I_0(qr')}{2\pi D I_0(qa)}
+                \left( -K_0(qa)I_0(qr) + I_0(qa)K_0(qr) \right)
+\end{eqnarray}
+in $r > r'$. In the case of $r < r'$, $\bar{v}$ can be obtained like this way.
+
+\[
+    \bar{v} = \begin{cases}
+        \cfrac{I_0(qr')}{2 \pi D I_0(qa)}(I_0(qa)K_0(qr) - I_0(qr)K_0(qa)) & (r > r') \\
+        \cfrac{I_0(qr)}{2 \pi D I_0(qa)}(I_0(qa)K_0(qr') - I_0(qr')K_0(qa)) & (r' > r)
+    \end{cases}
+\]
+
+Inverse Laplace transformation can be calculated generally
+by integral of a function of complex valuable.
+
+\begin{equation}
+    f(t) = \frac{1}{2\pi i} \lim_{T \to \infty} 
+           \int^{\gamma + iT}_{\gamma - iT} \mathrm{e}^{pt}F(p)dp
+\end{equation}
+here, $\gamma$ is greater than the real part of all singularities of $F(q)$.
+Therefore the integration is done along the vertical line $Re(p) = \gamma$
+and all of the singularities of $\bar{v}$ exist in the left of this line.
+
+So the inverse transformation of $\bar{v}$ is
+
+\begin{eqnarray}
+    & & \mathscr{L}^{-1} \left(\bar{v}(p)\right)(t) \nonumber \\
+    &=& \frac{1}{2\pi i} \lim_{T \to \infty}
+        \int^{\gamma + iT}_{\gamma - iT} \mathrm{e}^{pt} \bar{v}(p) dp \nonumber \\
+    &=& \frac{1}{2\pi i} \lim_{T \to \infty} \int^{\gamma + iT}_{\gamma - iT}
+        \mathrm{e}^{pt} \frac{I_0(qr')}{2\pi DI_0(qa)}
+        \left(I_0(qa)K_0(qr) - I_0(qr)K_0(qa) \right) dp
+\end{eqnarray}
+make the contour to be closed and 
+based on the residue-theorem, the integral is written as
+
+\begin{equation}
+    \oint \mathrm{e}^{pt} \bar{v}(p) dp \nonumber \\
+    = 2\pi i\sum_m Res(\mathrm{e}^{pt} \bar{v}(p), \beta'_m)
+\end{equation}
+here, $\beta'_m$ is a pole of $\mathrm{e}^{pt} \bar{v}(p)$.
+$\beta'_m$ satisfies $I_0\left(\sqrt{\frac{\beta'_m}{D}} a\right) = 0$.
+
+Using this formula,
+\begin{eqnarray}
+    & & \mathscr{L}^{-1} \left(\bar{v}(p)\right)(t) \nonumber \\
+    &=& \frac{1}{2\pi i} 2\pi i
+        \sum_m Res(\mathrm{e}^{pt} \bar{v}(p), \beta'_m) \nonumber \\
+    &=& \sum_m Res(\mathrm{e}^{pt} \bar{v}(p), \beta'_m)
+\end{eqnarray}
+
+here, using the transformation of valuables $p = -Dz^2$, $q = iz$, the integration become
+\begin{equation}
+    \oint \mathrm{e}^{-Dz^2t} \frac{I_0(izr')}{2\pi DI_0(iza)}
+    \left(I_0(iza)K_0(izr) - I_0(izr)K_0(iza) \right) (-2Dz)dz
+\end{equation}
+
+From the nature of Bessel functions,
+
+\begin{eqnarray}
+    I_0(ix) &=& J_0(x) \nonumber \\
+    K_0(ix) &=& \frac{-\pi i}{2} (J_0(x) - iY_0(x)) \nonumber
+\end{eqnarray}
+and the zero point of $I_0(\alpha')$, satisfies $J_0(\alpha' / i) = 0$.
+
+So the values of residues become
+\begin{eqnarray}
+    & & Res(\mathrm{e}^{pt} \bar{v}(p), \alpha'_m) \nonumber \\
+    &=& Res\left(\frac{\mathrm{e}^{pt}}{2\pi D}
+        \frac{I_0(qr')}{I_0(qa)}
+        \left(I_0(qa)K_0(qr) - I_0(qr)K_0(qa)\right), \alpha'_m \right) \nonumber \\
+        &=& Res(-2Dz\frac{\mathrm{e}^{-z^2Dt}}{2\pi D} \frac{J_0(zr')}{J_0(za)} 
+        (J_0(za)\cfrac{-\pi i}{2}\left(J_0(zr) - iY_0(zr) \right) \nonumber \\
+    & & - J_0(zr)\cfrac{-\pi i}{2}\left(J_0(za) - iY_0(za) \right) ), \alpha_m )\nonumber \\
+\end{eqnarray}
+where, $\alpha'_m = \sqrt{\frac{\beta'_m}{D}}$.
+And $\alpha_m$ satisfies $J_0(a\alpha_m) = 0$.
+
+The value can be calculated as
+\begin{eqnarray}
+    & & Res(\bar{v}(z)\mathrm{e}^{-z^2Dt}) \nonumber \\
+    &=& \lim_{z \to \alpha_m} -2Dz(z - \alpha_m)
+        \frac{\mathrm{e}^{-z^2Dt}}{2\pi D} \frac{J_0(zr')}{J_0(za)} \nonumber \\
+    & & \left(J_0(za)\cfrac{-\pi i}{2}\left(J_0(zr) - iY_0(zr) \right)
+        - J_0(zr)\cfrac{-\pi i}{2}\left(J_0(za) - iY_0(za) \right) \right) \nonumber \\
+    &=& \lim_{z \to \alpha_m} -2Dz(z - \alpha_m)
+        \frac{-\mathrm{e}^{-z^2Dt}}{4D} \frac{J_0(zr')}{J_0(za)}
+        \left(J_0(za)Y_0(zr) - J_0(zr)Y_0(za) \right) \nonumber \\
+    &=& \lim_{z \to \alpha_m} -2Dz \frac{(z - \alpha_m)}{J_0(za)}
+        \frac{-\mathrm{e}^{-z^2Dt}}{4D} J_0(zr')
+        \left(J_0(za)Y_0(zr) - J_0(zr)Y_0(za) \right) \nonumber \\
+    &=& \lim_{z \to \alpha_m} \frac{-\mathrm{e}^{-z^2Dt}}{4D}
+        \frac{(z - \alpha_m)}{J_0(za)}
+        (-2Dz)J_0(zr')
+        \left(J_0(za)Y_0(zr) - J_0(zr)Y_0(za) \right) \nonumber
+\end{eqnarray}
+
+The value of first part becomes
+\begin{equation}
+    \lim_{z \to \alpha_m} \frac{-\mathrm{e}^{-z^2Dt}}{4D}
+    = \frac{-\mathrm{e}^{-\alpha_{m}^{2}Dt}}{4D}
+\end{equation}
+
+From the definition of derivative, second part becomes
+\begin{eqnarray}
+        \lim_{z \to \alpha_m} \frac{(z - \alpha_m)}{J_0(za)}
+    &=& \lim_{z \to \alpha_m} \frac{(za - a\alpha_m)}{a(J_0(za) - J_0(a\alpha_m))} \nonumber \\
+    &=& \frac{1}{aJ'_0(a\alpha_m)}
+\end{eqnarray}
+
+The last part is 
+\begin{eqnarray}
+    & & \lim_{z \to \alpha_m} -2DzJ_0(zr')
+        \left(J_0(za)Y_0(zr) - J_0(zr)Y_0(za) \right) \nonumber \\
+    &=& \lim_{z \to \alpha_m} -2DzJ_0(zr')J_0(za)Y_0(zr) +
+        2DzJ_0(zr')J_0(zr)Y_0(za) \nonumber \\
+    &=& 2D\alpha_m J_0(\alpha_m r')J_0(\alpha_m r)Y_0(\alpha_m a) \nonumber \\
+\end{eqnarray}
+
+and $Y_n$ satisfies the equation below
+\begin{eqnarray}
+    J_n(z)Y'_n(z) - J'_n(z)Y_n(z) &=& \frac{2}{\pi z} \nonumber \\
+    \pi zJ_n(z)Y'_n(z) - \pi zJ'_n(z)Y_n(z) &=& 2 \nonumber \\
+    \pi zJ'_n(z)Y_n(z) &=& -2 + \pi zJ_n(z)Y'_n(z) \nonumber \\
+    Y_n(z) &=& \frac{-2}{\pi zJ'_n(z)} + \frac{J_n(z)Y'_n(z)}{J'_n(z)}
+\end{eqnarray}
+then the value can be written as
+\begin{equation}
+    \alpha_mY_0(a\alpha_m) = \frac{-2}{a\pi J'_0(a\alpha_m)}
+\end{equation}
+
+So, 
+\begin{eqnarray}
+    & & 2D\alpha_mJ_0(\alpha_mr')J_0(\alpha_mr)Y_0(\alpha_ma) \nonumber \\
+    &=& 2DJ_0(\alpha_mr')J_0(\alpha_mr)\frac{-2}{a\pi J'_0(a\alpha_m)}
+\end{eqnarray}
+
+Therefore, the values of the residues are
+\begin{eqnarray}
+    & & Res(\bar{v}(z)\mathrm{e}^{-z^2Dt}, \alpha_m) \nonumber \\
+    &=& \lim_{z \to \alpha_m} \frac{-\mathrm{e}^{-z^2Dt}}{4D}
+        \frac{(z - \alpha_m)}{J_0(za)}
+        (-2Dz)J_0(zr')
+        \left(J_0(za)Y_0(zr) - J_0(zr)Y_0(za) \right) \nonumber \\
+    &=& \frac{-\mathrm{e}^{-\alpha_{m}^{2}Dt}}{4D}
+        \frac{1}{aJ'_0(a\alpha_m)}
+        2DJ_0(\alpha_mr')J_0(\alpha_mr)\frac{-2}{\pi J'_0(\alpha_m)} \nonumber \\
+    &=& \frac{\mathrm{e}^{-\alpha_{m}^{2}Dt}}{a^2\pi}
+        \frac{J_0(\alpha_mr')J_0(\alpha_mr)}{\{J'_0(\alpha_m)\}^2}
+\end{eqnarray}
+
+From these results, the inverse laplace transformation of $\bar{v}$ is
+
+\begin{eqnarray}
+  v &=& \mathscr{L}^{-1} \left(\bar{v}(p)\right)(t) \nonumber \\
+    &=& \sum_{\alpha_m} \frac{\mathrm{e}^{-\alpha_{m}^{2}Dt}}{\pi a^2}
+        \frac{J_0(\alpha_mr')J_0(\alpha_mr)}{\{J'_0(\alpha_m)\}^2}
+\end{eqnarray}
+
+As a conclusion,
+
+\begin{eqnarray}
+    v &=& \frac{1}{\pi a^2}
+          \sum^\infty_{n=1} \frac{J_0(r\alpha_n)J_0(r'\alpha_n)}{J^2_1(a\alpha_n)}
+                            \mathrm{e}^{-\alpha^2_n Dt}
+\end{eqnarray}
+where $J_0(\alpha_n) = 0$.
+
+this is the Green's function of this system($\tau = 0$).
+
+\subsection{solve the equation directory}
+
+Otherwise, the equation can be solved directory by using separation of valiables.
+
+First, the equation can be written as below.
+
+\begin{eqnarray}
+    P(r,t) &=& R(r)T(t) \nonumber \\
+    \frac{1}{R}\left(\frac{\partial^2 R}{\partial r^2}
+    + \frac{1}{r}\frac{\partial R}{\partial r}\right)
+    &=& \frac{1}{DT} \frac{\partial T}{\partial t} = -\lambda^2 \nonumber
+\end{eqnarray}
+
+Equation of $R$ is Bessel's differencial equation, so the solution of $R$ is
+
+\begin{equation}
+    R(r) = AJ_0(\lambda r) + BY_0(\lambda r) \nonumber
+\end{equation}
+
+and the equation of $T$ is simply
+
+\begin{equation}
+    T(r) = C\mathrm{e}^{- \lambda^2 \alpha t} \nonumber
+\end{equation}
+
+where $A$, $B$, and $C$ is constant.
+
+Therefore, the general solution is
+
+\begin{equation}
+    P(r, t) = (AJ_0(\lambda r) + BY_0(\lambda r) )
+              C \mathrm{e}^{- \lambda^2 \alpha t} \nonumber
+\end{equation}
+
+and now, P has finite value in $r \rightarrow 0$ when $t>0$, so $B = 0$.
+
+From boundary condition, 
+
+\begin{eqnarray}
+    P(a, t) &=& AJ_0(\lambda a) C \mathrm{e}^{- \lambda^2 \alpha t} \nonumber \\
+            &=& 0 \nonumber
+\end{eqnarray}
+
+the exponential cannot be zero,
+so $\lambda a$ should satisfy $J_0(\lambda a) = 0$.
+
+Both of $A$ and $C$ are arbitrary constant, so let $AC = A$.
+
+Therefore, 
+
+\begin{equation}
+    P(r, t) = AJ_0(\alpha r) \mathrm{e}^{-\alpha^2 Dt} \nonumber
+\end{equation}
+
+where $J_0(a\alpha) = 0$.
+
+Let initial condition F(r). F can be written as sum of these solutions like,
+
+\begin{eqnarray}
+    F(r) = \sum_n A_n J_0(\alpha_n r) \nonumber
+\end{eqnarray}
+
+Bessel function is complete system, so F can be written as expansion.
+
+\begin{eqnarray}
+    & & \int^a_0 J_0(\alpha_n r) F(r) 2\pi rdr \nonumber \\
+    &=& \int^a_0 \sum^\infty_{n=1} A_n J_0(\alpha_n r)J_0(\alpha_n r) 2\pi rdr
+        \nonumber
+\end{eqnarray}
+thus
+\begin {equation}
+    A_n = \frac{1}{\pi a^2 J^2_1(\alpha_n)} \int^a_0 J_0(\alpha_n r)
+          F(r) 2 \pi rdr \nonumber
+\end{equation}
+
+therefore the solution is
+
+\begin{eqnarray}
+    P(r,t) &=& \sum^\infty_{n=1} \mathrm{e}^{-\alpha_n Dt} 
+               \int^a_0 \frac{J_0(\alpha_n r')J_0(\alpha_n r)}{\pi a^2 J^2_1(a\alpha)}
+               F(r') r'dr' \nonumber \\
+           &=& \int^a_0 F(r') \frac{1}{\pi a^2} \sum^\infty_{n=1}
+               \frac{J_0(\alpha_n r')J_0(\alpha_n r)}{\pi a^2 J^2_1(a\alpha)}
+               \mathrm{e}^{-\alpha^2 Dt} r' dr' \nonumber
+\end{eqnarray}
+
+so the Green's function is
+
+\begin{equation}
+    G(r, t) = \frac{1}{\pi a^2} \sum^\infty_{n=1}
+              \frac{J_0(\alpha_n r')J_0(\alpha_n r)}{J^2_1(a\alpha)}
+              \mathrm{e}^{-\alpha^2 Dt} \nonumber
+\end{equation}
+
+this is equal to the form described above.
+
+\section{public member function}
+
+\subsection{drawR(rnd, t) const}
+
+\begin{table}[htb]
+    \begin{tabular}{ll}
+        rnd    & const double \\
+        t      & const double \\
+        return & const double
+    \end{tabular}
+\end{table}
+
+drawR returns the distance between particle position in time t and initial position.
+
+the return value r satisfies
+$\int^r_0 P(r', t) r'dr' = \mathrm{p\_survival}(t) \times \mathrm{rnd}$.
+
+p\_int\_r(r) calculate the integration$\int^r_0 P(r',t) r'dr'$.
+
+\subsection{drawTime(rnd) const}
+
+\begin{table}[htb]
+    \begin{tabular}{ll}
+        rnd     & const double \\
+        return  & const double
+    \end{tabular}
+\end{table}
+
+drawTime returns when the particle goes out of the boundary($ = a$).
+
+the return value t satisfies $ 1 - \mathrm{p\_survival}(t) = \mathrm{rnd}$.
+
+\subsection{p\_survival(t) const}
+
+\begin{table}[htb]
+    \begin{tabular}{ll}
+        t       & const double\\
+        return  & const double
+    \end{tabular}
+\end{table}
+
+p\_survival returns the survival probability of the particle in the system at time t.
+
+\begin{eqnarray}
+    S(t) &=& \int^a_0 \int^{2\pi}_0 P(r,t) rdr \nonumber \\
+         &=& \frac{2}{a}\sum^{\infty}_{n=1}\frac{1}{\alpha_n J_1(a\alpha_n)}
+             \mathrm{e}^{-D\alpha^2_nt}\nonumber
+\end{eqnarray}
+
+derivation of the function is
+\begin{eqnarray}
+    \int^a_0 \int^{2\pi}_0 P(r, t) r dr
+    &=&
+    2\pi \int^a_0 \frac{1}{\pi a}
+    \sum^{\infty}_{n=1}\frac{J_0(r\alpha_n)}{J^2_1(a\alpha_n)}
+                       \mathrm{e}^{-D\alpha^2_nt} rdr \nonumber \\
+    &=& \frac{2}{a}\sum^{\infty}_{n=1}
+                       \frac{1}{J^2_1(a\alpha_n)}
+                       \mathrm{-D\alpha^2_nt} \int^a_0 J_0(r\alpha_n) rdr
+        \nonumber \\
+    &=& \frac{2}{a}\sum^{\infty}_{n=1}
+                       \frac{1}{J^2_1(a\alpha_n)}
+                       \mathrm{e}^{-D\alpha^2_nt} \frac{aJ_1(a\alpha_n)}{\alpha_n}
+        \nonumber \\
+    &=& \frac{2}{a}\sum^{\infty}_{n=1}
+                       \frac{1}{\alpha_n J_1(a\alpha_n)}
+                       \mathrm{e}^{-D\alpha^2_nt} \nonumber
+\end{eqnarray}
+
+\subsection{p\_int\_r(r, t) const}
+
+\begin{table}[htb]
+    \begin{tabular}{ll}
+        r       & const double\\
+        t       & const double\\
+        return  & const double
+    \end{tabular}
+\end{table}
+
+p\_int\_r returns the cumulative distriburion function $[0,r)$.
+integration can be obtained in the same way as the case of p\_survival.
+
+\begin{eqnarray}
+    \int^r_0 \int^{2\pi}_0 P(r',t) r'dr' =
+    \frac{2}{a^2}\sum^{\infty}_{n=1}
+        \frac{rJ_1(r\alpha_n)}{\alpha_n J^2_1(a\alpha_n)}
+        \mathrm{e}^{-D\alpha^2_nt}\nonumber
+\end{eqnarray}
+
+\end{document}

@@ -1,0 +1,311 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+
+\begin{document}
+
+\title{GreensFunction2DAbsInfWedge}
+\author{Toru Niina}
+\maketitle
+
+\section{Overview}
+
+System contains only one particle. 
+ Position is described by cylindrical coordinate system.
+ Initial position of the particle is $r = r_0$, $\theta = \theta_0$.
+
+And boundary conditions are
+\begin{eqnarray}
+    P(r, 0, t)      &=& 0 \nonumber \\
+    P(r, \phi, t)   &=& 0 \label{boundary-condition}
+\end{eqnarray}
+where $0 < \phi < 2\pi$.
+
+\subsection{Green's Function}
+\begin{equation}\label{greens-function}
+    G(r, \theta, t) = \frac{1}{\phi Dt}\mathrm{e}^{-(r_0^2 + r^2)/4Dt}
+          \sum^{\infty}_{n=1}\sin\frac{n\pi\theta_0}{\phi}\sin\frac{n\pi\theta}{\phi}
+          I_{\frac{n\pi}{\phi}}\left(\frac{rr_0}{2Dt}\right)
+%
+%     \frac{1}{2\phi Dt}\mathrm{e}^{-(r'^2 + r^2)/4Dt}
+%                         \sum^{\infty}_{n=1}\sin\frac{n\pi}{2}\sin\frac{n\pi\theta}{\phi}
+%                         I_{\frac{n\pi}{\phi}}\left(\frac{rr'}{2Dt}\right)
+\end{equation}
+
+
+\subsection{Derivation of the Green's function}
+As a starting point, consider 2 dimentional diffusion equation in infinite space
+and the solution of that.
+
+\begin{eqnarray}
+    \frac{\partial u}{\partial t} &=& D\nabla^2 u \\
+    u(R, t) &=& \frac{1}{4\pi Dt}\mathrm{exp}\left(\frac{-R^2}{4Dt}\right)
+    \label{solution-infinite}
+\end{eqnarray}
+here, $R$ is a distance from initial position $(x_0, y_0)$ to $(x, y)$, so
+\begin{equation}
+ R = \sqrt{(x-x_0)^2+(y-y_0)^2}.
+\end{equation}
+
+When the equation is considered in Cylindrical coordinate, the form of solution
+is same as above (\ref{solution-infinite}) but the definition of distance $R$ become
+
+\begin{equation}
+    R = \sqrt{r^2+r_0^2+rr_0\cos(\theta - \theta_0)}.
+\end{equation}
+
+Let the solution of diffusion equation $v$ under the boundary conditions
+ (\ref{boundary-condition}) as
+\begin{equation}
+    v = u + w.
+\end{equation}
+here, $u$ corresponds to the solution of diffusion equation in the case of
+ infinite space. $w$ satisfies the same equation and cancels the value of $u$ on
+ the boundary.
+
+To solve this, use Laplace transformation.
+ The solution of diffusion equation in infinite space with transformation
+ $(t\rightarrow p)$ is
+
+\begin{equation} \label{Laplace-u-solution-infinite}
+    \bar{u} = \frac{1}{2\pi D}K_0(qR)
+\end{equation}
+here, q is defined as $q = \sqrt{\cfrac{p}{D}}$ and $K_0$ means modified Bessel
+ function of the second kind.
+
+Now, it can be written that
+\begin{eqnarray}
+    K_0(qR) &=& K_0\left(q\sqrt{r^2+r_0^2+rr_0\cos(\theta - \theta_0)}\right) \nonumber \\
+            &=& P.V.\int^{\infty i}_{-\infty i}
+                \frac{\cos\nu (\pi - (\theta - \theta_0 ))}{\sin\nu\pi}
+                K_\nu(qr)I_\nu(qr_0)id\nu\label{expansion-K0}
+\end{eqnarray}
+where $0 < \theta - \theta_0 < 2\pi$ and $r_0 < r$.
+ Here, $P.V.$ implys Cauthy's principal value of the origin.
+ This can be calculated by completing the contour by a large hemi-circle
+ in the right-hand half-plane and using residue theorem.
+
+Then $\bar{u}$ can be re-written as
+\begin{equation}\label{expansion-bar-u}
+    \bar{u} = \frac{i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+              \frac{\cos\nu (\pi - \theta + \theta_0)}{\sin\nu\pi}
+              K_\nu(qr)I_\nu(qr_0)d\nu
+\end{equation}
+where $0 < \theta - \theta_0 < 2\pi$ and $r_0 < r$.
+
+In order to cancel out the value of $\bar{u}$ on the boundary,
+ where $\theta = \phi$ and $r_0 < r$, $\bar{w}$ should satisfy below.
+\begin{equation}
+    \bar{w}(r, \phi, t) =
+              \frac{-i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+              \frac{\cos\nu (\pi - \phi + \theta_0)}{\sin\nu\pi}
+              K_\nu(qr)I_\nu(qr_0)d\nu
+\end{equation}
+
+With the Laplace transformation $t\rightarrow p$, subsidiary equation become
+\begin{eqnarray}
+    D\left( \frac{\partial^2}{\partial r^2} +
+            \frac{1}{r}\frac{\partial}{\partial r} +
+            \frac{1}{r^2}\frac{\partial^2}{\partial \theta^2}
+            \right)
+    \bar{\Psi}
+    &=&
+    p\bar{\Psi} \nonumber \\
+    r^2 \frac{\partial^2}{\partial r^2}\bar{\Psi} +
+    r   \frac{\partial}{\partial r}\bar{\Psi} +
+        \frac{\partial^2}{\partial \theta^2}\bar{\Psi} -
+    r^2 \frac{p}{D}\bar{\Psi} &=& 0.
+\end{eqnarray}
+
+Assuming that the form of the solution $\Psi$ can be written as
+ $R(r, t)\Theta(\theta)$ and $\Theta(\theta)$ satisfies the equation below, 
+\begin{equation}
+    \frac{d^2}{d\theta^2}\bar{\Theta} = -n^2\bar{\Theta}
+\end{equation}
+
+The subsidialy equation become the same form as Modified Bessel's equation.
+\begin{equation} \label{subsidiary-eq}
+    r^2\frac{\partial^2}{\partial r^2}\bar{\Psi} +
+    r\frac{\partial}{\partial r}\bar{\Psi} -(n^2 + r^2q^2)\bar{\Psi} = 0.
+\end{equation}
+So the solution of (\ref{subsidiary-eq}) is a multipletation between
+ a linear combination of Modified Bessel function, $I_n(qr), K_n(qr)$ and
+ a linear combination of $\sin n\theta$ and $\cos n\theta$.
+
+\begin{equation}\label{solution-of-subsidialy-equation}
+    solution = \sum_n\Bigl( A\cos n\theta + B\sin n\theta\Bigr)
+    \Bigl(CI_n(rq) + DK_n(rq)\Bigr)
+\end{equation}
+
+Here, this integral
+\begin{equation}\label{general-integral-form-of-w}
+P.V.\int^{\infty i}_{-\infty i}
+    \frac{\cos\nu\pi}{\sin\nu\pi}
+    (A\sin\nu(\phi - \theta) + B\sin\nu\theta)
+    K_\nu(qr)id\nu
+\end{equation}
+is evaluated as
+\begin{equation}
+    \sum_n\Bigl( A\sin n\phi\cos n\theta + (B-A\cos n\phi)\sin n\theta\Bigr)K_n(qr)
+\end{equation}
+So the form (\ref{general-integral-form-of-w}) satisfies (\ref{subsidiary-eq}).
+
+From the boundary condition on $\theta = 0, \phi$, forrowing equations can be derived.
+\begin{eqnarray}
+    0 &=& \frac{\cos\nu\pi}{\sin\nu\pi}
+          A\sin\nu\phi
+          K_\nu(qr) + \frac{\cos\nu (\pi - \theta_0)}{\sin\nu\pi}
+          K_\nu(qr)I_\nu(qr_0) \nonumber \\
+    0 &=& \frac{\cos\nu\pi}{\sin\nu\pi}
+          B\sin\nu\phi
+          K_\nu(qr) + \frac{\cos\nu (\pi - \phi + \theta_0)}{\sin\nu\pi}
+          K_\nu(qr)I_\nu(qr_0) \nonumber
+\end{eqnarray}
+It should be noted that $\theta$ and $\theta_0$ in the form of (\ref{expansion-bar-u})
+ are interchanged  in the case of $\theta < \theta_0$.
+ So the case of boundary condition $\theta = 0$, the form of the function differs from the other.
+
+These equations correspond to the condition of $\theta=0$ and $\theta=\phi$, respectively.
+ From this condition, the constants $A, B$ are obtained as
+\begin{eqnarray}
+    A &=& -\frac{\cos\nu(\pi-\theta_0)}{\cos\nu\pi\sin\nu\phi}I_\nu(qr_0) \\
+    B &=& -\frac{\cos\nu(\pi-\phi+\theta_0)}{\cos\nu\pi\sin\nu\phi}I_\nu(qr_0)
+\end{eqnarray}
+
+Therefore, the form of $\bar{w}$ is
+\begin{eqnarray} 
+    \bar{w} = \frac{-i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+              \frac{\cos\nu (\pi - \phi + \theta_0)\sin\nu\theta + 
+                    \cos\nu(\pi - \theta_0)\sin\nu(\phi - \theta)}
+                   {\sin\nu\pi\sin\nu\phi} \times \nonumber \\
+              K_\nu(qr)I_\nu(qr_0)d\nu\label{bar-w}
+\end{eqnarray}
+evaluating the value of this integral by completing the contour by a large semicircle in
+ the right-hand half-plane and using residue theorem, the form of $\bar{w}$ become same
+ form as (\ref{solution-of-subsidialy-equation}).
+
+%  with some rearrangement, become below.
+% \begin{eqnarray}
+%     \bar{w} = \frac{-i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+%               \frac{\cos\nu (\pi - \frac{\phi}{2})}
+%                    {\sin\nu\pi\sin\nu\phi}
+%               (\sin\nu\theta + \sin\nu(\phi - \theta))
+%               \times \nonumber \\
+%               K_\nu(qr)I_\nu(qr_0)d\nu \label{bar-w}
+% \end{eqnarray}
+
+Then $\bar{v}$ can be obtained by simply add (\ref{expansion-bar-u}) and
+ (\ref{bar-w}). And then the integration path can be completed at the 
+ origin.
+
+% this is the procedure of rearrangement.
+% \begin{eqnarray}
+%     \bar{v} &=& \bar{u} + \bar{w} \nonumber \\
+%             &=& \frac{i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+%                 \frac{\cos\nu (\pi - \theta + \frac{\phi}{2})}{\sin\nu\pi}
+%                 K_\nu(qr)I_\nu(qr_0)d\nu \nonumber \\
+%             &+& \frac{-i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+%                 \frac{\cos\nu (\pi - \frac{\phi}{2})}
+%                      {\sin\nu\pi\sin\nu\phi}
+%                 (\sin\nu\theta + \sin\nu(\phi - \theta))
+%                 \times
+%                 K_\nu(qr)I_\nu(qr_0)d\nu \nonumber\\
+%             &=& \frac{i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+%                 \left(\frac{\cos\nu (\pi - \theta + \frac{\phi}{2})}{\sin\nu\pi} -
+%                 \frac{\cos\nu (\pi - \frac{\phi}{2})}
+%                      {\sin\nu\pi\sin\nu\phi}
+%                 (\sin\nu\theta + \sin\nu(\phi - \theta))\right)
+%                 \times
+%                 K_\nu(qr)I_\nu(qr_0)d\nu \nonumber \\
+%             &=& \frac{i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+%                 \frac{K_\nu(qr)I_\nu(qr_0)}{\sin\nu\pi}
+%                 \left(\cos\nu (\pi - \theta + \frac{\phi}{2}) -
+%                 \frac{\cos\nu (\pi - \frac{\phi}{2})}{\sin\nu\phi}
+%                 (\sin\nu\theta + \sin\nu(\phi - \theta))\right)
+%                 d\nu \nonumber \\
+%             &=& \frac{i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+%                 \frac{K_\nu(qr)I_\nu(qr_0)}{\sin\nu\pi}
+%                 \Biggl(
+%                     \cos\nu (\pi - \frac{\phi}{2} - \theta + \phi) -
+%                     \cos\nu (\pi - \frac{\phi}{2})
+%                     \frac{\sin\nu\theta + \sin\nu(\phi - \theta)}{\sin\nu\phi}
+%                 \Biggr)
+%                 d\nu \nonumber \\
+%             &=& \frac{i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+%                 \frac{K_\nu(qr)I_\nu(qr_0)}{\sin\nu\pi}
+%                 \Biggl(
+%                     \cos\nu (\pi - \frac{\phi}{2})\cos\nu(\phi - \theta) -
+%                     \sin\nu (\pi - \frac{\phi}{2})\sin\nu(\phi - \theta) - \nonumber \\
+%             & &     \cos\nu (\pi - \frac{\phi}{2})
+%                     \frac{\sin\nu\theta + \sin\nu(\phi - \theta)}{\sin\nu\phi}
+%                 \Biggr)
+%                 d\nu \nonumber \\
+%             &=& \frac{i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+%                 \frac{K_\nu(qr)I_\nu(qr_0)}{\sin\nu\pi}
+%                 \Biggl(
+%                     \cos\nu (\pi - \frac{\phi}{2})\Bigl(\cos\nu(\phi - \theta) - 
+%                     \frac{\sin\nu\theta + \sin\nu(\phi - \theta)}{\sin\nu\phi}\Bigr)- \nonumber \\
+%             & &     \sin\nu (\pi - \frac{\phi}{2})\sin\nu(\phi - \theta)\Biggr) d\nu \nonumber \\
+%             &=& \frac{i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+%                 K_\nu(qr)I_\nu(qr_0)\Biggl(
+%                     (\frac{\cos\nu\pi}{\sin\nu\pi}\cos\frac{\nu\phi}{2} - \sin\frac{\nu\phi}{2})
+% \nonumber \\
+%             & &     \Bigl(\cos\nu(\phi - \theta) - 
+%                     \frac{\sin\nu\theta + \sin\nu(\phi - \theta)}{\sin\nu\phi}\Bigr) -
+%                     (\cos\frac{\nu\phi}{2} - \frac{\cos\nu\pi}{\sin\nu\pi}\sin\frac{\nu\phi}{2})
+%                     \sin\nu(\phi - \theta)\Biggr) d\nu \nonumber \\
+%             &=& \frac{i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+%                 K_\nu(qr)I_\nu(qr_0)\Biggl( \nonumber \\
+%             & &     (\frac{\cos\nu\pi}{\sin\nu\pi}\cos\frac{\nu\phi}{2})
+%                     \Bigl(\cos\nu(\phi-\theta)-\frac{\sin\nu\theta + \sin\nu(\phi - \theta)}{\sin\nu\phi}\Bigr) - \nonumber \\
+%             & &     \sin\frac{\nu\phi}{2}
+%                     \Bigl(\cos\nu(\phi-\theta)-\frac{\sin\nu\theta + \sin\nu(\phi - \theta)}{\sin\nu\phi}\Bigr) - \nonumber \\
+%             & &     (\cos\frac{\nu\phi}{2} - \frac{\cos\nu\pi}{\sin\nu\pi}\sin\frac{\nu\phi}{2})
+%                     \sin\nu(\phi - \theta)\Biggr) d\nu \nonumber 
+% \end{eqnarray}
+
+\begin{equation} \label{bar-v}
+    \bar{v} = \frac{i}{\pi D}\int^{\infty i}_{-\infty i}
+              \frac{\sin\nu\theta_0\sin\nu(\phi - \theta)}{\sin\nu\phi}
+              K_\nu(qr)I_\nu(qr_0)d\nu
+\end{equation}
+
+This integral is calculated by completing the path by a large semicircle in the
+ right half plane, and evaluating the residues at the poles $\sin\nu\phi = 0$, $n\pi / \phi$.
+
+Now, let
+\begin{equation}
+    s = n\pi / \phi
+\end{equation}
+then the values of residues are
+\begin{eqnarray}
+    & & \frac{i}{\pi D}\lim_{\nu\to s}\left[
+        (\nu - s)\frac{\sin\nu\theta_0\sin\nu(\phi - \theta)}{\sin\nu\phi}
+        K_\nu(qr)I_\nu(qr_0)
+        \right] \nonumber \\
+    &=& \frac{i}{\pi D}\lim_{\nu\to s}\left[
+        \frac{\nu\phi - s\phi}{\phi\sin(\nu\phi-s\phi)}
+        \sin\nu\theta_0\sin\nu(\phi - \theta)
+        K_\nu(qr)I_\nu(qr_0)
+        \right] \nonumber \\
+    &=& \frac{i}{\pi D\phi}\sin s\theta_0\sin s(\phi - \theta)K_s(qr)I_s(qr_0) \nonumber \\
+    &=& \frac{-i}{\pi D\phi}\sin s\theta_0\sin s\theta K_s(qr)I_s(qr_0)
+\end{eqnarray}
+so from residue theorem,
+\begin{eqnarray}
+    \bar{v} &=& 2\pi i\sum_{n=1}^{\infty}
+            \frac{1}{\pi iD\phi}\sin s\theta_0\sin s\theta K_s(qr)I_s(qr_0) \nonumber \\
+            &=& \frac{2}{D\phi}\sum^{\infty}_{n=1}
+            \sin\frac{n\pi\theta_0}{\phi}\sin\frac{n\pi\theta}{\phi}
+                K_{\frac{n\pi}{\phi}}(qr)I_{\frac{n\pi}{\phi}}(qr_0)
+\end{eqnarray}
+
+By Inverse Laplace transformation, $p\to t$, $v$ can be obtained as
+\begin{eqnarray}
+    v(r, \theta, t) &=& \frac{1}{\phi Dt}\mathrm{e}^{-(r_0^2 + r^2)/4Dt}
+          \sum^{\infty}_{n=1}\sin\frac{n\pi\theta_0}{\phi}\sin\frac{n\pi\theta}{\phi}
+          I_{\frac{n\pi}{\phi}}\left(\frac{rr_0}{2Dt}\right)
+\end{eqnarray}
+this is the Green's function of this system.
+
+\end{document}

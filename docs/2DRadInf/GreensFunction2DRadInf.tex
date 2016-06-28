@@ -1,0 +1,206 @@
+\documentclass{article}
+\begin{document}
+
+\title{Pair2DRadInf}
+\maketitle
+\section{infinite medium}
+
+\begin{eqnarray}
+    u(r,t|r',0)=\frac{1}{4\pi Dt}e^{-R^2/4Dt} \nonumber \\
+    R^2=r^2+r'^2-2rr'\cos(\theta-\theta') \nonumber
+\end{eqnarray}
+
+by Laplace Transformation $\frac{1}{2t}e^{-x^2/4Dt}\rightarrow K_0(qx)$
+
+\begin{equation}
+    \bar{u}(r,s|r',0)=\frac{1}{2\pi D}K_0(qR)
+\end{equation}
+here, 
+$q\equiv\sqrt{s/D}$
+
+and using this
+\begin{eqnarray}
+    K_0(\eta R)&=&\sum_{n=-\infty}^{\infty}\cos n(\theta-\theta')I_n(\eta r)K_n(\eta r') \mathrm{when} r<r' \nonumber \\
+    K_0(\eta R)&=&\sum_{n=-\infty}^{\infty}\cos n(\theta-\theta')I_n(\eta r')K_n(\eta r) \mathrm{when} r>r' 
+\end{eqnarray}
+
+transformed u can be written as
+
+\begin{equation}
+    \bar{u}(r,s|r',0)=\frac{1}{2\pi D}\sum_{n=-\infty}^{\infty}\cos n(\theta-\theta')I_n(qr)K_n(qr'), when r<r'
+\end{equation}
+here, let $\theta'=0$, 
+
+\begin{equation}
+\bar{u}(r,s|r',0)=\frac{1}{2\pi D}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta I_n(qr)K_n(qr'), when r<r'
+\end{equation}
+here, $\epsilon_n \equiv 2-\delta(n)$
+
+\section{boundary condision}
+
+\begin{eqnarray}
+    \frac{\partial^2 v}{\partial r^2}+\frac{1}{r}\frac{\partial v}{\partial r}+\frac{1}{r^2}\frac{\partial^2 v}{\partial\theta^2}-\frac{1}{D}\frac{\partial v}{\partial t}=0 \nonumber \\
+    v(r,0)=\delta(r-r')\delta(\theta-\theta') \nonumber \\
+    \left.\frac{\partial v(r,t)}{\partial r}\right|_{r=a}=hv(a,t), a<r' \nonumber
+\end{eqnarray}
+
+$v(r,t)$ has a finit value in $r\rightarrow\infty$. 
+
+so let $v = u+w$, u and w satisfies below.
+\begin{eqnarray}
+    \frac{\partial^2 u}{\partial r^2}+\frac{1}{r}\frac{\partial u}{\partial r}+\frac{1}{r^2}\frac{\partial^2 u}{\partial\theta^2}-\frac{1}{D}\frac{\partial u}{\partial t}&=&0 \\
+    \frac{\partial^2 w}{\partial r^2}+\frac{1}{r}\frac{\partial w}{\partial r}+\frac{1}{r^2}\frac{\partial^2 w}{\partial\theta^2}-\frac{1}{D}\frac{\partial w}{\partial t}&=&0 \\
+    u(r,0)=\delta(r-r')\delta(\theta-\theta'), w(r,0)&=&0 \\
+    \left.\frac{\partial (u+w)(r,t)}{\partial r}\right|_{r=a}&=&h(u+w)(a,t),\ a<r'
+\end{eqnarray}
+
+and let u is a solution in the case of infinite medium. then, we should find w that makes v to satisfy the boundary conditions.
+
+\begin{eqnarray}
+    \frac{\partial^2 w}{\partial r^2}+\frac{1}{r}\frac{\partial w}{\partial r}+\frac{1}{r^2}\frac{\partial^2 w}{\partial\theta^2}-\frac{1}{D}\frac{\partial w}{\partial t}=0 \\
+    w(r,0)=0\\
+    \left.\frac{\partial (u+w)(r,t)}{\partial r}\right|_{r=a}=h(u+w)(a,t) a<r'
+\end{eqnarray}
+
+\subsection{obtaining the solution}
+
+\begin{equation}
+    \frac{\partial^2 w}{\partial r^2}+\frac{1}{r}\frac{\partial w}{\partial r}+\frac{1}{r^2}\frac{\partial^2 w}{\partial\theta^2}-\frac{1}{D}\frac{\partial w}{\partial t}=0
+\end{equation}
+
+using $q\equiv\sqrt{s/D}$
+
+\begin{equation}
+    \frac{\partial^2\bar{w}}{\partial r^2}+\frac{1}{r}\frac{\partial\bar{w}}{\partial r}+\frac{1}{r^2}\frac{\partial^2\bar{w}}{\partial\theta^2}-q^2\bar{w}=0
+\end{equation}
+
+separating valuables like 
+$\bar{w}(r,\theta,q)\equiv\bar{w}_r(r,q)\bar{w}_\theta(\theta,q)$, 
+
+\begin{eqnarray}
+    \frac{\partial^2\bar{w}_r}{\partial r^2}\bar{w}_\theta+\frac{1}{r}\frac{\partial\bar{w}_r}{\partial r}\bar{w}_\theta+\frac{1}{r^2}\frac{\partial^2\bar{w}_\theta}{\partial\theta^2}\bar{w}_r-q^2\bar{w}_r\bar{w}_\theta=0 \\
+    r^2\frac{\partial^2\bar{w}_r}{\partial r^2}/\bar{w}_r+r\frac{\partial\bar{w}_r}{\partial r}/\bar{w}_r+\frac{\partial^2\bar{w}_\theta}{\partial\theta^2}/\bar{w}_\theta-q^2r^2=0
+\end{eqnarray}
+
+using
+$-n^2$
+\begin{eqnarray}
+    r^2\frac{\partial^2\bar{w}_r}{\partial r^2}+r\frac{\partial\bar{w}_r}{\partial r}-\left(n^2+q^2r^2\right)\bar{w}_r=0 \\
+    \frac{\partial^2\bar{w}_\theta}{\partial\theta^2}=-n^2\bar{w}_\theta .
+\end{eqnarray}
+
+generally, w can be written as
+\begin{equation}
+    \bar{w}_r=A_n I_n(qr) + B_n K_n(qr), \bar{w}_\theta=C_n \cos n\theta + D_n \sin n\theta,
+\end{equation}
+
+so
+
+\begin{equation}
+  \bar{w}=\sum_{n=0}^{\infty}\left\{A_n I_n(qr) + B_n K_n(qr)\right\}\left(C_n \cos n\theta + D_n \sin n\theta\right) .
+\end{equation}
+
+from first boundary condition, $r \to \infty v \to 0$,
+\begin{equation}
+    \bar{w}=\sum_{n=0}^{\infty}B_n K_n(qr)\cos n\theta
+\end{equation}
+
+now, let
+$B_n\rightarrow\epsilon_nB_n$, then v in r<r' become
+
+\begin{equation}
+  \bar{v}=\bar{u}+\bar{v}=\frac{1}{2\pi D}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta I_n(qr)K_n(qr')+2\pi D\epsilon_nB_n K_n(qr)\cos n\theta=\frac{1}{2\pi D}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta \left[I_n(qr)K_n(qr')+2\pi DB_n K_n(qr)\right] .
+\end{equation}
+
+and differenciation by r is
+\begin{eqnarray}
+  & & \frac{\partial \bar{v}}{\partial r}=\frac{1}{2\pi D}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta \left[qI'_n(qr)K_n(qr')+2\pi DB_n qK'_n(qr)\right] , \\
+  &=&\frac{1}{2\pi D}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta \left[q\left\{I_{n+1}(qr)+\frac{n}{qr}I_n(qr)\right\}K_n(qr')+2\pi DB_n q\left\{-K_{n+1}(qr)+\frac{n}{qr}K_n(qr)\right\}\right] ,
+\end{eqnarray}
+
+from the boundary condition r=a<r'
+\begin{eqnarray}
+  0=\left.\frac{\partial\bar{v}}{\partial r}-h\bar{v}\right|_{r=a}=\frac{1}{2\pi D}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta \left[\left\{qI_{n+1}(qa)+\frac{n}{a}I_n(qa)\right\}K_n(qr')+2\pi DB_n \left\{-qK_{n+1}(qa)+\frac{n}{a}K_n(qa)\right\}\right] ... \\
+  -\frac{h}{2\pi D}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta \left[I_n(qa)K_n(qr')+2\pi DB_n K_n(qa)\right] .
+\end{eqnarray}
+
+to satisfy this in arbitrary argument, 
+
+\begin{eqnarray}
+  \left\{qI_{n+1}(qa)+\left(\frac{n}{a}-h\right)I_n(qa)\right\}K_n(qr')+2\pi DB_n \left\{-qK_{n+1}(qa)+\left(\frac{n}{a}-h\right)K_n(qa)\right\}=0 , \\
+  2\pi DB_n=\frac{-\left(ah-n\right)I_n(qa)+qaI_{n+1}(qa)}{\left(ah-n\right)K_n(qa)+qaK_{n+1}(qa)}K_n(qr') .
+\end{eqnarray}
+
+so $\bar{v}$ is
+
+\begin{equation}
+  \bar{v}=\frac{1}{2\pi D}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta\times K_n(qr') \left[\frac{\left\{\left(ah-n\right)K_n(qa)+qaK_{n+1}(qa)\right\}I_n(qr)+K_n(qr)\left\{-\left(ah-n\right)I_n(qa)+qaI_{n+1}(qa)\right\}}{\left(ah-n\right)K_n(qa)+qaK_{n+1}(qa)}\right] .
+\end{equation}
+
+\subsection{inverse laplace transformation}
+
+consider second Bromwich path. "Conduction of Heat in Solids", p. 393. FIG. 40.
+
+\begin{equation}
+  v=\frac{1}{2\pi i}\int_{AB}\bar{v}e^{pt}dp=-\frac{1}{2\pi i}\int_{FE+ED+DC}\bar{v}e^{pt}dp 
+\end{equation}
+
+first, let path FE is $p=u^2De^{\pi i}$, $u \rightarrow 0$. then, $q\equiv\sqrt{\frac{p}{D}}$ and $q=ue^{\frac{1}{2}\pi i}$
+
+\begin{equation}
+  \frac{1}{2\pi i}\int_{FE}\bar{v}e^{pt}dp=\frac{1}{2\pi i}\int_{\infty}^{0}\bar{v}e^{-u^2Dt}\left(-2uD\right)du=\frac{D}{\pi i}\int_{0}^{\infty}\bar{v}ue^{-u^2Dt}du .
+\end{equation}
+
+generally, mopdified Bessel function satisfies
+
+\begin{eqnarray}
+  K_n(ze^{\pm\frac{1}{2}\pi i})=\pm\frac{1}{2}\pi ie^{\mp\frac{1}{2}n\pi i}\left[-J_n(z)\pm iY_n(z)\right] ,\\
+  I_n(ze^{\pm\frac{1}{2}\pi i})=e^{\pm\frac{1}{2}n\pi i}J_n(z) ,
+\end{eqnarray}
+
+therefore, using this,
+\begin{eqnarray}
+    K_n(ze^{\frac{1}{2}\pi i})=\frac{1}{2}\pi ie^{-\frac{1}{2}n\pi i}\left[-J_n(z)+ iY_n(z)\right],\,I_n(ze^{\frac{1}{2}\pi i})=e^{\frac{1}{2}n\pi i}J_n(z) , \\
+    trans = {BesselK[n_, q x_] -> 1/2 Pi  I Exp[-Pi (n)/2 I] (-BesselJ[n, u x] + I BesselY[n, u x]), BesselI[n_, q x_] -> Exp[ Pi (n)/2 I] BesselJ[n, u x], q -> I u}
+\end{eqnarray}
+
+the path FE becomes
+\begin{equation}
+    \bar{v}_{FE}=\frac{1}{4D}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta\left[\left\{P_nJ_n(ur')+Y_n(ur')Q_n\right\}+i\left\{-P_nY_n(ur')+J_n(ur')Q_n\right\}\right]\frac{-Q_nJ_n(ur)+Y_n(ur)P_n}{P_n^2+Q_n^2} .
+\end{equation}
+
+here, $P_n=(ah-n)J_n(ua)+uaJ_{n+1}(ua)$ and $Q_n=(ah-n)Y_n(ua)+uaY_{n+1}(ua)$.
+
+in other hand, let the path DC is $p=u^2De^{-\pi i}$, $u:\,0\rightarrow\infty$. therefore, $q=ue^{-\frac{1}{2}\pi i}$
+
+\begin{equation}
+  K_n(ze^{-\frac{1}{2}\pi i})=-\frac{1}{2}\pi ie^{\frac{1}{2}n\pi i}\left[-J_n(z)- iY_n(z)\right],\,I_n(ze^{-\frac{1}{2}\pi i})=e^{-\frac{1}{2}n\pi i}J_n(z) ,
+trans = {BesselK[n_,q x_] -> -1/2 Pi I Exp[Pi (n)/2 I] (-BesselJ[n, u x] - I BesselY[n, u x]), BesselI[n_, q x_] -> Exp[-Pi (n)/2 I] BesselJ[n, u x], q -> -I u}
+\end{equation}
+
+\begin{equation}
+  \bar{v}_{DC}=\frac{1}{4D}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta\left[\left\{P_nJ_n(ur')+Y_n(ur')Q_n\right\}-i\left\{-P_nY_n(ur')+J_n(ur')Q_n\right\}\right]\frac{-Q_nJ_n(ur)+Y_n(ur)P_n}{P_n^2+Q_n^2} .
+\end{equation}
+
+this is a conjugate of the case of path FE
+
+therefore
+\begin{equation}
+  v=-\frac{1}{2\pi i}\int_{FE}\bar{v}e^{pt}dp-\frac{1}{2\pi i}\int_{DC}\bar{v}e^{pt}dp=-\frac{D}{\pi i}\int_{0}^{\infty}\bar{v}_{FE}ue^{-u^2Dt}du+\frac{D}{\pi i}\int_{0}^{\infty}\bar{v}_{DC}ue^{-u^2Dt}du=-\frac{2D}{\pi}\int_{0}^{\infty}\mathrm{Im}\left[\bar{v}_{FE}\right]ue^{-u^2Dt}du .
+\end{equation}
+
+so inverse fourier transformation becomes
+\begin{eqnarray}
+    v&=&\frac{1}{2\pi}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta\int_{0}^{\infty}\frac{\bigl(J_n(ur')Q_n-P_nY_n(ur')\bigr)\bigl(J_n(ur)Q_n-P_nY_n(ur)\bigr)}{P_n^2+Q_n^2}ue^{-u^2Dt}du\\
+     &=&\frac{1}{2\pi}\sum_{n=0}^{\infty}\epsilon_n\cos n\theta\int_{0}^{\infty}C_n(ur)C_n(ur')ue^{-u^2Dt}du ,
+\end{eqnarray}
+
+here, $C_n(z)=\frac{J_n(z)Q_n-P_nY_n(z)}{\left(P_n^2+Q_n^2\right)^{\frac{1}{2}}}$ .
+
+unsolved problem
+
+-そもそも, second Bromwich pathでの経路積分がゼロになる理由. 特異点の問題.
+
+-経路EDの小円がゼロに収束する証明.
+
+\end{document}

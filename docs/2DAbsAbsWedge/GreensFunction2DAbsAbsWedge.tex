@@ -1,0 +1,435 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+
+\begin{document}
+
+\title{GreensFunction2DAbsAbsWedge}
+\author{Toru Niina}
+\maketitle
+
+\section{Overview}
+
+System contains only one particle. 
+ Position is described by cylindrical coordinate system.
+ Initial position of the particle is $r = r_0$, $\theta = \theta_0$.
+
+And boundary conditions are
+\begin{eqnarray}
+    P(r, 0, t)      &=& 0 \nonumber \\
+    P(r, \phi, t)   &=& 0 \nonumber \\ 
+    P(a, \theta, t) &=& 0
+    \label{boundary-condition}
+\end{eqnarray}
+where $0 < \phi < 2\pi$.
+
+\subsection{Green's Function}
+\begin{equation}\label{greens-function}
+    G(r, \theta, t) =
+          \frac{4}{\phi a^2}\sum^{\infty}_{n=1}
+          \sin\frac{n\pi\theta_0}{\phi}\sin\frac{n\pi\theta}{\phi}
+          \sum^{\infty}_{m=1}\mathrm{e}^{-\alpha_{mn}^2Dt}
+          \frac{J_{\frac{n\pi}{\phi}}(r_0\alpha_{mn})
+                J_{\frac{n\pi}{\phi}}(r\alpha_{mn})}
+          {\{J'_{\frac{n\pi}{\phi}}(a\alpha_{mn})\}^2}
+%
+%     \frac{2}{\phi a^2}\sum^{\infty}_{n=1}
+%           \sin\frac{n\pi\theta_0}{\phi}\sin\frac{n\pi\theta}{\phi}
+%           \sum^{\infty}_{m=1}\mathrm{e}^{-\alpha_{mn}^2Dt}
+%           \frac{J_{\frac{n\pi}{\phi}}(r_0\alpha_{mn})
+%                 J_{\frac{n\pi}{\phi}}(r\alpha_{mn})}
+%           {\{J'_{\frac{n\pi}{\phi}}(a\alpha_{mn})\}^2}
+\end{equation}
+
+\subsection{Derivation of the Green's function}
+As a starting point, consider 2 dimentional diffusion equation in infinite space
+and the solution of that.
+
+\begin{eqnarray}
+    \frac{\partial u}{\partial t} &=& D\nabla^2 u \\
+    u(R, t) &=& \frac{1}{4\pi Dt}\mathrm{exp}\left(\frac{-R^2}{4Dt}\right)
+    \label{solution-infinite}
+\end{eqnarray}
+here, $R$ is a distance from initial position $(x_0, y_0)$ to $(x, y)$, so
+\begin{equation}
+ R = \sqrt{(x-x_0)^2+(y-y_0)^2}.
+\end{equation}
+
+When the equation is considered in Cylindrical coordinate, the form of solution
+is same as above (\ref{solution-infinite}) but the definition of distance $R$ become
+
+\begin{equation}
+    R = \sqrt{r^2+r_0^2+rr_0\cos(\theta - \theta_0)}.
+\end{equation}
+
+Let the solution of diffusion equation $v$ under the boundary conditions
+ (\ref{boundary-condition}) as
+\begin{equation}
+    v = u + w_\theta + w_r.
+\end{equation}
+here, $u$ corresponds to the solution of diffusion equation in the case of
+ infinite space. $w_i$ satisfies the same equation and cancels the value of $u$ on
+ the boundary of $r$ and $\theta$, respectively.
+
+To solve this, use Laplace transformation.
+ The solution of diffusion equation in infinite space with transformation
+ $(t\rightarrow p)$ is
+
+\begin{equation} \label{Laplace-u-solution-infinite}
+    \bar{u} = \frac{1}{2\pi D}K_0(qR)
+\end{equation}
+here, q is defined as $q = \sqrt{\cfrac{p}{D}}$ and $K_0$ means modified Bessel
+ function of the second kind.
+
+Now, it can be written that
+\begin{eqnarray}
+    K_0(qR) &=& K_0\left(q\sqrt{r^2+r_0^2+rr_0\cos(\theta - \theta_0)}\right) \nonumber \\
+            &=& P.V.\int^{\infty i}_{-\infty i}
+                \frac{\cos\nu (\pi - (\theta - \theta_0 ))}{\sin\nu\pi}
+                K_\nu(qr)I_\nu(qr_0)id\nu\label{expansion-K0}
+\end{eqnarray}
+where $0 < \theta - \theta_0 < 2\pi$ and $r_0 < r$.
+ Here, $P.V.$ implys Cauthy's principal value of the origin.
+
+Then $\bar{u}$ can be re-written as
+\begin{equation}\label{expansion-bar-u}
+    \bar{u} = \frac{i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+              \frac{\cos\nu (\pi - \theta + \theta_0)}{\sin\nu\pi}
+              K_\nu(qr)I_\nu(qr_0)d\nu
+\end{equation}
+where $0 < \theta - \theta_0 < 2\pi$ and $r_0 < r$.
+
+In order to cancel out the value of $\bar{u}$ on the boundary of $\theta = \phi$,
+ where $\theta = \phi$ and $r_0 < r$, $\bar{w}$ should satisfy below.
+\begin{equation}
+    \bar{w_\theta}(r, \phi, t) =
+              \frac{-i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+              \frac{\cos\nu (\pi - \phi + \theta_0)}{\sin\nu\pi}
+              K_\nu(qr)I_\nu(qr_0)d\nu
+\end{equation}
+And same as above, to cancel out the value of $\bar{u}$ on the boundary of $r = a$,
+ where $0 < \theta-\theta_0 < 2\pi$ and $r=a$, $\bar{w}$ should satisfy below.
+\begin{equation}
+    \bar{w_r}(a, \theta, t) =
+              \frac{-i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+              \frac{\cos\nu (\pi - \theta + \theta_0)}{\sin\nu\pi}
+              K_\nu(qa)I_\nu(qr_0)d\nu
+\end{equation}
+
+With the Laplace transformation $t\rightarrow p$, subsidiary equation become
+\begin{eqnarray}
+    D\left( \frac{\partial^2}{\partial r^2} +
+            \frac{1}{r}\frac{\partial}{\partial r} +
+            \frac{1}{r^2}\frac{\partial^2}{\partial \theta^2}
+            \right)
+    \bar{\Psi}
+    &=&
+    p\bar{\Psi} \nonumber \\
+    r^2 \frac{\partial^2}{\partial r^2}\bar{\Psi} +
+    r   \frac{\partial}{\partial r}\bar{\Psi} +
+        \frac{\partial^2}{\partial \theta^2}\bar{\Psi} -
+    r^2 \frac{p}{D}\bar{\Psi} &=& 0.
+\end{eqnarray}
+
+Assuming that the form of the solution $\Psi$ can be written as
+ $R(r, t)\Theta(\theta)$ and $\Theta(\theta)$ satisfies the equation below, 
+\begin{equation}
+    \frac{d^2}{d\theta^2}\bar{\Theta} = -n^2\bar{\Theta}
+\end{equation}
+
+The subsidiary equation become the same form as Modified Bessel's equation.
+\begin{equation} \label{subsidiary-eq}
+    r^2\frac{\partial^2}{\partial r^2}\bar{\Psi} +
+    r\frac{\partial}{\partial r}\bar{\Psi} -(n^2 + r^2q^2)\bar{\Psi} = 0.
+\end{equation}
+So the solution of (\ref{subsidiary-eq}) is a multipletation between
+ a linear combination of Modified Bessel function, $I_n(qr), K_n(qr)$ and
+ a linear combination of $\sin n\theta$ and $\cos n\theta$.
+
+\begin{equation}\label{solution-of-subsidiary-equation}
+    solution = \sum_n\Bigl( A\cos n\theta + B\sin n\theta\Bigr)
+    \Bigl(CI_n(qr) + DK_n(qr)\Bigr)
+\end{equation}
+
+Here, this integral
+\begin{equation}\label{general-integral-form-of-w}
+P.V.\int^{\infty i}_{-\infty i}
+    \frac{\cos\nu\pi}{\sin\nu\pi}
+    (A\sin\nu(\phi - \theta) + B\sin\nu\theta)
+    K_\nu(qr)id\nu
+\end{equation}
+is evaluated as
+\begin{equation}
+    \sum_n\Bigl( A\sin n\phi\cos n\theta + (B-A\cos n\phi)\sin n\theta\Bigr)K_n(qr)
+\end{equation}
+So the form (\ref{general-integral-form-of-w}) satisfies (\ref{subsidiary-eq}).
+
+From the boundary condition on $\theta = 0, \phi$, forrowing equations can be derived.
+\begin{eqnarray}
+    0 &=& \frac{\cos\nu\pi}{\sin\nu\pi}
+          A\sin\nu\phi
+          K_\nu(qr) + \frac{\cos\nu (\pi - \theta_0)}{\sin\nu\pi}
+          K_\nu(qr)I_\nu(qr_0) \nonumber \\
+    0 &=& \frac{\cos\nu\pi}{\sin\nu\pi}
+          B\sin\nu\phi
+          K_\nu(qr) + \frac{\cos\nu (\pi - \phi + \theta_0)}{\sin\nu\pi}
+          K_\nu(qr)I_\nu(qr_0) \nonumber
+\end{eqnarray}
+It should be noted that $\theta$ and $\theta_0$ in the form of (\ref{expansion-bar-u})
+ are interchanged  in the case of $\theta < \theta_0$.
+ So the case of boundary condition $\theta = 0$, the form of the function differs from the other.
+
+These equations correspond to the condition of $\theta=0$ and $\theta=\phi$, respectively.
+ From this condition, the constants $A, B$ are obtained as
+\begin{eqnarray}
+    A &=& -\frac{\cos\nu(\pi-\theta_0)}{\cos\nu\pi\sin\nu\phi}I_\nu(qr_0) \\
+    B &=& -\frac{\cos\nu(\pi-\phi+\theta_0)}{\cos\nu\pi\sin\nu\phi}I_\nu(qr_0)
+\end{eqnarray}
+
+Therefore, the form of $\bar{w_\theta}$ is
+\begin{eqnarray} 
+    \bar{w_\theta} = \frac{-i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+              \frac{\cos\nu (\pi - \phi + \theta_0)\sin\nu\theta + 
+                    \cos\nu(\pi - \theta_0)\sin\nu(\phi - \theta)}
+                   {\sin\nu\pi\sin\nu\phi} \times \nonumber \\
+              K_\nu(qr)I_\nu(qr_0)d\nu\label{bar-w-theta}
+\end{eqnarray}
+
+%  with some rearrangement, become below.
+% \begin{eqnarray}
+%     \bar{w_\theta} = \frac{-i}{2\pi D}P.V.\int^{\infty i}_{-\infty i}
+%               \frac{\cos\nu (\pi - \frac{\phi}{2})}
+%                    {\sin\nu\pi\sin\nu\phi}
+%               (\sin\nu\theta + \sin\nu(\phi - \theta))
+%               \times \nonumber \\
+%               K_\nu(qr)I_\nu(qr_0)d\nu \label{bar-w-theta-2}
+% \end{eqnarray}
+
+And then the $\bar{w_r}$ is
+\begin{eqnarray} 
+    \bar{w_r} = \frac{-i}{\pi D}P.V.\int^{\infty i}_{-\infty i}
+              \frac{\sin\nu\theta_0\sin\nu(\phi - \theta)}{\sin\nu\phi}
+              \frac{K_\nu(qa)I_\nu(qr)I_\nu(qr_0)}{I_\nu(qa)}d\nu
+              \label{bar-w-r}
+\end{eqnarray}
+% evaluating the integral by conpleting the contour by a large semicircle in the right
+%  half-plane and using residue theorem, these $w$ become same form as
+%  (\ref{solution-of-subsidiary-equation}).
+
+Then $\bar{v}$ can be obtained by simply add (\ref{expansion-bar-u}), (\ref{bar-w-r}) and
+ (\ref{bar-w-theta}). And then the integration path can be completed at the 
+ origin.
+
+\begin{equation} \label{bar-v}
+    \bar{v} = \frac{i}{\pi D}\int^{\infty i}_{-\infty i}
+              \frac{\sin\nu\theta_0\sin\nu(\phi - \theta)}{\sin\nu\phi}
+              \frac{I_\nu(qr_0)}{I_\nu(qa)}
+              \left(K_\nu(qa)I_\nu(qr) - K_\nu(qr)I_\nu(qa)\right)d\nu
+\end{equation}
+
+This integral is calculated by completing the path by a large semicircle in the
+ right half plane, and evaluating the residues at the poles
+ $\nu = n\pi / \phi \Leftrightarrow \sin\nu\phi = 0 $ because $I_n(z)$ never be zero.
+
+Now, let
+\begin{equation}
+    s = n\pi / \phi
+\end{equation}
+and define
+\begin{equation}
+    F_n(x, y) = K_n(x)I_n(y) - K_n(y)I_n(x)
+\end{equation}
+then the values of residues are
+\begin{eqnarray}
+    & & \frac{i}{\pi D}\lim_{\nu\to s}\left[
+        (\nu - s)\frac{\sin\nu\theta_0\sin\nu(\phi - \theta)}{\sin\nu\phi}
+        \frac{I_\nu(qr_0)}{I_\nu(qa)}F_\nu(qa, qr)
+        \right] \nonumber \\
+    &=& \frac{i}{\pi D}\lim_{\nu\to s}\left[
+        \frac{\nu\phi - s\phi}{\phi\sin(\nu\phi-s\phi)}
+        \sin\nu\theta_0\sin\nu(\phi - \theta)
+        \frac{I_\nu(qr_0)}{I_\nu(qa)}F_\nu(qa, qr)
+        \right] \nonumber \\
+    &=& \frac{i}{\pi D\phi}\sin s\theta_0\sin s(\phi - \theta)
+        \frac{I_\nu(qr_0)}{I_\nu(qa)}F_\nu(qa, qr)\nonumber \\
+    &=& \frac{-i}{\pi D\phi}\sin s\theta_0\sin s\theta
+        \frac{I_\nu(qr_0)}{I_\nu(qa)}F_\nu(qa, qr)\nonumber
+\end{eqnarray}
+so based on residue theorem,
+\begin{eqnarray}
+    \bar{v} &=& 2\pi i\sum_{n=1}^{\infty}
+                \frac{1}{\pi iD\phi}\sin s\theta_0\sin s\theta
+                \frac{I_{\frac{n\pi}{\phi}}(qr_0)}{I_{\frac{n\pi}{\phi}}(qa)}
+                F_{\frac{n\pi}{\phi}}(qa, qr)\nonumber \\
+            &=& \frac{2}{D\phi}\sum^{\infty}_{n=1}
+                \sin\frac{n\pi\theta_0}{\phi}\sin\frac{n\pi\theta}{\phi}
+                \frac{I_{\frac{n\pi}{\phi}}(qr_0)}{I_{\frac{n\pi}{\phi}}(qa)}
+                F_{\frac{n\pi}{\phi}}(qa, qr)\nonumber
+\end{eqnarray}
+It should be noted that $r$ and $r_0$ will be interchanged in the case of $r < r_0$.
+
+Considering Bromwich integral,
+$v$ can be evaluated by inverse Laplace transform $p\to r$ by using residue theorem.
+\begin{eqnarray}
+    v &=& \frac{2}{D\phi}\sum^{\infty}_{n=1}
+          \sin\frac{n\pi\theta_0}{\phi}\sin\frac{n\pi\theta}{\phi} \nonumber \\
+      & & \int\frac{I_{\frac{n\pi}{\phi}}(qr_0)}{I_{\frac{n\pi}{\phi}}(qa)}
+          \left(K_{\frac{n\pi}{\phi}}(qa)I_{\frac{n\pi}{\phi}}(qr) - 
+          K_{\frac{n\pi}{\phi}}(qr)I_{\frac{n\pi}{\phi}}(qa)\right)
+          \mathrm{e}^{pt} dp\label{bar-v-bromwich-integral}
+\end{eqnarray}
+
+Using variable transformation $q = -is \to p = -Ds^2$, the form of the function integrated 
+in (\ref{bar-v-bromwich-integral}) become
+\begin{eqnarray}
+    \int\frac{I_{\frac{n\pi}{\phi}}(-isr_0)}{I_{\frac{n\pi}{\phi}}(-isa)}
+    (I_{\frac{n\pi}{\phi}}(-isa)K_{\frac{n\pi}{\phi}}(-isr) -
+     I_{\frac{n\pi}{\phi}}(-isr)K_{\frac{n\pi}{\phi}}(-isa)) \times\nonumber \\
+    \mathrm{e}^{-s^2Dt}(-2Ds)ds
+\end{eqnarray}
+And re-writing the above integral by using characteristics of modified Bessel function
+\begin{eqnarray}
+    I_n(-ix) &=& i^{-n}J_n(x)\nonumber \\
+    K_n(-ix) &=& \frac{\pi}{2}i^{n+1}(J_n(x)+iY_n(x))\nonumber
+\end{eqnarray}
+with some rearrangement, the integral become
+\begin{eqnarray}
+\int\pi Ds\frac{J_{\frac{n\pi}{\phi}}(sr_0)}{J_{\frac{n\pi}{\phi}}(sa)}
+    \left(J_{\frac{n\pi}{\phi}}(sa)Y_{\frac{n\pi}{\phi}}(sr) -
+          J_{\frac{n\pi}{\phi}}(sr)Y_{\frac{n\pi}{\phi}}(sa)\right)
+    \mathrm{e}^{-s^2Dt}ds
+%procedure of rearrangement.
+% \\
+% & & \int\frac{I_{\frac{n\pi}{\phi}}(-isr_0)}{I_{\frac{n\pi}{\phi}}(-isa)}
+%     (I_{\frac{n\pi}{\phi}}(-isa)K_{\frac{n\pi}{\phi}}(-isr) -
+%      I_{\frac{n\pi}{\phi}}(-isr)K_{\frac{n\pi}{\phi}}(-isa)) \times\nonumber \\
+% & & \mathrm{e}^{-s^2Dt}(-2Ds)ds \\
+% &=& \int\frac{J_{\frac{n\pi}{\phi}}(sr_0)}{J_{\frac{n\pi}{\phi}}(sa)}
+%     (I_{\frac{n\pi}{\phi}}(-isa)K_{\frac{n\pi}{\phi}}(-isr) -
+%      I_{\frac{n\pi}{\phi}}(-isr)K_{\frac{n\pi}{\phi}}(-isa)) \times\nonumber \\
+% & & \mathrm{e}^{-s^2Dt}(-2Ds)ds\\
+% &=& \int\frac{J_{\frac{n\pi}{\phi}}(sr_0)}{J_{\frac{n\pi}{\phi}}(sa)}
+%     (i^{-\nu}J_{\frac{n\pi}{\phi}}(sa)
+%         \frac{\pi}{2}i^{\nu+1}(J_{\frac{n\pi}{\phi}}(sr)+iY_{\frac{n\pi}{\phi}}(sr)) -
+%     i^{-\nu}J_{\frac{n\pi}{\phi}}(sr)
+%         \frac{\pi}{2}i^{\nu+1}(J_{\frac{n\pi}{\phi}}(sa)+iY_{\frac{n\pi}{\phi}}(sa)))
+%     \times\nonumber \\
+% & & \mathrm{e}^{-s^2Dt}(-2Ds)ds\\
+% &=& \int\frac{J_{\frac{n\pi}{\phi}}(sr_0)}{J_{\frac{n\pi}{\phi}}(sa)}
+%     (J_{\frac{n\pi}{\phi}}(sa)
+%         \frac{\pi}{2}i(J_{\frac{n\pi}{\phi}}(sr)+iY_{\frac{n\pi}{\phi}}(sr)) -
+%     J_{\frac{n\pi}{\phi}}(sr)
+%         \frac{\pi}{2}i(J_{\frac{n\pi}{\phi}}(sa)+iY_{\frac{n\pi}{\phi}}(sa)))
+%     \times\nonumber \\
+% & & \mathrm{e}^{-s^2Dt}(-2Ds)ds\\
+% &=& \int\frac{\pi}{2}\frac{J_{\frac{n\pi}{\phi}}(sr_0)}{J_{\frac{n\pi}{\phi}}(sa)}
+%     \left(J_{\frac{n\pi}{\phi}}(sa)
+%         (iJ_{\frac{n\pi}{\phi}}(sr)-Y_{\frac{n\pi}{\phi}}(sr)) -
+%     J_{\frac{n\pi}{\phi}}(sr)
+%         (iJ_{\frac{n\pi}{\phi}}(sa)-Y_{\frac{n\pi}{\phi}}(sa))\right)
+%     \times\nonumber \\
+% & & \mathrm{e}^{-s^2Dt}(-2Ds)ds\\
+% &=& \int\frac{\pi}{2}\frac{J_{\frac{n\pi}{\phi}}(sr_0)}{J_{\frac{n\pi}{\phi}}(sa)}
+%     \left(-J_{\frac{n\pi}{\phi}}(sa)
+%         Y_{\frac{n\pi}{\phi}}(sr) +
+%            J_{\frac{n\pi}{\phi}}(sr)
+%         Y_{\frac{n\pi}{\phi}}(sa)\right)
+%     \mathrm{e}^{-s^2Dt}(-2Ds)ds\\
+% &=& \int\pi Ds\frac{J_{\frac{n\pi}{\phi}}(sr_0)}{J_{\frac{n\pi}{\phi}}(sa)}
+%     \left(J_{\frac{n\pi}{\phi}}(sa)Y_{\frac{n\pi}{\phi}}(sr) -
+%           J_{\frac{n\pi}{\phi}}(sr)Y_{\frac{n\pi}{\phi}}(sa)\right)
+%     \mathrm{e}^{-s^2Dt}ds
+\end{eqnarray}
+
+The poles are at the point that $s$ satisfies $J_{\frac{n\pi}{\phi}}(sa)$. 
+ Now let $a\alpha_{mn}$ is m-th root of $J_{\frac{n\pi}{\phi}}$,
+ then the value of each residues become
+\begin{equation}
+    \lim_{s\to\alpha_{mn}} \left[
+       (s-\alpha_{mn})
+       \pi Ds\mathrm{e}^{-s^2Dt}
+       \frac{J_{\frac{n\pi}{\phi}}(sr_0)}{J_{\frac{n\pi}{\phi}}(sa)}
+       \left(J_{\frac{n\pi}{\phi}}(sa)Y_{\frac{n\pi}{\phi}}(sr) -
+        J_{\frac{n\pi}{\phi}}(sr)Y_{\frac{n\pi}{\phi}}(sa)\right)
+       \right]
+\end{equation}
+
+In the same way as GreensFunction2DAbs, this can be evaluated as below.
+From the definition of differenciation,
+\begin{eqnarray}
+    \lim_{s\to\alpha_{mn}}\frac{(s-\alpha_{mn})}{J_{\frac{n\pi}{\phi}}(as)}
+    &=& \frac{1}{a} \lim_{s\to\alpha_{mn}} \frac{(as-a\alpha_{mn})}
+        {J_{\frac{n\pi}{\phi}}(as) - J_{\frac{n\pi}{\phi}}(a\alpha_{mn})}\nonumber \\
+    &=& \frac{1}{aJ'_{\frac{n\pi}{\phi}}(a\alpha_{mn})}\nonumber
+\end{eqnarray}
+
+And by definition of $\alpha_{mn}$
+\begin{eqnarray}
+    & & \lim_{s\to\alpha_{mn}}-J_{\frac{n\pi}{\phi}}(sr_0)
+        (J_{\frac{n\pi}{\phi}}(sa)Y_{\frac{n\pi}{\phi}}(sr) -
+         J_{\frac{n\pi}{\phi}}(sr)Y_{\frac{n\pi}{\phi}}(sa)) \nonumber \\
+    &=& -J_{\frac{n\pi}{\phi}}(r_0\alpha_{mn})
+         J_{\frac{n\pi}{\phi}}(r\alpha_{mn})Y_{\frac{n\pi}{\phi}}(a\alpha_{mn})
+\end{eqnarray}
+
+So the values of residues are
+\begin{equation}\label{residue-values}
+    Res_m = 
+    \pi D\alpha_{mn}\mathrm{e}^{-\alpha_{mn}^2Dt}
+    \frac{J_{\frac{n\pi}{\phi}}(r_0\alpha_{mn})}
+         {aJ'_{\frac{n\pi}{\phi}}(a\alpha_{mn})}
+       \left(-J_{\frac{n\pi}{\phi}}(r\alpha_{mn})
+         Y_{\frac{n\pi}{\phi}}(a\alpha_{mn})\right)
+\end{equation}
+
+Additionally, the characteristics of Bessel functions
+\begin{eqnarray}
+    J_n(x)Y'_n(x) - J'_n(x)Y_n(x) = \frac{2}{\pi x} \nonumber \\
+    Y_n(x) = \frac{-2}{\pi xJ'_n(x)} + \frac{J_n(x)Y'_n(x)}{J'_n(x)}
+\end{eqnarray}
+(\ref{residue-values}) are re-writtened as
+\begin{eqnarray}
+% procedure of derivation
+%    Res_m &=& \pi D\alpha_{mn}\mathrm{e}^{-\alpha_{mn}^2Dt}
+%    \frac{J_{\frac{n\pi}{\phi}}(r_0\alpha_{mn})}
+%         {aJ'_{\frac{n\pi}{\phi}}(a\alpha_{mn})}
+%       \left(-J_{\frac{n\pi}{\phi}}(r\alpha_{mn})
+%       \frac{-2}{\pi a\alpha_{mn}J'_{\frac{n\pi}{\phi}}(a\alpha_{mn})}\right) \nonumber \\
+%    &=& D\mathrm{e}^{-\alpha_{mn}^2Dt}
+%    \frac{J_{\frac{n\pi}{\phi}}(r_0\alpha_{mn})}
+%         {aJ'_{\frac{n\pi}{\phi}}(a\alpha_{mn})}
+%       J_{\frac{n\pi}{\phi}}(r\alpha_{mn})
+%       \frac{2}{aJ'_{\frac{n\pi}{\phi}}(a\alpha_{mn})} \nonumber \\
+%
+    Res_m &=& 2D\mathrm{e}^{-\alpha_{mn}^2Dt}
+    \frac{J_{\frac{n\pi}{\phi}}(r_0\alpha_{mn})
+          J_{\frac{n\pi}{\phi}}(r\alpha_{mn})}
+         {a^2\{J'_{\frac{n\pi}{\phi}}(a\alpha_{mn})\}^2}
+    \label{residue-values-only-J}
+\end{eqnarray}
+
+Therefore, $v$ is
+\begin{eqnarray}
+% procedure of derivation
+%     v &=& \frac{1}{D\phi}\sum^{\infty}_{n=1}
+%           \sin\frac{n\pi\theta_0}{\phi}\sin\frac{n\pi\theta}{\phi}
+%           \sum^{\infty}_{m=1}2D\mathrm{e}^{-\alpha_{mn}^2Dt}
+%           \frac{J_{\frac{n\pi}{\phi}}(r_0\alpha_{mn})
+%                 J_{\frac{n\pi}{\phi}}(r\alpha_{mn})}
+%           {a^2\{J'_{\frac{n\pi}{\phi}}(a\alpha_{mn})\}^2} \nonumber \\
+%     v &=& \frac{2}{\phi}\sum^{\infty}_{n=1}
+%           \sin\frac{n\pi\theta_0}{\phi}\sin\frac{n\pi\theta}{\phi}
+%           \sum^{\infty}_{m=1}\mathrm{e}^{-\alpha_{mn}^2Dt}
+%           \frac{J_{\frac{n\pi}{\phi}}(r_0\alpha_{mn})
+%                 J_{\frac{n\pi}{\phi}}(r\alpha_{mn})}
+%           {a^2\{J'_{\frac{n\pi}{\phi}}(a\alpha_{mn})\}^2} \nonumber \\
+    v &=& \frac{4}{\phi a^2}\sum^{\infty}_{n=1}
+          \sin\frac{n\pi\theta_0}{\phi}\sin\frac{n\pi\theta}{\phi}
+          \sum^{\infty}_{m=1}\mathrm{e}^{-\alpha_{mn}^2Dt}
+          \frac{J_{\frac{n\pi}{\phi}}(r_0\alpha_{mn})
+                J_{\frac{n\pi}{\phi}}(r\alpha_{mn})}
+          {\{J'_{\frac{n\pi}{\phi}}(a\alpha_{mn})\}^2}
+    \label{v-complete}
+\end{eqnarray}
+this is the Green's function of this system.
+\end{document}

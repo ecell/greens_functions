@@ -1,0 +1,435 @@
+\documentclass{article}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+
+\begin{document}
+
+\title{GreensFunction2DAbs}
+\author{Toru Niina}
+\maketitle
+
+\section{Overview}
+
+System contains only one particle. Initial position of the particle is $r=r_0$
+(Position is descrived by the cylindorical coordinate,
+$x = r\cos\theta, y = r\sin\theta$).
+
+Boundary condition is Absorbance boundary $\psi(a,t) = 0$.
+$\psi(r, t)$ means the probability of finding the particle in distance r and time t.
+
+\subsection{Green's Function}
+
+\begin{eqnarray}
+    & & G(r, \theta, t | r', \theta', \tau) \nonumber\\
+    &=& \frac{1}{\pi a^2}\sum^{\infty}_{m=1}
+        \frac{J_0(r\alpha_{m0})J_0(r'\alpha_{m0})}{J^2_1(a\alpha_{m0})}
+        \mathrm{e}^{-D\alpha^2_{m0} (t-\tau)} \nonumber \\
+    &+& \frac{2}{\pi a^2}\sum^{\infty}_{n=1}\cos(n(\theta - \theta'))
+        \sum^{\infty}_{m=1}
+        \frac{4J_n(r\alpha_{mn})J_n(r'\alpha_{mn})}
+             {(J_{n-1}(a\alpha_{mn})-J_{n+1}(a\alpha_{mn}))^2}
+        \mathrm{e}^{-D\alpha^2_{mn} (t-\tau)} \nonumber
+\end{eqnarray}
+where $J_n$ is 1st kind Bessel's function and
+$a\alpha_{mn}$ causes the 1st kind Bessel function to be zero like
+$J_n(a\alpha_{mn}) = 0$. 
+
+and the initial condition $F$ is
+
+\begin{equation}
+    F(r, \theta) = \delta(r - r_0)\delta(\theta)
+\end{equation}
+at $t=0$.
+
+then the probability function is
+
+\begin{eqnarray}
+    P &=& \int^a_0 \int^{2\pi}_0 F(r', \theta')
+                                 G(r, \theta, t | r', \theta', 0)
+                                 r'dr'd\theta' \nonumber \\
+      &=& \frac{1}{\pi a^2}\sum^{\infty}_{m=1}
+                                 \frac{J_0(r\alpha_{m0})J_0(r_0\alpha_{m0})}
+                                      {J^2_1(a\alpha_{m0})}
+          \mathrm{e}^{-D\alpha^2_{m0} t} \nonumber \\
+      &+& \frac{2}{\pi a^2}\sum^{\infty}_{n=1}\cos(n\theta)
+          \sum^{\infty}_{m=1}
+          \frac{4J_n(r\alpha_{mn})J_n(r_0\alpha_{mn})}
+               {(J_{n-1}(a\alpha_{mn})-J_{n+1}(a\alpha_{mn}))^2}
+          \mathrm{e}^{-D\alpha^2_{mn} t}
+\end{eqnarray}
+
+\subsection{derivation of the Green's function}
+
+First, consider the point source in a 3 dimentional cylinder
+and then integrate the function from $z = -\infty$ to $z = \infty$.
+
+the diffusion equation is
+\begin{eqnarray}
+    D\nabla^2 P(r, \theta, t) &=& \frac{\partial P(r, \theta, t)}{\partial t} \nonumber \\
+    P(a, \theta, t) &=& 0 \nonumber \\
+    P(r, \theta, 0) &=& \delta(r')
+\end{eqnarray}
+
+In infinite medium, if there are probability source in $(x',y',z')$,
+
+\begin{equation}
+    u = \frac{1}{8\sqrt{\pi Dt}^{3}}\mathrm{e}^{(-R^2 + (z - z')^2) / 4Dt}
+\end{equation}
+where
+\begin{equation}
+    R = (x - x')^2 + (y - y')^2 = r'^2 + r^2 - 2rr'\cos(\theta - \theta')
+\end{equation}
+
+In below, let $z' = 0$.
+
+using Laplace transformation, $\bar{u}$ can be written as
+\begin{eqnarray}
+    \bar{u}(p) &=& \frac{\mathrm{e}^{\sqrt{R^2 + z^2}}}
+                      {4\pi D\sqrt{R^2 + z^2}} \nonumber \\
+               &=& \frac{1}{2\pi^2 D}\int^{\infty}_{0}
+                   \cos{\xi z}K_0(\eta R)d\xi \label{Subequ}
+\end{eqnarray}
+where $q = \sqrt{\frac{p}{D}}$, $\eta = \sqrt{(\xi^2 + q^2)}$.
+
+And subsidery equation(with laplace transformation $t \to p$) is
+\begin{equation}
+    \frac{\partial^2 \bar{u}}{\partial r^2} +
+    \frac{1}{r}\frac{\partial \bar{u}}{\partial r} +
+    \frac{1}{r^2} \frac{\partial^2 \bar{u}}{\partial \theta^2} + 
+    \frac{\partial^2 \bar{u}}{\partial z^2} -
+    q^2 \bar{u} = 0
+\end{equation}
+
+Let the solution of this differencial equation $v = u + w$ 
+and select $w$ to satisfy the boundary condision such that 
+$v(a, \theta, t) = u(a, \theta, t) + w(a, \theta, t) = 0$.
+
+Based on addition theorem for the Bessel function $K_0$,
+\[
+    K_0(\eta R)
+    = \begin{cases}
+        \sum_{n = -\infty}^\infty \cos n(\theta - \theta')I_n(\eta r)K_n(\eta r') & (r  < r') \\
+        \sum_{n = -\infty}^\infty \cos n(\theta - \theta')I_n(\eta r')K_n(\eta r) & (r' < r )
+      \end{cases}
+\]
+$\bar{u}$ where $r > r'$ can be written as
+\begin{eqnarray}
+    \bar{u} &=& \frac{1}{2\pi^2D}\int^{\infty}_{0}
+                \cos{\xi z}K_0(\eta R)d\xi \nonumber \\
+            &=& \frac{1}{2\pi^2D}\int^{\infty}_{0}
+                \cos{\xi z}\sum_{n = -\infty}^\infty
+                \cos n(\theta - \theta')I_n(\eta r')K_n(\eta r)d\xi\nonumber \\
+            &=& \frac{1}{2\pi^2D}\sum_{n = -\infty}^\infty
+                \cos n(\theta - \theta')\int^{\infty}_{0}
+                \cos{\xi z}I_n(\eta r')K_n(\eta r)d\xi
+\end{eqnarray}
+and the value of $\bar{u}$ at $r = a$ is
+\begin{equation}
+    \bar{u}(a, \theta, t)
+    = \frac{1}{2\pi^2D}\sum_{n = -\infty}^\infty
+      \cos n(\theta - \theta')\int^{\infty}_{0}
+      \cos{\xi z}I_n(\eta r')K_n(\eta a)d\xi
+\end{equation}
+
+$\bar{w}$ is also the solution of (\ref{Subequ}), so the form is same as $\bar{u}$.
+In order $v$ to be zero in $r = a$, $\bar{w}$ become
+\begin{equation}
+    \bar{w} = \frac{-1}{2\pi^2D}\sum_{n = -\infty}^\infty
+              \cos n(\theta - \theta')\int^{\infty}_{0}
+              \cos{\xi z}\frac{I_n(\eta r)}{I_n(\eta a)}I_n(\eta r')K_n(\eta a)d\xi
+\end{equation}
+
+Simply add them, $\bar{v}$ can be obtained as
+\begin{eqnarray}
+    \bar{v} &=& \frac{1}{2\pi^2D}\sum_{n = -\infty}^\infty
+                \cos n(\theta - \theta') \nonumber \\
+            & & \int^{\infty}_{0}
+                \cos{\xi z}\frac{I_n(\eta r)}{I_n(\eta a)}
+                \left(I_n(\eta a)K_n(\eta r') - I_n(\eta r')K_n(\eta a)\right)d\xi
+\end{eqnarray}
+
+To calculate the integral
+\begin{equation}
+    \int^{\infty}_{0}
+    \cos{\xi z}\frac{I_n(\eta r)}{I_n(\eta a)}
+    \left(I_n(\eta a)K_n(\eta r') - I_n(\eta r')K_n(\eta a)\right)d\xi
+\end{equation}
+consider
+\begin{equation}
+    \int
+    \mathrm{e}^{i\xi z}\frac{I_n(\eta r)}{I_n(\eta a)}
+    \left(I_n(\eta a)K_n(\eta r') - I_n(\eta r')K_n(\eta a)\right)d\xi
+\end{equation}
+the contour is the real axis and a large semicircle in the upper plane($z > 0$).
+
+The poles are the point that satisfies $I_n(\eta a) = 0$, 
+at $\xi = i\sqrt{(q^2 + \alpha_{mn}^2)}$,
+where $\alpha_{mn}$ satisfies $J_n(a\alpha_{mn}) = 0$.
+
+Based on Residue theorem, the value of integral is
+\begin{eqnarray}
+    & & \int \mathrm{e}^{i\xi z}\frac{I_n(\eta r)}{I_n(\eta a)}
+        \left(I_n(\eta a)K_n(\eta r') - I_n(\eta r')K_n(\eta a)\right)d\xi \nonumber \\
+    &=& 2\pi i\sum Res(\mathrm{e}^{i\xi z}\frac{I_n(\eta r)}{I_n(\eta a)}
+        \left(I_n(\eta a)K_n(\eta r') - I_n(\eta r')K_n(\eta a)\right))
+\end{eqnarray}
+
+The values of residues are, by definition,
+\begin{eqnarray}
+    & & Res(\mathrm{e}^{i\xi z}\frac{I_n(\eta r)}{I_n(\eta a)}
+        \left(I_n(\eta a)K_n(\eta r') - I_n(\eta r')K_n(\eta a)\right)) \nonumber \\
+    &=& \lim_{\xi \to \beta}
+        (\xi - \beta)
+        \mathrm{e}^{i\xi z}\frac{I_n(\eta r)}{I_n(\eta a)}
+        \left(I_n(\eta a)K_n(\eta r') - I_n(\eta r')K_n(\eta a)\right)
+\end{eqnarray}
+here, $\beta = i\sqrt{(q^2 + \alpha_{mn}^2)}$.
+
+Now, let $\xi = i\sqrt{s^2 + q^2}$ i.e., $\eta = is$, the residues are written as
+\begin{equation}
+    \lim_{s \to \alpha_{mn}}
+    (s - \alpha_{mn})
+    \mathrm{e}^{-\sqrt{s^2 + q^2} z}\frac{I_n(isr)}{I_n(isa)}
+    \left(I_n(isa)K_n(isr') - I_n(isr')K_n(isa)\right)
+    \frac{si}{\sqrt{s^2+q^2}} \label{residue_s}
+\end{equation}
+using the nature of Bessel function
+\begin{eqnarray}
+    I_n(z\mathrm{e}^{\pm\frac{\pi i}{2}}) &=& \mathrm{e}^{\pm\frac{n\pi i}{2}}J_n(z) \nonumber \\
+    K_n(z\mathrm{e}^{\pm\frac{\pi i}{2}}) &=&
+        \pm\frac{\pi i}{2}\mathrm{e}^{\mp\frac{n\pi i}{2}}(-J_n(z) \pm iY_n(z))
+\end{eqnarray}
+the value (\ref{residue_s}) can be written as
+\begin{eqnarray}
+    & & \lim_{s \to \alpha_{mn}}
+        (s - \alpha_{mn})
+        \mathrm{e}^{-\sqrt{s^2 + q^2} z}
+        \frac{\mathrm{e}^{\frac{n\pi i}{2}}J_n(sr)}
+        {\mathrm{e}^{\frac{n\pi i}{2}}J_n(sa)} \nonumber \\
+    & & \Big(\mathrm{e}^{\frac{n\pi i}{2}}J_n(sa)
+            \frac{\pi i}{2}\mathrm{e}^{-\frac{n\pi i}{2}}(-J_n(sr') + iY_n(sr')) \nonumber \\
+    &-&     \mathrm{e}^{\frac{n\pi i}{2}}J_n(sr')
+            \frac{\pi i}{2}\mathrm{e}^{-\frac{n\pi i}{2}}(-J_n(sa) + iY_n(sa))
+        \Big) \frac{si}{\sqrt{s^2+q^2}}\nonumber \\
+    &=& \lim_{s \to \alpha_{mn}}
+        (s - \alpha_{mn})
+        \mathrm{e}^{-\sqrt{s^2 + q^2} z}
+        \frac{J_n(sr)}{J_n(sa)}\frac{\pi i}{2}\nonumber \\
+    & & \Big(J_n(sa)(-J_n(sr') + iY_n(sr')) - J_n(sr')(-J_n(sa) + iY_n(sa))
+        \Big) \frac{si}{\sqrt{s^2+q^2}}\nonumber \\
+    &=& \lim_{s \to \alpha_{mn}}
+        (s - \alpha_{mn})
+        \frac{\mathrm{e}^{-\sqrt{s^2 + q^2} z}}{\sqrt{s^2+q^2}}
+        \frac{J_n(sr)}{J_n(sa)}\frac{-s\pi}{2}\Big(iJ_n(sa)Y_n(sr') - iJ_n(sr')Y_n(sa)
+        \Big)\nonumber \\
+    &=& \lim_{s \to \alpha_{mn}}\frac{i\pi}{2}
+        \frac{\mathrm{e}^{-\sqrt{s^2 + q^2} z}}{\sqrt{s^2+q^2}}
+        \frac{(s - \alpha_{mn})}{J_n(sa)}sJ_n(sr)
+        \Big(-J_n(sa)Y_n(sr') + J_n(sr')Y_n(sa)\Big)\nonumber \\
+        \label{Lim_v}
+\end{eqnarray}
+The first part of (\ref{Lim_v}) is 
+\begin{equation}
+    \lim_{s \to \alpha_{mn}}\frac{i\pi}{2}
+        \frac{\mathrm{e}^{-\sqrt{s^2 + q^2} z}}{\sqrt{s^2+q^2}}
+  = \frac{i\pi}{2}
+  \frac{\mathrm{e}^{-\sqrt{\alpha_{mn}^2 + q^2} z}}{\sqrt{\alpha_{mn}^2+q^2}}
+\end{equation}
+Then, second part of (\ref{Lim_v}) is, by definition of derivative, 
+\begin{eqnarray}
+    & & \lim_{s \to \alpha_{mn}} \frac{(s - \alpha_{mn})}{J_n(sa)} \nonumber \\
+    &=& \lim_{s \to \alpha_{mn}}
+        \frac{(as - a\alpha_{mn})}{a(J_n(sa) - J_n(a\alpha_{mn}))} \nonumber \\
+    &=& \frac{1}{aJ'_n(a\alpha_{mn})}
+\end{eqnarray}
+The last part of (\ref{Lim_v}) is
+\begin{eqnarray}
+    & & \lim_{s \to \alpha_{mn}}sJ_n(sr)\Big(-J_n(sa)Y_n(sr') + J_n(sr')Y_n(sa)\Big) \nonumber \\
+    &=& \lim_{s \to \alpha_{mn}}sJ_n(sr)J_n(sr')Y_n(sa) \nonumber \\
+    &=& sJ_n(\alpha_{mn}r)J_n(\alpha_{mn}r')Y_n(\alpha_{mn}a) \label{last_limv}
+\end{eqnarray}
+and using
+\begin{equation}
+    zY_n(z) = \frac{-2}{\pi J'_n(z)} + \frac{zJ_n(z)Y'_n(z)}{J'_n(z)}
+\end{equation}
+(\ref{last_limv}) can be re-written as
+\begin{eqnarray}
+    & & \lim_{s \to \alpha_{mn}}sJ_n(sr)\Big(-J_n(sa)Y_n(sr') + J_n(sr')Y_n(sa)\Big) \nonumber \\
+    &=& J_n(\alpha_{mn}r)J_n(\alpha_{mn}r')\frac{-2}{a\pi J'_n(a\alpha_{mn})}
+\end{eqnarray}
+
+Thus, the value of residue finally becomes
+\begin{eqnarray}
+    & & \lim_{s \to \alpha_{mn}}\frac{i\pi}{2}
+        \frac{\mathrm{e}^{-\sqrt{s^2 + q^2} z}}{\sqrt{s^2+q^2}}
+        \frac{(s - \alpha_{mn})}{J_n(sa)}sJ_n(sr)
+        \Big(-J_n(sa)Y_n(sr') + J_n(sr')Y_n(sa)\Big) \nonumber \\
+    &=& \frac{i\pi}{2}\frac{\mathrm{e}^{-\sqrt{\alpha_{mn}^2 + q^2} z}}
+                           {\sqrt{\alpha_{mn}^2+q^2}}
+        \frac{1}{aJ'_n(a\alpha_{mn})}
+        J_n(\alpha_{mn}r)J_n(\alpha_{mn}r')
+        \frac{-2}{a\pi J'_n(a\alpha_{mn})} \nonumber \\
+    &=& \frac{-i}{a^2}\frac{\mathrm{e}^{-\sqrt{\alpha_{mn}^2 + q^2} z}}
+                         {\sqrt{\alpha_{mn}^2+q^2}}
+        \frac{J_n(\alpha_{mn}r)J_n(\alpha_{mn}r')}{\{J'_n(a\alpha_{mn})\}^2}
+\end{eqnarray}
+
+So $\bar{v}$ become
+\begin{eqnarray}
+\bar{v} &=& \frac{1}{2\pi^2D}\sum^\infty_{n = \infty}\cos n(\theta - \theta)
+            2\pi i\sum_\alpha
+            \frac{-i}{a^2}\frac{\mathrm{e}^{-\sqrt{\alpha_{mn}^2 + q^2} z}}
+                     {\sqrt{\alpha_{mn}^2+q^2}}
+            \frac{J_n(\alpha_{mn}r)J_n(\alpha_{mn}r')}{\{J'_n(a\alpha_{mn})\}^2} \nonumber \\
+        &=& \frac{1}{\pi Da^2}\sum^\infty_{n = \infty}\cos n(\theta - \theta)
+            \sum_\alpha
+            \frac{\mathrm{e}^{-\sqrt{\alpha_{mn}^2 + q^2} z}}
+                 {\sqrt{\alpha_{mn}^2+q^2}}
+            \frac{J_n(\alpha_{mn}r)J_n(\alpha_{mn}r')}{\{J'_n(a\alpha_{mn})\}^2}
+\end{eqnarray}
+
+From inverse Laplace transformation,
+\begin{equation}
+    \mathscr{L}^{-1} \left\{\frac{\mathrm{e}^{-qx}}{q}\right\}(t)
+  = \left(\frac{D}{\pi t}\right)^\frac{1}{2} \mathrm{e}^{-x^2/4Dt}
+\end{equation}
+thus $v$ is
+\begin{equation}
+    v = \frac{\mathrm{e}^{-z^2/4Dt}}{\pi a^2\sqrt{\pi Dt}}
+        \sum^\infty_{n = -\infty}\cos n(\theta - \theta)
+        \sum_\alpha
+        \mathrm{e}^{-\alpha_{mn}Dt}
+        \frac{J_n(\alpha_{mn}r)J_n(\alpha_{mn}r')}{\{J'_n(a\alpha_{mn})\}^2}
+\end{equation}
+
+Then integrate this from $z = -\infty$ to $z = + \infty$, using Gaussian integral, 
+\begin{eqnarray}
+    v &=& \frac{\sqrt{4Dt\pi}}{\pi a^2\sqrt{\pi Dt}}
+          \sum^\infty_{n = -\infty}\cos n(\theta - \theta)
+          \sum_\alpha
+          \mathrm{e}^{-\alpha_{mn}Dt}
+          \frac{J_n(\alpha_{mn}r)J_n(\alpha_{mn}r')}{\{J'_n(a\alpha_{mn})\}^2} \nonumber\\
+      &=& \frac{2}{\pi a^2}
+          \sum^\infty_{n = -\infty}\cos n(\theta - \theta)
+          \sum_\alpha
+          \mathrm{e}^{-\alpha_{mn}Dt}
+          \frac{J_n(\alpha_{mn}r)J_n(\alpha_{mn}r')}{\{J'_n(a\alpha_{mn})\}^2}
+\end{eqnarray}
+this is the Green's function of this system.
+
+\section{public member function}
+
+\subsection{drawR(rnd, t) const}
+
+drawR returns the distance between
+the position of particle and the center of system in time t.
+the return value $r$ satisfies
+\begin{equation}
+    \int^r_0 \int^{2\pi}_0 P(r', \theta', t) r'dr'd\theta' =
+    \mathrm{p\_survival}(t) \times \mathrm{rnd}.
+\end{equation}
+p\_int\_r calculates the integration
+$\int^r_0 \int^{2\pi}_0 P(r', \theta', t) r'dr'd\theta'$.
+
+\subsection{drawTheta(rnd, r, t) const}
+
+drawTheta returns the angle $\theta$ of the particle from initial position in time $t$ and radius $r$.
+
+The return value $\theta$ satisfies the equation
+\begin{equation}
+    \cfrac{\int^\theta_0 P(r, \theta', t) d\theta'}
+          {\int^{2\pi}_0 P(r, \theta', t) d\theta'} = \mathrm{rnd}
+\end{equation}
+
+this function should be called after drawR was called and
+the value of $r$ determined.
+
+p\_int\_theta calculate the integration
+$\int^\theta_0 P(r, \theta', t) d\theta'$.
+and p\_int\_2pi calculate the integration
+$\int^\pi_0 P(r, \theta', t) d\theta'$.
+
+\subsection{drawTime(rnd) const}
+
+drawTime returns the time when the particle goes out of the boundary.
+Return value $t$ satisfies $1 - \mathrm{p\_survival}(t) = \mathrm{rnd}$.
+
+\subsection{p\_survival(t) const}
+
+\begin{eqnarray}
+    S(t) &=& \int^a_0 \int^{2\pi}_0 P(r, \theta, t) rdrd\theta \nonumber \\
+         &=& \int^a_0 \frac{2}{a^2} \sum^{\infty}_{m=1}
+             \frac{J_0(r\alpha_{m0}) J_0(r_0\alpha_{m0})}{J^2_1(a\alpha_{m0})}
+             \mathrm{e}^{-\alpha^2_{m0}Dt} rdr \nonumber \\
+         &+& \int^a_0 \int^{2\pi}_0 \frac{2}{\pi a^2}
+             \sum^{\infty}_{n=1}\cos(n\theta)
+             \sum^{\infty}_{m=1}
+             \frac{4J_n(r\alpha_{mn})J_n(r_0\alpha_{mn})}
+                  {(J_{n-1}(a\alpha_{mn})-J_{n+1}(a\alpha_{mn}))^2}
+             \mathrm{e}^{(-D\alpha^2_{mn} t)} rdrd\theta \nonumber \\
+         &=& \frac{2}{a} \sum^{\infty}_{m=1}
+             \frac{J_0(r_0\alpha_{m0})}{\alpha_{m0} J_1(a\alpha_{m0})}
+             \mathrm{e}^{-\alpha^2_{m0}Dt} \nonumber
+\end{eqnarray}
+
+\subsection{p\_int\_r(r, t) const}
+
+\begin{eqnarray}
+    & & \int^r_0 \int^{2\pi}_0 P(r', \theta, t) r'dr'd\theta \nonumber \\
+    &=& \int^r_0 \frac{2}{a^2} \sum^{\infty}_{m=1}
+        \frac{J_0(r'\alpha_{m0}) J_0(r_0\alpha_{m0})}{J^2_1(a\alpha_{m0})}
+        \mathrm{e}^{-\alpha^2_{m0}Dt} r'dr' \nonumber \\
+    &+& \int^r_0 \int^{2\pi}_0 
+        \frac{2}{\pi a^2}\sum^{\infty}_{n=1}\cos(n\theta)
+        \sum^{\infty}_{m=1}
+        \frac{4J_n(r'\alpha_{mn})J_n(r_0\alpha_{mn})}
+             {(J_{n-1}(a\alpha_{mn})-J_{n+1}(a\alpha_{mn}))^2}
+        \mathrm{e}^{(-D\alpha^2_{mn} t)} r'dr'd\theta \nonumber \\
+    &=& \frac{2}{a^2}\sum^\infty_{m=1} \frac{r}{\alpha_{m0}}
+        \frac{J_1(r\alpha_{m0})J_0(r_0\alpha_{m0})}{J^2_1(a\alpha_{m0})}
+        \mathrm{e}^{-\alpha^2_{m0}Dt}\nonumber
+\end{eqnarray}
+
+\subsection{p\_int\_theta(r, $\theta$, t) const}
+
+Note: It is required that the value of $r$ is already determined by using drawR when this function is called.
+
+This function returns the value of cummurative probability in $[0,\theta)$ for certain value of r.
+
+\begin{eqnarray}
+    & & \int^\theta_0 P(r, \theta', t) d\theta' \nonumber\\
+    &=& \frac{\theta}{\pi a^2} \sum^{\infty}_{m=1}
+        \frac{J_0(r\alpha_{m0}) J_0(r_0\alpha_{m0})}{J^2_1(a\alpha_{m0})}
+        \mathrm{e}^{-\alpha^2_{m0}Dt} \nonumber \\
+    &+& \int^{\theta}_0 \frac{2}{\pi a^2}\sum^{\infty}_{n=1}\cos(n\theta')\sum^{\infty}_{m=1}
+        \frac{4J_n(r\alpha_{mn})J_n(r_0\alpha_{mn})}{(J_{n-1}(a\alpha_{mn})-J_{n+1}(a\alpha_{mn}))^2}
+        \mathrm{e}^{-D\alpha^2_{mn} t} d\theta' \nonumber \\
+    &=& \frac{\theta}{\pi a^2} \sum^{\infty}_{m=1}
+        \frac{J_0(r\alpha_{m0}) J_0(r_0\alpha_{m0})}{J^2_1(a\alpha_{m0})}
+        \mathrm{e}^{-\alpha^2_{m0}Dt} \nonumber \\
+    &+& \frac{2}{\pi a^2} \sum^\infty_{n=1} \frac{\sin(n\theta)}{n}
+        \sum^\infty_{m=1} \frac{4J_n(r\alpha_{mn})J_n(r_0\alpha_{mn})}{(J_{n-1}(a\alpha_{mn})-J_{n+1}(a\alpha_{mn}))^2}
+        \mathrm{e}^{-D\alpha^2_{mn} t} \nonumber
+\end{eqnarray}
+
+\subsection{p\_int\_2pi(r, t) const}
+
+Note: It is required that the value of $r$ is already determined by using drawR when this function is called.
+
+This function returns the value of cummurative probability in $[0,2\pi)$ for certain value of r.
+
+\begin{eqnarray}
+    & & \int^{2\pi}_0 P(r, \theta, t) d\theta \nonumber\\
+    &=& \frac{2}{a^2} \sum^{\infty}_{m=1}
+        \frac{J_0(r\alpha_{m0}) J_0(r_0\alpha_{m0})}{J^2_1(a\alpha_{m0})}
+        \mathrm{e}^{-\alpha^2_{m0}Dt} \nonumber \\
+    &+& \int^{2\pi}_0 \frac{2}{\pi a^2}\sum^{\infty}_{n=1}\cos(n\theta)\sum^{\infty}_{m=1}
+        \frac{4J_n(r\alpha_{mn})J_n(r_0\alpha_{mn})}{(J_{n-1}(a\alpha_{mn})-J_{n+1}(a\alpha_{mn}))^2}
+        \mathrm{e}^{-D\alpha^2_{mn} t} d\theta \nonumber \\
+    &=& \frac{2}{a^2} \sum^{\infty}_{m=1}
+        \frac{J_0(r\alpha_{m0}) J_0(r_0\alpha_{m0})}{J^2_1(a\alpha_{m0})}
+        \mathrm{e}^{-\alpha^2_{m0}Dt} \nonumber
+\end{eqnarray}
+
+\end{document}

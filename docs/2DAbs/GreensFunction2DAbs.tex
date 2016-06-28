@@ -1,0 +1,286 @@
+\documentclass{article}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+
+\begin{document}
+
+\title{GreensFunction2DAbs}
+\author{Toru Niina}
+\maketitle
+
+\section{Overview}
+
+System contains only one particle. Initial position of the particle is $r=r_0$, $\theta = 0$
+(Position is descrived by the cylindrical coordinate,
+$x = r\cos\theta, y = r\sin\theta$).
+
+Boundary($r=a$) condition is absorbing boundary $\psi(a,t) = 0$.
+$\psi(r, t)$ means the probability of finding the particle in distance r and time t.
+
+\subsection{Green's Function}
+
+\begin{eqnarray}
+    & & G(r, \theta, t | r', \theta', \tau) \nonumber\\
+    &=& \frac{1}{\pi a^2}\sum^{\infty}_{m=1}
+        \frac{J_0(r\alpha_{m0})J_0(r'\alpha_{m0})}{J^2_1(a\alpha_{m0})}
+        \mathrm{e}^{-D\alpha^2_{m0} (t-\tau)} \nonumber \\
+    &+& \frac{2}{\pi a^2}\sum^{\infty}_{n=1}\cos(n(\theta - \theta'))
+        \sum^{\infty}_{m=1}
+        \frac{4J_n(r\alpha_{mn})J_n(r'\alpha_{mn})}
+             {(J_{n-1}(a\alpha_{mn})-J_{n+1}(a\alpha_{mn}))^2}
+        \mathrm{e}^{-D\alpha^2_{mn} (t-\tau)} \nonumber
+\end{eqnarray}
+where $J_n$ is 1st kind Bessel's function and
+$a\alpha_{mn}$ are roots of the 1st kind Bessel function $J_n(x)$. like
+$J_n(a\alpha_{mn}) = 0$. 
+
+and the initial condition $F$ is
+
+\begin{equation}
+    F(r, \theta) = \delta(r - r_0)\delta(\theta)
+\end{equation}
+at $t=0$.
+
+then the probability function is
+
+\begin{eqnarray}
+    P &=& \int^a_0 \int^{2\pi}_0 F(r', \theta')
+                                 G(r, \theta, t | r', \theta', 0)
+                                 r'dr'd\theta' \nonumber \\
+      &=& \frac{1}{\pi a^2}\sum^{\infty}_{m=1}
+                                 \frac{J_0(r\alpha_{m0})J_0(r_0\alpha_{m0})}
+                                      {J^2_1(a\alpha_{m0})}
+          \mathrm{e}^{-D\alpha^2_{m0} t} \nonumber \\
+      &+& \frac{2}{\pi a^2}\sum^{\infty}_{n=1}\cos(n\theta)
+          \sum^{\infty}_{m=1}
+          \frac{4J_n(r\alpha_{mn})J_n(r_0\alpha_{mn})}
+               {(J_{n-1}(a\alpha_{mn})-J_{n+1}(a\alpha_{mn}))^2}
+          \mathrm{e}^{-D\alpha^2_{mn} t}
+\end{eqnarray}
+
+\subsection{Derivation of the Green's function}
+
+As a starting point, consider 2 dimentional diffusion equation in infinite space
+and the solution of that.
+
+\begin{eqnarray}
+    \frac{\partial\psi}{\partial t} &=& D\nabla^2\psi \\
+    P(R, t) &=& \frac{1}{4\pi Dt}\mathrm{exp}\left(\frac{-R^2}{4Dt}\right)
+\end{eqnarray}
+here, $R$ is a distance between initial position $(x_0, y_0)$ and $(x, y)$,
+\begin{equation}
+ R = \sqrt{(x-x_0)^2+(y-y_0)^2}.
+\end{equation}
+
+When the equation is considered in Cylindrical coordinate, the form of solution
+ is same as above but the definition of distance $R$ become
+
+\begin{equation}
+    R = \sqrt{r^2+r_0^2+rr_0\cos(\theta)}.
+\end{equation}
+
+Let the solution of diffusion equation $v$ on the absorbing boundary condition
+ $P(a, \theta, t) = 0$ as
+\begin{equation}
+    v = u + w.
+\end{equation}
+here, $u$ corresponds to the solution of diffusion equation in the case of
+ infinite space. $w$ satisfies the same equation and cancels the value of $u$ on
+ the boundary.
+
+To solve this, use Laplace transformation.
+ The solution of diffusion equation in infinite space with transformation
+ $(t\rightarrow p)$ is
+
+\begin{equation} \label{L-solution-infinite}
+    \bar{u} = \frac{1}{2\pi D}K_0(qR)
+\end{equation}
+here, q is defined as $q = \sqrt{\cfrac{p}{D}}$ and $K_0$ means modified Bessel
+ function of the second kind.
+
+Based on addition theorem for the Modified Bessel function of the second kind $K_0$,
+\[
+    K_0(qR)
+    = \begin{cases}
+        \sum_{n = -\infty}^\infty \cos(n\theta)I_n(qr)K_n(qr_0) & (r < r_0) \\
+        \sum_{n = -\infty}^\infty \cos(n\theta)I_n(qr_0)K_n(qr) & (r_0 < r )
+      \end{cases}
+\]
+$\bar{u}$ where $r > r_0$ can be written as
+\begin{eqnarray}
+    \bar{u} &=& \frac{1}{2\pi^2D}\sum_{n = -\infty}^\infty
+                \cos(n\theta)I_n(qr_0)K_n(qr).
+\end{eqnarray}
+So the value on the boundary that $\bar{w}(r=a)$ should cancel out is
+\begin{eqnarray}
+    \bar{u}(a,\theta,q) &=& \frac{1}{2\pi^2D}\sum_{n = -\infty}^\infty
+                \cos(n\theta)I_n(qr_0)K_n(qa).
+\end{eqnarray}
+
+The subsidiary equation for $\bar{w}$ is, with Laplace transformation $t \rightarrow p$,
+\begin{eqnarray}
+    D\left( \frac{\partial^2}{\partial r^2} + \frac{1}{r}\frac{\partial}{\partial r} + \frac{1}{r^2}\frac{\partial^2}{\partial \theta^2} \right) \bar{\Psi} &=& p\bar{\Psi} \nonumber \\
+    r^2\frac{\partial^2}{\partial r^2}\bar{\Psi} + r\frac{\partial}{\partial r}\bar{\Psi} + \frac{\partial^2}{\partial \theta^2}\bar{\Psi} - r^2\frac{p}{D}\bar{\Psi} &=& 0.
+\end{eqnarray}
+
+Assuming that the form of the solution $\Psi$ can be written as
+ $R(r, t)\Theta(\theta)$ and the form of $\Theta(\theta)$ as $\cos(n\theta)$,
+ the partial differentiation of $\Theta$ with $\theta$ become
+\begin{equation}
+    \frac{\partial^2}{\partial\theta}\bar{\Psi} = -n^2\bar{\Psi}
+\end{equation}
+
+Substitute it into the above equation, we get
+\begin{eqnarray} \label{subsidery-eq}
+    r^2\frac{\partial^2}{\partial r^2}\bar{\Psi} + r\frac{\partial}{\partial r}\bar{\Psi} -(n^2 + r^2q^2)\bar{\Psi} &=& 0.
+\end{eqnarray}
+The form of (\ref{subsidery-eq}) is same as Modified Bessel's equation, so the solution of (\ref{subsidery-eq}) is a linear combination of Modified Bessel function, $I_n(qr), K_n(qr)$.
+
+Now we can get the form of $\bar{w}$ as 
+\begin{equation}
+    \bar{w} = - \frac{1}{2\pi D}\sum^{\infty}_{n=-\infty}\cos(n\theta)\frac{I_n(qr)I_n(qr_0)K_n(qa)}{I_n(qa)}
+\end{equation}
+
+Therefore $\bar{v}$ can be obtained as a sum of $\bar{u}$ and ${\bar{w}}$.
+\begin{eqnarray}
+    \bar{v} &=& \bar{u} + \bar{w} \nonumber \\
+            &=& \frac{1}{2\pi D}\sum_{n=-\infty}^{\infty}\cos(n\theta)
+                \frac{I_n(qr_0)}{I_n(qa)}(I_n(qa)K_n(qr) - I_n(qr)K_n(qa)) \label{v-bar}
+\end{eqnarray}
+
+The solution of the equation on absorbing boundary condition is the inverse transformation of (\ref{v-bar}), $p\rightarrow t$.
+
+In order to calculate the inverse transformation, consider Bromwich integral.
+
+\begin{equation}\label{v-form-not-integrated}
+    v = \frac{1}{2\pi D}\sum_{n=-\infty}^{\infty}\cos(n\theta)
+        \frac{1}{2\pi i}\int \frac{I_n(qr_0)}{I_n(qa)}(I_n(qa)K_n(qr) - I_n(qr)K_n(qa))
+        \mathrm{e}^{pt} dp
+\end{equation}
+
+Based on Residue theorem, the value of integral is obtained this way.
+\begin{eqnarray}
+    & & \int \frac{I_n(qr_0)}{I_n(qa)}(I_n(qa)K_n(qr) - I_n(qr)K_n(qa))\mathrm{e}^{pt}dp
+    \nonumber\\
+    &=& 2 \pi i \sum Res\left[\frac{I_n(qr_0)}{I_n(qa)}(I_n(qa)K_n(qr) - I_n(qr)K_n(qa))
+        \mathrm{e}^{pt}\right]
+\end{eqnarray}
+
+Using variable transformation $q = -is \Leftrightarrow p = -Ds^2$, values of residues become
+\begin{equation}
+    Res\left[\frac{I_n(-isr_0)}{I_n(-isa)}(I_n(-isa)K_n(-isr) - I_n(-isr)K_n(-isa))
+    \mathrm{e}^{-s^2Dt}(-2Ds)\right]\label{transformed-residue}
+\end{equation}
+
+Then by characteristics of modified Bessel function
+\begin{eqnarray}
+    I_n(-ix) &=& i^{-n}J_n(x)\nonumber \\
+    K_n(-ix) &=& \frac{\pi}{2}i^{n+1}(J_n(x)+iY_n(x))\nonumber
+\end{eqnarray}
+(\ref{transformed-residue}) is re-writtened as
+\begin{equation}
+    Res\left[\frac{J_n(sr_0)}{J_n(sa)}\frac{\pi}{2}i(J_n(sa)(J_n(sr)+iY_n(sr)) - J_n(sr)(J_n(sa)+iY_n(sa)))
+    \mathrm{e}^{-s^2Dt}(-2Ds)\right]
+\end{equation}
+and with some rearrangement,
+\begin{equation}
+    Res\left[\pi Ds\mathrm{e}^{-s^2Dt}
+        \frac{J_n(sr_0)}{J_n(sa)}(J_n(sa)Y_n(sr) - J_n(sr)Y_n(sa))
+       \right]
+\end{equation}
+
+The singularities are at the point that s satisfies $J_n(sa) = 0$.
+Now let $\alpha_{mn}$ is m-th zero on $J_n$, so each $\alpha$ satisfies $J_n(a\alpha_{mn})$, then the value of residues become
+\begin{equation}
+    \lim_{s\to\alpha_{mn}} \left[(s-\alpha_{mn})\pi Ds\mathrm{e}^{-s^2Dt}
+       \frac{J_n(sr_0)}{J_n(sa)}(J_n(sa)Y_n(sr) - J_n(sr)Y_n(sa))
+       \right]
+\end{equation}
+
+From the definition of differenciation,
+\begin{eqnarray}
+    \lim_{s\to\alpha_{mn}}\frac{(s-\alpha_{mn})}{J_n(as)}
+    &=& \lim_{s\to\alpha_{mn}} \frac{(as-a\alpha_{mn})}{J_n(as) - J_n(a\alpha_{mn})}\nonumber \\
+    &=& \frac{1}{J'_n(a\alpha_{mn})}\nonumber
+\end{eqnarray}
+
+And by definition of $\alpha_{mn}$
+\begin{eqnarray}
+    & & \lim_{s\to\alpha_{mn}}-J_n(sr_0)(J_n(sa)Y_n(sr) - J_n(sr)Y_n(sa)) \nonumber \\
+    &=& -J_n(r_0\alpha_{mn})J_n(r\alpha_{mn})Y_n(a\alpha_{mn})
+\end{eqnarray}
+
+So the values of residues are
+\begin{equation}\label{residue-values}
+    Res_m = \pi D\alpha_{mn}\mathrm{e}^{-\alpha_{mn}^2Dt}
+    \frac{J_n(r_0\alpha_{mn})}{aJ'_n(a\alpha_{mn})}(- J_n(r\alpha_{mn})Y_n(a\alpha_{mn}))
+\end{equation}
+
+Additionally, the characteristics of Bessel functions
+\begin{eqnarray}
+    J_n(x)Y'_n(x) - J'_n(x)Y_n(x) = \frac{2}{\pi x} \nonumber \\
+    Y_n(x) = \frac{-2}{\pi xJ'_n(x)} + \frac{J_n(x)Y'_n(x)}{J'_n(x)}
+\end{eqnarray}
+(\ref{residue-values}) are re-writtened as
+\begin{equation}\label{residue-values-only-J}
+    Res_m = 2D\mathrm{e}^{-\alpha_{mn}^2Dt}
+    \frac{J_n(r_0\alpha_{mn})J_n(r\alpha_{mn})}{a^2\{J'_n(a\alpha_{mn})\}^2}
+\end{equation}
+
+Now, the form of $v$ can be obtained by substituting the result of above (\ref{residue-values-only-J}) into
+(\ref{v-form-not-integrated}).
+\begin{equation}
+    v = \frac{1}{\pi a^2}
+        \sum_{n=-\infty}^{\infty}\cos(n\theta)
+        \sum_{m=1}^{\infty}\mathrm{e}^{-\alpha_{mn}^2Dt}
+        \frac{J_n(r_0\alpha_{mn})J_n(r\alpha_{mn})}{\{J'_n(a\alpha_{mn})\}^2}
+\end{equation}
+
+Because $\cos(-x) = \cos(x)$ and $J_{-n}(x) = (-1)^nJ_n(x)$, $v$ can be partitioned into the case of $n=0$ and $n \geq 1$ case.
+\begin{eqnarray}
+  v &=& \frac{1}{\pi a^2}\sum_m^{\infty}\mathrm{e}^{-\alpha_{m0}^2Dt}
+        \frac{J_0(r_0\alpha_{mn})J_0(r\alpha_{m0})}{\{J_1(a\alpha_{m0})\}^2} \nonumber \\
+    &+& \sum_{n=1}^{\infty}\cos(n\theta)
+        \sum_{m=1}^{\infty}\mathrm{e}^{-\alpha_{mn}^2Dt}
+        \frac{J_n(r_0\alpha_{mn})J_n(r\alpha_{mn})}{\{J'_n(a\alpha_{mn})\}^2}
+\end{eqnarray}
+
+This is the Green's function of this system.
+
+
+\subsection{Application to diffution on surface of cone}
+Consider particle diffusion problem on lateral surface of a cone, it can be seen $\theta$ value differs from planner surface. Maximum value of $\theta$ is lesser than $2\pi$. So it cannot be applied simply the function drawtheta to determine the position in next timestep.
+
+Assume that there are two types of Diffusion correlation, $D_r$ and $D_\theta$. Then the equation of diffusion in cyrindrical coordinate become
+\begin{equation}\label{two-D-difeq}
+    \left( D_r\frac{\partial^2}{\partial r^2} +
+           D_r\frac{1}{r}\frac{\partial}{\partial r} +
+           D_\theta\frac{1}{r^2}\frac{\partial^2}{\partial \theta^2} \right) \Psi
+    = \frac{\partial}{\partial t} \Psi.
+\end{equation}
+
+So the subsidiary equation become 
+\begin{equation}
+    \left( D_r\frac{\partial^2}{\partial r^2} +
+           D_r\frac{1}{r}\frac{\partial}{\partial r} +
+       D_\theta\frac{1}{r^2}\frac{\partial^2}{\partial \theta^2} \right) \bar{\Psi}
+           - p\bar{\Psi} = 0
+\end{equation}
+and assume $\bar{\Psi}$ in the same way as derivation of planner Green's function, we get
+\begin{equation}
+    r^2 \frac{\partial^2}{\partial r^2} \bar{\Psi} +
+    r \frac{\partial}{\partial r} \bar{\Psi} -
+    (\frac{D_\theta}{D_r}n^2 + \frac{p}{D_r})\bar{\Psi} = 0
+\end{equation}
+remember $q = \cfrac{p}{D}$ and $D_r = D$, the only part that differs from original form is $\cfrac{D_\theta}{D_r}$.
+
+So if we assume that
+\begin{equation}
+    \Theta(\theta) = \cos\left(n\sqrt{\cfrac{D_r}{D_\theta}}\theta\right)
+\end{equation}
+instead of the original form $\Theta(\theta) = \cos n\theta$, the form of subsidiary equation become same as the original form.
+
+Therefore, to apply the function to particle diffusion on a lateral surface of a cone, the value of $\theta$ should be standardized with $\cfrac{D_r}{D_\theta}$. Usually this value become the ratio of the angle around the apex on the lateral surface to $2\pi$.
+
+\end{document}
