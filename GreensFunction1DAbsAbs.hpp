@@ -37,19 +37,19 @@ public:
 
 private:
     // This is a typical length scale of the system, may not be true!
-    static const Real L_TYPICAL = 1E-8;
+    static const Real L_TYPICAL;
     // The typical timescale of the system, may also not be true!!
-    static const Real T_TYPICAL = 1E-6;
+    static const Real T_TYPICAL;
     // measure of 'sameness' when comparing floating points numbers
-    static const Real EPSILON = 1E-10;
+    static const Real EPSILON;
     //E3; Is 1E3 a good measure for the probability density?!
-    static const Real PDENS_TYPICAL = 1;
+    static const Real PDENS_TYPICAL;
     // The maximum number of terms in the sum
-    static const uint MAX_TERMS = 500;
+    static const uint MAX_TERMS;
     // The minimum
-    static const uint MIN_TERMS = 20;
+    static const uint MIN_TERMS;
     // Cutoff distance: When H * sqrt(2Dt) < 1/2*L, use free greensfunction instead of absorbing.
-    static const Real CUTOFF_H = 6.0;
+    static const Real CUTOFF_H;
 
 
 public:

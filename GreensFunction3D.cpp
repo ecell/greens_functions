@@ -13,6 +13,9 @@
 namespace greens_functions
 {
 
+const Real GreensFunction3D::H = 7.0;
+const Real GreensFunction3D::TOLERANCE = 1e-8;
+
 GreensFunction3D::~GreensFunction3D()
 {
     ; // do nothing

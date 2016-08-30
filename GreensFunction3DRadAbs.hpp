@@ -10,6 +10,8 @@
 
 #include "GreensFunction3DRadAbsBase.hpp"
 
+#define GF_3D_RAD_ABS_MAX_ORDER 50
+
 namespace greens_functions{
 
 class GreensFunction3DRadAbs: public GreensFunction3DRadAbsBase
@@ -19,16 +21,16 @@ public:
 
 private:
     // Error tolerance used by default.
-    static const Real TOLERANCE = 1e-8;
+    static const Real TOLERANCE;
 
     // SphericalBesselGenerator's accuracy, used by some
     // theta-related calculations.
-    static const Real THETA_TOLERANCE = 1e-5;
+    static const Real THETA_TOLERANCE;
 
-    static const Real MIN_T_FACTOR = 1e-8;
+    static const Real MIN_T_FACTOR;
 
-    static const unsigned int MAX_ORDER = 50;
-    static const unsigned int MAX_ALPHA_SEQ = 2000;
+    static const unsigned int MAX_ORDER;
+    static const unsigned int MAX_ALPHA_SEQ;
 
 
 public:
@@ -288,8 +290,8 @@ private:
     const Real h;
     const Real hsigma_p_1;
 
-    mutable boost::array<Integer, MAX_ORDER+1> alphaOffsetTable;
-    mutable boost::array<RealVector, MAX_ORDER+1> alphaTable;
+    mutable boost::array<Integer, GF_3D_RAD_ABS_MAX_ORDER+1> alphaOffsetTable;
+    mutable boost::array<RealVector, GF_3D_RAD_ABS_MAX_ORDER+1> alphaTable;
 
     const Real a;
 
@@ -298,4 +300,5 @@ private:
 
 
 };
+#undef GF_3D_RAD_ABS_MAX_ORDER
 #endif // __FIRSTPASSAGEPAIRGREENSFUNCTION_HPP

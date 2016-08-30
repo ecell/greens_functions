@@ -23,8 +23,13 @@
 namespace greens_functions
 {
 
-const unsigned int GreensFunction1DAbsAbs::MAX_TERMS;
-const unsigned int GreensFunction1DAbsAbs::MIN_TERMS;
+const Real GreensFunction1DAbsAbs::L_TYPICAL = 1E-8;
+const Real GreensFunction1DAbsAbs::T_TYPICAL = 1E-6;
+const Real GreensFunction1DAbsAbs::EPSILON = 1E-10;
+const Real GreensFunction1DAbsAbs::PDENS_TYPICAL = 1;
+const GreensFunction1DAbsAbs::uint GreensFunction1DAbsAbs::MAX_TERMS = 500;
+const GreensFunction1DAbsAbs::uint GreensFunction1DAbsAbs::MIN_TERMS = 20;
+const Real GreensFunction1DAbsAbs::CUTOFF_H = 6.0;
 
 /* returns a guess for the number of terms needed for 
    the greensfunction to converge at time t */

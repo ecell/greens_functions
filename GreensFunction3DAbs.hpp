@@ -9,6 +9,8 @@
 //#include "Logger.hpp"
 #include "GreensFunction3DRadAbsBase.hpp"
 
+#define GF_3D_ABS_MAX_ORDER 50
+
 namespace greens_functions{
 
 class GreensFunction3DAbs: public GreensFunction3DRadAbsBase
@@ -18,16 +20,16 @@ public:
 
 private:
     // Error tolerance used by default.
-    static const Real TOLERANCE = 1e-8;
+    static const Real TOLERANCE;
 
     // SphericalBesselGenerator's accuracy, used by some
     // theta-related calculations.
-    static const Real THETA_TOLERANCE = 1e-5;
+    static const Real THETA_TOLERANCE;
 
-    static const Real MIN_T = 1e-18;
+    static const Real MIN_T;
 
-    static const unsigned int MAX_ORDER = 50;
-    static const unsigned int MAX_ALPHA_SEQ = 1005;
+    static const unsigned int MAX_ORDER;
+    static const unsigned int MAX_ALPHA_SEQ;
 
 
 public:
@@ -99,13 +101,14 @@ protected:
 
 private:
     
-    mutable boost::array<Integer,MAX_ORDER+1> alphaOffsetTable;
-    mutable boost::array<RealVector,MAX_ORDER+1> alphaTable;
+    mutable boost::array<Integer, GF_3D_ABS_MAX_ORDER+1> alphaOffsetTable;
+    mutable boost::array<RealVector, GF_3D_ABS_MAX_ORDER+1> alphaTable;
     //mutable std::vector<RealVector> alphaTable;
 
     Real a;
 
 //    static Logger& log_;
 };
-}
+}//greens_functions
+#undef GF_3D_ABS_MAX_ORDER
 #endif // __FIRSTPASSAGEPAIRGREENSFUNCTION 

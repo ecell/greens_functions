@@ -14,6 +14,8 @@
 
 namespace greens_functions
 {
+const Real GreensFunction3DSym::TOLERANCE = 1e-8;
+const Real GreensFunction3DSym::H = 6;
 
 Real GreensFunction3DSym::p_r(Real r, Real t) const
 {

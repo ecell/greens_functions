@@ -22,8 +22,14 @@
 namespace greens_functions
 {
 
-const unsigned int GreensFunction1DAbsSinkAbs::MAX_TERMS;
-const unsigned int GreensFunction1DAbsSinkAbs::MIN_TERMS;
+const Real GreensFunction1DAbsSinkAbs::L_TYPICAL = 1E-8;
+const Real GreensFunction1DAbsSinkAbs::T_TYPICAL = 1E-6;
+const Real GreensFunction1DAbsSinkAbs::EPSILON = 1E-10;
+const Real GreensFunction1DAbsSinkAbs::PDENS_TYPICAL = 1;
+const GreensFunction1DAbsSinkAbs::uint GreensFunction1DAbsSinkAbs::MAX_TERMS = 500;
+const GreensFunction1DAbsSinkAbs::uint GreensFunction1DAbsSinkAbs::MIN_TERMS = 20;
+const Real GreensFunction1DAbsSinkAbs::CUTOFF_H = 6.0;
+
 
 /* This is the appropriate definition of the function defining
    the roots of our Green's functions in GSL.

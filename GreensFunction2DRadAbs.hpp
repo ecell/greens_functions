@@ -20,6 +20,9 @@
 
 #include "PairGreensFunction.hpp"
 
+// this must be constexpr!
+#define GF_2D_RAD_ABS_MAX_ORDER 30
+
 namespace greens_functions{
 
 class GreensFunction2DRadAbs
@@ -34,22 +37,22 @@ public:
 
 private:
     // Error tolerance used by default.
-    static const Real TOLERANCE = 1e-8;
+    static const Real TOLERANCE;
 
     // SphericalBesselGenerator's accuracy, used by some
     // theta-related calculations.
 
-    static const Real MIN_T_FACTOR = 1e-8;
+    static const Real MIN_T_FACTOR;
 
-    static const Real L_TYPICAL = 1E-7; // typical length scale
-    static const Real T_TYPICAL = 1E-5; // typical time scale
-    static const Real EPSILON   = 1E-12; // relative numeric error  // TESTING temporarily increased; was 1e-12
+    static const Real L_TYPICAL; // typical length scale
+    static const Real T_TYPICAL; // typical time scale
+    static const Real EPSILON; // relative numeric error
+    // TESTING temporarily increased; was 1e-12
 
-    // DEFAULT = 30
-    static const unsigned int MAX_ORDER = 30;         // The maximum number of m 
-                                                      // terms
-    static const unsigned int MAX_ALPHA_SEQ = 500;    // The maximum number of n 
-                                                      // terms
+//     // DEFAULT = 30
+    static const unsigned int MAX_ORDER; // The maximum number of m terms
+//     XXX this must be constexpr!
+    static const unsigned int MAX_ALPHA_SEQ; // The maximum number of n terms
     
     // Parameters for alpha-root finding
     // ======
@@ -57,9 +60,9 @@ private:
     //
     // Parameters for scanning method
     // Left boundary of 1st search interval 1st root
-    static const Real SCAN_START = 0.001;     
+    static const Real SCAN_START;
     // Length of the scanning interval relative to estimated interval
-    static const Real FRACTION_SCAN_INTERVAL = .5; // TODO CHANGED THIS FROM .5 to .2
+    static const Real FRACTION_SCAN_INTERVAL; // TODO CHANGED THIS FROM .5 to .2
     
     // Other paramters
     // After CONVERGENCE_ASSUMED subsequent roots that lay within +/- 
@@ -67,10 +70,8 @@ private:
     // converge, it is assumed all following roots have a distances inbetween
     // that don't deviate for more than INTERVAL_MARGIN from the distance to 
     // which the roots are known to converge (Pi/(a-sigma)).
-    static const Real CONVERGENCE_ASSUMED = 25;
-    static const Real INTERVAL_MARGIN = .33; 
-
-
+    static const Real CONVERGENCE_ASSUMED;
+    static const Real INTERVAL_MARGIN; 
 
 public:
 
@@ -322,7 +323,7 @@ private:
 
     // Tables that hold calculated roots (y=0) of "alpha" function for each    
     // order n.
-    mutable boost::array<RealVector,MAX_ORDER+1> alphaTable;
+    mutable boost::array<RealVector, GF_2D_RAD_ABS_MAX_ORDER+1> alphaTable;
 
     // Constants used in the roots of f_alpha() finding algorithm.
     // ====
@@ -330,7 +331,7 @@ private:
     // This constant will simply be M_PI/(a-Sigma), the value to which the 
     // distance between roots of f_alpha() should converge.
     const Real estimated_alpha_root_distance_;        
-    //
+
     // Table which tells us at which x we're left with scanning the alpha 
     // function for a sign change, for a given order n. (A sign change would 
     // indicate a root (y=0) lies between the boundaries of the "scanned" 
@@ -340,12 +341,12 @@ private:
     // boundaries that allow the direct use of the estimate interval width 
     // pi/(sigma-a).
     //      Initial values are set by constructor.
-    mutable boost::array<Real,MAX_ORDER+1> alpha_x_scan_table_;     
+    mutable boost::array<Real, GF_2D_RAD_ABS_MAX_ORDER+1> alpha_x_scan_table_;
     //
     // Table that keeps track of the number of previous subsequent roots that 
     // we're within margin of the distance to which they're expected to 
     // converge.
-    mutable boost::array<int,MAX_ORDER+1> alpha_correctly_estimated_;
+    mutable boost::array<int, GF_2D_RAD_ABS_MAX_ORDER+1> alpha_correctly_estimated_;
     
 //    static Logger& log_;
 
@@ -353,4 +354,5 @@ private:
 
 
 };
+#undef GF_2D_RAD_ABS_MAX_ORDER
 #endif // __FIRSTPASSAGEPAIRGREENSFUNCTION2D_HPP

@@ -30,6 +30,9 @@
 namespace greens_functions
 {
 
+const Real GreensFunction3DAbsSym::CUTOFF = 1e-10;
+const Real GreensFunction3DAbsSym::CUTOFF_H = 6.0;
+
 Real GreensFunction3DAbsSym::ellipticTheta4Zero(Real q)
 {
     if (fabs(q) > 1.0)

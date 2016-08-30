@@ -20,6 +20,9 @@
 namespace greens_functions
 {
 
+const Real GreensFunction2DAbsSym::CUTOFF = 1e-10;
+const Real GreensFunction2DAbsSym::CUTOFF_H = 6.0;
+
 // an alternative form, which is not very convergent.
 const Real 
 GreensFunction2DAbsSym::p_survival( const Real t ) const

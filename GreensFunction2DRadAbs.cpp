@@ -37,11 +37,17 @@
 
 namespace greens_functions
 {
-
-const Real GreensFunction2DRadAbs::MIN_T_FACTOR;
-const unsigned int GreensFunction2DRadAbs::MAX_ORDER;
-const unsigned int GreensFunction2DRadAbs::MAX_ALPHA_SEQ;
-
+const Real GreensFunction2DRadAbs::TOLERANCE = 1e-8;
+const Real GreensFunction2DRadAbs::MIN_T_FACTOR = 1e-8;
+const Real GreensFunction2DRadAbs::L_TYPICAL = 1E-7;
+const Real GreensFunction2DRadAbs::T_TYPICAL = 1E-5;
+const Real GreensFunction2DRadAbs::EPSILON   = 1E-12;
+const unsigned int GreensFunction2DRadAbs::MAX_ORDER = 30;
+const unsigned int GreensFunction2DRadAbs::MAX_ALPHA_SEQ = 500;
+const Real GreensFunction2DRadAbs::SCAN_START = 0.001;     
+const Real GreensFunction2DRadAbs::FRACTION_SCAN_INTERVAL = .5;
+const Real GreensFunction2DRadAbs::CONVERGENCE_ASSUMED = 25;
+const Real GreensFunction2DRadAbs::INTERVAL_MARGIN = .33; 
 
 // This is the constructor
 GreensFunction2DRadAbs::
