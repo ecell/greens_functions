@@ -42,12 +42,12 @@ const Real GreensFunction2DRadAbs::MIN_T_FACTOR = 1e-8;
 const Real GreensFunction2DRadAbs::L_TYPICAL = 1E-7;
 const Real GreensFunction2DRadAbs::T_TYPICAL = 1E-5;
 const Real GreensFunction2DRadAbs::EPSILON   = 1E-12;
-const unsigned int GreensFunction2DRadAbs::MAX_ORDER = 30;
-const unsigned int GreensFunction2DRadAbs::MAX_ALPHA_SEQ = 500;
 const Real GreensFunction2DRadAbs::SCAN_START = 0.001;     
 const Real GreensFunction2DRadAbs::FRACTION_SCAN_INTERVAL = .5;
 const Real GreensFunction2DRadAbs::CONVERGENCE_ASSUMED = 25;
 const Real GreensFunction2DRadAbs::INTERVAL_MARGIN = .33; 
+const unsigned int GreensFunction2DRadAbs::MAX_ORDER;
+const unsigned int GreensFunction2DRadAbs::MAX_ALPHA_SEQ;
 
 // This is the constructor
 GreensFunction2DRadAbs::
@@ -807,13 +807,13 @@ GreensFunction2DRadAbs::guess_maxi( const Real t ) const
 
     if( thrsq <= 0.0 )
     {
-        return this->MAX_ALPHA_SEQ;
+        return MAX_ALPHA_SEQ;
     }
 
     const Real max_alpha( 1.0 / ( sqrt( exp( gsl_sf_lambert_W0( 2 * Dt / thrsq ) ) * thrsq ) ) );
     const unsigned int maxi( safety + static_cast<unsigned int>( max_alpha * ( a - sigma ) / M_PI ) );
 
-    return std::min( maxi, this->MAX_ALPHA_SEQ );
+    return std::min( maxi, MAX_ALPHA_SEQ );
 }
 
 

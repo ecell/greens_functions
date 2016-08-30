@@ -20,9 +20,6 @@
 
 #include "PairGreensFunction.hpp"
 
-// this must be constexpr!
-#define GF_2D_RAD_ABS_MAX_ORDER 30
-
 namespace greens_functions{
 
 class GreensFunction2DRadAbs
@@ -49,10 +46,8 @@ private:
     static const Real EPSILON; // relative numeric error
     // TESTING temporarily increased; was 1e-12
 
-//     // DEFAULT = 30
-    static const unsigned int MAX_ORDER; // The maximum number of m terms
-//     XXX this must be constexpr!
-    static const unsigned int MAX_ALPHA_SEQ; // The maximum number of n terms
+    static const unsigned int MAX_ORDER = 30; // The maximum number of m terms
+    static const unsigned int MAX_ALPHA_SEQ = 500; // The maximum number of n terms
     
     // Parameters for alpha-root finding
     // ======
@@ -323,7 +318,7 @@ private:
 
     // Tables that hold calculated roots (y=0) of "alpha" function for each    
     // order n.
-    mutable boost::array<RealVector, GF_2D_RAD_ABS_MAX_ORDER+1> alphaTable;
+    mutable boost::array<RealVector, MAX_ORDER+1> alphaTable;
 
     // Constants used in the roots of f_alpha() finding algorithm.
     // ====
@@ -341,12 +336,12 @@ private:
     // boundaries that allow the direct use of the estimate interval width 
     // pi/(sigma-a).
     //      Initial values are set by constructor.
-    mutable boost::array<Real, GF_2D_RAD_ABS_MAX_ORDER+1> alpha_x_scan_table_;
+    mutable boost::array<Real, MAX_ORDER+1> alpha_x_scan_table_;
     //
     // Table that keeps track of the number of previous subsequent roots that 
     // we're within margin of the distance to which they're expected to 
     // converge.
-    mutable boost::array<int, GF_2D_RAD_ABS_MAX_ORDER+1> alpha_correctly_estimated_;
+    mutable boost::array<int, MAX_ORDER+1> alpha_correctly_estimated_;
     
 //    static Logger& log_;
 
@@ -354,5 +349,4 @@ private:
 
 
 };
-#undef GF_2D_RAD_ABS_MAX_ORDER
 #endif // __FIRSTPASSAGEPAIRGREENSFUNCTION2D_HPP

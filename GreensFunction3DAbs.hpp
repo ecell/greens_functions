@@ -9,8 +9,6 @@
 //#include "Logger.hpp"
 #include "GreensFunction3DRadAbsBase.hpp"
 
-#define GF_3D_ABS_MAX_ORDER 50
-
 namespace greens_functions{
 
 class GreensFunction3DAbs: public GreensFunction3DRadAbsBase
@@ -28,14 +26,13 @@ private:
 
     static const Real MIN_T;
 
-    static const unsigned int MAX_ORDER;
-    static const unsigned int MAX_ALPHA_SEQ;
-
+    static const unsigned int MAX_ORDER = 50;
+    static const unsigned int MAX_ALPHA_SEQ = 1005;
 
 public:
     
     GreensFunction3DAbs(Real D, Real r0, Real a); 
-    
+
     virtual ~GreensFunction3DAbs();
 
     Real geta() const
@@ -101,8 +98,8 @@ protected:
 
 private:
     
-    mutable boost::array<Integer, GF_3D_ABS_MAX_ORDER+1> alphaOffsetTable;
-    mutable boost::array<RealVector, GF_3D_ABS_MAX_ORDER+1> alphaTable;
+    mutable boost::array<Integer, MAX_ORDER+1> alphaOffsetTable;
+    mutable boost::array<RealVector, MAX_ORDER+1> alphaTable;
     //mutable std::vector<RealVector> alphaTable;
 
     Real a;
@@ -110,5 +107,4 @@ private:
 //    static Logger& log_;
 };
 }//greens_functions
-#undef GF_3D_ABS_MAX_ORDER
 #endif // __FIRSTPASSAGEPAIRGREENSFUNCTION 
