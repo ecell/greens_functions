@@ -9,6 +9,7 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include <string>
 #include <stdexcept>
 #include <gsl/gsl_errno.h>
 
