@@ -114,7 +114,7 @@ void GreensFunction1DRadAbs::calculate_n_roots(uint const& n) const
 
 /* returns a guess for the number of terms needed for 
    the greensfunction to converge at time t */
-uint GreensFunction1DRadAbs::guess_maxi(Real const& t) const
+GreensFunction1DRadAbs::uint GreensFunction1DRadAbs::guess_maxi(Real const& t) const
 {
     const uint safety(2);
 

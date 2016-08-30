@@ -28,7 +28,7 @@ const unsigned int GreensFunction1DAbsAbs::MIN_TERMS;
 
 /* returns a guess for the number of terms needed for 
    the greensfunction to converge at time t */
-uint GreensFunction1DAbsAbs::guess_maxi(Real const& t) const
+GreensFunction1DAbsAbs::uint GreensFunction1DAbsAbs::guess_maxi(Real const& t) const
 {
     const uint safety(2);
 
