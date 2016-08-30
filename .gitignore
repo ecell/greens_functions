@@ -1,0 +1,4 @@
+*.dat
+build/*
+bin/*
+.DS_Store
