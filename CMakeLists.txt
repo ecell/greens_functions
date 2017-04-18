@@ -5,7 +5,7 @@ set (CPP_FILES
     GreensFunction1DAbsAbs.cpp GreensFunction1DAbsSinkAbs.cpp GreensFunction1DRadAbs.cpp
     GreensFunction2DAbsSym.cpp GreensFunction2DRadAbs.cpp GreensFunction2DAbs.cpp
     GreensFunction2DRefWedgeAbs.cpp
-    GreensFunction3D.cpp GreensFunction3DAbs.cpp GreensFunction3DAbsSym.cpp 
+    GreensFunction3D.cpp GreensFunction3DAbs.cpp GreensFunction3DAbsSym.cpp
     GreensFunction3DRadAbs.cpp GreensFunction3DRadAbsBase.cpp GreensFunction3DRadInf.cpp
     GreensFunction3DSym.cpp SphericalBesselGenerator.cpp
     findRoot.cpp funcSum.cpp freeFunctions.cpp
@@ -38,6 +38,9 @@ add_library(greens_functions SHARED
 
 target_link_libraries(greens_functions
     ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
+
+install(TARGETS greens_functions DESTINATION lib)
+install(FILES ${HPP_FILES} DESTINATION "include/greens_functions")
 
 #python wrapper
 
