@@ -1049,7 +1049,8 @@ Real GreensFunction2DRadAbs::drawTime( const Real rnd) const
 
 
 // This determines based on the flux at a certain time, if the 'escape' was a reaction or a proper escape
-EventKind GreensFunction2DRadAbs::drawEventType( const Real rnd, 
+GreensFunction2DRadAbs::EventKind
+GreensFunction2DRadAbs::drawEventType( const Real rnd, 
                                        const Real t     ) const
 {
   

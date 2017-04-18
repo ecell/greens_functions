@@ -871,7 +871,7 @@ GF3DA::drawTheta(Real rnd, Real r, Real t) const
     return theta;
 }
 
-EventKind GF3DA::drawEventType(Real rnd, Real t) const
+GF3DA::EventKind GF3DA::drawEventType(Real rnd, Real t) const
 {
     assert(0);
 }

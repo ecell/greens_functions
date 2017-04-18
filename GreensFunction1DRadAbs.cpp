@@ -511,7 +511,7 @@ Real GreensFunction1DRadAbs::fluxRatioRadTot (Real t) const
 /* Determine which event has occured, an escape or a reaction. Based on the
    fluxes through the boundaries at the given time. Beware: if t is not a
    first passage time you still get an answer! */
-EventKind
+GreensFunction1DRadAbs::EventKind
 GreensFunction1DRadAbs::drawEventType( Real rnd, Real t )
 const
 {

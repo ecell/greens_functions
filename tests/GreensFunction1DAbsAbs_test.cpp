@@ -101,18 +101,18 @@ BOOST_AUTO_TEST_CASE(GF1DAbsAbs_DrawEventType)
 
   Real t( gf.drawTime( 0.5 ) );
 //  std::cout << "DrawEventType gf.drawTime(0.5): " << t << std::endl;
-  EventKind eventType( gf.drawEventType(0.5, t) );
+  GreensFunction1DAbsAbs::EventKind eventType( gf.drawEventType(0.5, t) );
 
-  BOOST_CHECK( ( eventType == IV_ESCAPE || eventType == IV_REACTION ) );
+  BOOST_CHECK( ( eventType == GreensFunction1DAbsAbs::IV_ESCAPE || eventType == GreensFunction1DAbsAbs::IV_REACTION ) );
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawType(0.5, t) = " << eventType << std::endl;
 
 //when r0 = 1e-7, sigma = 2e-7, a = 4e-7, fluxratio > 1 and error detected.
   eventType = gf.drawEventType(0.999999, t);
-  BOOST_CHECK_EQUAL(eventType, IV_ESCAPE); //ESCAPE
+  BOOST_CHECK_EQUAL(eventType, GreensFunction1DAbsAbs::IV_ESCAPE); //ESCAPE
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawType(0.999999,t) = " << eventType << std::endl;
 
   eventType = gf.drawEventType(0.0, t);
-  BOOST_CHECK_EQUAL(eventType, IV_REACTION); //REACTION
+  BOOST_CHECK_EQUAL(eventType, GreensFunction1DAbsAbs::IV_REACTION); //REACTION
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawType(0,t) = " << eventType << std::endl;
   std::cout << std::endl;
 }
@@ -123,17 +123,17 @@ BOOST_AUTO_TEST_CASE(GF1DAbsAbs_DrawEventType_smallt)
   GreensFunction1DAbsAbs gf( D, v, r0, sigma, a );
 
   Real t( gf.drawTime( 0.001 ) );
-  EventKind eventType(gf.drawEventType(0.5, t));
+  GreensFunction1DAbsAbs::EventKind eventType(gf.drawEventType(0.5, t));
 
-  BOOST_CHECK( eventType == IV_ESCAPE || eventType == IV_REACTION );
+  BOOST_CHECK( eventType == GreensFunction1DAbsAbs::IV_ESCAPE || eventType == GreensFunction1DAbsAbs::IV_REACTION );
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawType = " << eventType << std::endl;
 
   eventType = gf.drawEventType(0.999999, t);
-  BOOST_CHECK_EQUAL(eventType, IV_ESCAPE); //ESCAPE
+  BOOST_CHECK_EQUAL(eventType, GreensFunction1DAbsAbs::IV_ESCAPE); //ESCAPE
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawType(1,t) = " << eventType << std::endl;
 
   eventType = gf.drawEventType(0.0, t);
-  BOOST_CHECK_EQUAL(eventType, IV_REACTION); //REACTION
+  BOOST_CHECK_EQUAL(eventType, GreensFunction1DAbsAbs::IV_REACTION); //REACTION
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawType(0,t) = " << eventType << std::endl;
   std::cout << std::endl;
 }

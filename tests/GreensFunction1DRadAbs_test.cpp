@@ -106,16 +106,16 @@ BOOST_AUTO_TEST_CASE(GF1DRadAbs_DrawEventType)
   GreensFunction1DRadAbs gf( D, v, kf, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  EventKind eventType(gf.drawEventType(0.5, t));
+  GreensFunction1DRadAbs::EventKind eventType(gf.drawEventType(0.5, t));
 
-  BOOST_CHECK( (eventType == IV_ESCAPE) || (eventType == IV_REACTION) );
+  BOOST_CHECK( (eventType == GreensFunction1DRadAbs::IV_ESCAPE) || (eventType == GreensFunction1DRadAbs::IV_REACTION) );
   std::cout << "GreensFunction1DRadAbs_test : test_DrawEventType : eventType = " << eventType << std::endl;
 
   eventType = gf.drawEventType(0.999999, t);
-  BOOST_CHECK( eventType == IV_ESCAPE );
+  BOOST_CHECK( eventType == GreensFunction1DRadAbs::IV_ESCAPE );
 
   eventType = gf.drawEventType(0.0, t);
-  BOOST_CHECK( eventType == IV_REACTION );
+  BOOST_CHECK( eventType == GreensFunction1DRadAbs::IV_REACTION );
 
   std::cout << std::endl;
 }
@@ -126,16 +126,16 @@ BOOST_AUTO_TEST_CASE(GF1DRadAbs_DrawEventType_smallt)
   GreensFunction1DRadAbs gf( D, v, kf, r0, sigma, a );
 
   Real t( gf.drawTime( 0.001 ) );
-  EventKind eventType(gf.drawEventType(0.5, t));
+  GreensFunction1DRadAbs::EventKind eventType(gf.drawEventType(0.5, t));
 
-  BOOST_CHECK( (eventType == IV_ESCAPE) || (eventType == IV_REACTION) );
+  BOOST_CHECK( (eventType == GreensFunction1DRadAbs::IV_ESCAPE) || (eventType == GreensFunction1DRadAbs::IV_REACTION) );
   std::cout << "GreensFunction1DRadAbs_test : test_DrawEventType : eventType = " << eventType << std::endl;
 
   eventType = gf.drawEventType(0.999999, t);
-  BOOST_CHECK( eventType == IV_ESCAPE );
+  BOOST_CHECK( eventType == GreensFunction1DRadAbs::IV_ESCAPE );
 
   eventType = gf.drawEventType(0.0, t);
-  BOOST_CHECK( eventType == IV_REACTION );
+  BOOST_CHECK( eventType == GreensFunction1DRadAbs::IV_REACTION );
 
   std::cout << std::endl;
 }

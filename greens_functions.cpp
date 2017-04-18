@@ -213,9 +213,9 @@ BOOST_PYTHON_MODULE( lib_greens_functions )
         .def( "dump", &GreensFunction3D::dump )
         ;
 
-    enum_<EventKind>("PairEventKind")
-        .value( "IV_ESCAPE", IV_ESCAPE )
-        .value( "IV_REACTION", IV_REACTION )
+    enum_<GreensFunction::EventKind>("PairEventKind")
+        .value( "IV_ESCAPE", GreensFunction::IV_ESCAPE )
+        .value( "IV_REACTION", GreensFunction::IV_REACTION )
 //        .value( "IV_ESCAPE", GreensFunction1DRadAbs::IV_ESCAPE )
 //        .value( "IV_REACTION", GreensFunction1DRadAbs::IV_REACTION )
         ;

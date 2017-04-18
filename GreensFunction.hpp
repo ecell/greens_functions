@@ -4,14 +4,16 @@
 #include "Defs.hpp"
 namespace greens_functions{
 
+class GreensFunction
+{
+public:
+
 enum EventKind
     {
         IV_ESCAPE,
         IV_REACTION
     };
 
-class GreensFunction
-{
 public:
     GreensFunction( const Real D )
       : D( D ) {}
