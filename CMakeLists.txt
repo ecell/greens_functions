@@ -27,6 +27,10 @@ add_definitions("-DHAVE_DECL_INFINITY -Wall")
 find_library(GSL_LIBRARIES gsl)
 find_library(GSL_CBLAS_LIBRARIES gslcblas)
 
+if (NOT NO_BESSEL_TABLE)
+    add_subdirectory(tablegen)
+endif()
+
 #add_executable(main
 #    main.cpp ${CPP_FILES} ${HPP_FILES} "compat.h")
 
@@ -39,16 +43,27 @@ add_library(greens_functions SHARED
 target_link_libraries(greens_functions
     ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
 
+if (NOT NO_BESSEL_TABLE)
+    add_dependencies(greens_functions BesselTables)
+
+    install(FILES ${HPP_FILES}
+        "${CMAKE_CURRENT_BINARY_DIR}/SphericalBesselTable.hpp"
+        "${CMAKE_CURRENT_BINARY_DIR}/CylindricalBesselTable.hpp"
+        DESTINATION "include/greens_functions")
+endif()
+
+include_directories(${PROJECT_BINARY_DIR}/greens_functions)
+
 install(TARGETS greens_functions DESTINATION lib)
 install(FILES ${HPP_FILES} DESTINATION "include/greens_functions")
 
-#python wrapper
+# python wrapper
 
 find_library(BOOST_PYTHON boost_python)
 include_directories("/usr/include/python2.7")
 
 add_library( _greens_functions SHARED
-    greens_functions.cpp ${CPP_FILES} ${HPP_FILES} "compat.h")
+    python/greens_functions.cpp ${CPP_FILES} ${HPP_FILES} "compat.h")
 target_link_libraries( _greens_functions
     ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES} ${BOOST_PYTHON})
 
