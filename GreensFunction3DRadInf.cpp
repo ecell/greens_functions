@@ -85,7 +85,7 @@ GreensFunction3DRadInf::p_corr_R(Real alpha, unsigned int n, Real r, Real t) con
 
     const Real result(term1 * num / den);
 
-    assert(isfinite(result));
+    assert(std::isfinite(result));
 
     return result;
 }

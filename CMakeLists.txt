@@ -12,6 +12,7 @@ set (CPP_FILES
 )
 
 set (HPP_FILES
+    compat.h
     factorial.hpp Defs.hpp GreensFunction.hpp GreensFunction1DAbsAbs.hpp
     GreensFunction1DAbsSinkAbs.hpp GreensFunction1DRadAbs.hpp
     GreensFunction2DAbsSym.hpp GreensFunction2DRadAbs.hpp GreensFunction2DAbs.hpp
@@ -22,7 +23,22 @@ set (HPP_FILES
     findRoot.hpp funcSum.hpp freeFunctions.hpp PairGreensFunction.hpp
 )
 
-add_definitions("-DHAVE_DECL_INFINITY -Wall")
+# add_definitions("-DHAVE_DECL_INFINITY -Wall")
+add_definitions(-DHAVE_CONFIG_H)
+
+check_cxx_source_compiles("#include <math.h>
+int main() { double a = INFINITY; return (int)a * 0; }"
+    HAVE_DECL_INFINITY)
+check_cxx_source_compiles("#include <math.h>
+int main() { isfinite(0.); return 0; }"
+    HAVE_ISFINITE)
+check_cxx_source_compiles("#include <math.h>
+int main() { double a, b; sincos(0., &a, &b); return 0; }"
+    HAVE_SINCOS)
+
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 find_library(GSL_LIBRARIES gsl)
 find_library(GSL_CBLAS_LIBRARIES gslcblas)
@@ -38,7 +54,7 @@ endif()
 #    ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
 
 add_library(greens_functions SHARED
-    ${CPP_FILES} ${HPP_FILES} "compat.h")
+    ${CPP_FILES} ${HPP_FILES} "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 
 target_link_libraries(greens_functions
     ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
@@ -63,7 +79,7 @@ find_library(BOOST_PYTHON boost_python)
 include_directories("/usr/include/python2.7")
 
 add_library( _greens_functions SHARED
-    python/greens_functions.cpp ${CPP_FILES} ${HPP_FILES} "compat.h")
+    python/greens_functions.cpp ${CPP_FILES} ${HPP_FILES} "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 target_link_libraries( _greens_functions
     ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES} ${BOOST_PYTHON})
 

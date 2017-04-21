@@ -211,7 +211,7 @@ GF3DA::makep_nTable(RealVector& p_nTable, Real r, Real t) const
     {
         Real p_n(this->p_n(n, r, t) * factor);
 
-        if (! isfinite(p_n))
+        if (! std::isfinite(p_n))
         {
 //            log_.error("makep_nTable: invalid value: %.16g (n=%d)", p_n, n);
             break;
@@ -470,7 +470,7 @@ void GF3DA::makedp_nTable(RealVector& p_nTable, Real t) const
     {
         Real p_n(dp_n(n, t) * factor);
 
-        if (! isfinite(p_n))
+        if (! std::isfinite(p_n))
         {
 //            log_.error("makedp_nTable: invalid value: %.16g (n=%d)", p_n, n);
             break;
