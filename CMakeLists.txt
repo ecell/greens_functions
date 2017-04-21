@@ -73,14 +73,14 @@ include_directories(${PROJECT_BINARY_DIR}/greens_functions)
 install(TARGETS greens_functions DESTINATION lib)
 install(FILES ${HPP_FILES} DESTINATION "include/greens_functions")
 
-# python wrapper
-
-find_library(BOOST_PYTHON boost_python)
-include_directories("/usr/include/python2.7")
-
-add_library( _greens_functions SHARED
-    python/greens_functions.cpp ${CPP_FILES} ${HPP_FILES} "${CMAKE_CURRENT_BINARY_DIR}/config.h")
-target_link_libraries( _greens_functions
-    ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES} ${BOOST_PYTHON})
+# # python wrapper
+# 
+# find_library(BOOST_PYTHON boost_python)
+# include_directories("/usr/include/python2.7")
+# 
+# add_library( _greens_functions SHARED
+#     python/greens_functions.cpp ${CPP_FILES} ${HPP_FILES} "${CMAKE_CURRENT_BINARY_DIR}/config.h")
+# target_link_libraries( _greens_functions
+#     ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES} ${BOOST_PYTHON})
 
 add_subdirectory(tests)
