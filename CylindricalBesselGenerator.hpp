@@ -8,6 +8,29 @@
 
 #include "Defs.hpp"
 
+#ifdef NO_BESSEL_TABLE
+#include "tablegen/cjy_table.hpp"
+
+namespace cb_table
+{
+
+struct Table
+{
+    unsigned int N;
+    double x_start;
+    double delta_x;
+    std::vector<double> y;
+};
+
+const unsigned int cj_table_min = 0;
+const unsigned int cj_table_max = 50;
+const unsigned int cy_table_min = 0;
+const unsigned int cy_table_max = 50;
+const unsigned int cjy_table_resolution = 35;
+
+} // sb_table
+#endif
+
 namespace greens_functions{
 
 class CylindricalBesselGenerator
@@ -16,7 +39,34 @@ public:
 
     CylindricalBesselGenerator()
     {
-        ; // do nothing
+#ifdef NO_BESSEL_TABLE
+        cjy_table table = JnYn(
+            std::max(cb_table::cj_table_max, cb_table::cy_table_max), cb_table::cjy_table_resolution);
+
+        cj_table_.resize(cb_table::cj_table_max + 1);
+        for (unsigned int n(cb_table::cj_table_min); n<= cb_table::cj_table_max; ++n)
+        {
+            const int start(searchsorted(table.z, minz_j(n)));
+            const double z_start(table.z.at(start));
+            const int end(searchsorted(table.z, maxz_j(n)));
+            const std::vector<double> js(get_sub_sequence_from_matrix2(table.j, table.jdot, n, start, end));
+
+            const cb_table::Table cj_table_n = {end - start, z_start, table.delta, js};
+            cj_table_[n] = cj_table_n;
+        }
+
+        cj_table_.resize(cb_table::cy_table_max + 1);
+        for (unsigned int n(cb_table::cy_table_min); n<= cb_table::cy_table_max; ++n)
+        {
+            const int start(searchsorted(table.z, minz_y(n)));
+            const double z_start(table.z.at(start));
+            const int end(searchsorted(table.z, maxz_y(n)));
+            const std::vector<double> ys(get_sub_sequence_from_matrix2(table.y, table.ydot, n, start, end));
+
+            const cb_table::Table cy_table_n = {end - start, z_start, table.delta, ys};
+            cy_table_[n] = cy_table_n;
+        }
+#endif
     }
 
     ~CylindricalBesselGenerator()
@@ -34,6 +84,18 @@ public:
     static UnsignedInteger getMaxNY();
 
     static CylindricalBesselGenerator const& instance();
+
+#ifdef NO_BESSEL_TABLE
+    Real _J_table(UnsignedInteger n, Real z) const;
+    Real _Y_table(UnsignedInteger n, Real z) const;
+    cb_table::Table const* getCJTable(UnsignedInteger n) const;
+    cb_table::Table const* getCYTable(UnsignedInteger n) const;
+
+private:
+
+    std::vector<cb_table::Table> cj_table_;
+    std::vector<cb_table::Table> cy_table_;
+#endif
 };
 
 }
