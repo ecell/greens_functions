@@ -6,6 +6,16 @@
 namespace greens_functions
 {
 
+#ifdef WIN32_MSC
+double erf(const double x);
+
+double expm1(const double x);
+
+double erfc(const double x);
+#endif
+
+// double pow_2(const double x);
+
 Real expxsq_erfc(Real x);
 
 Real W(Real a, Real b);

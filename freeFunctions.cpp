@@ -6,11 +6,43 @@
 #include <gsl/gsl_roots.h>
 #include <gsl/gsl_errno.h>
 
+#ifdef WIN32_MSC
+#include <gsl/gsl_sf_erf.h>
+#endif
+
+
 //#include "Logger.hpp"
 #include "freeFunctions.hpp"
 
 namespace greens_functions
 {
+
+#ifdef WIN32_MSC
+double erf(const double x)
+{
+    return gsl_sf_erf(x);
+}
+
+double expm1(const double x)
+{
+    return gsl_expm1(x);
+}
+
+double erfc(const double x)
+{
+    return gsl_sf_erfc(x);
+}
+
+// double pow_2(const double x)
+// {
+//     return x * x;
+// }
+#else
+// double pow_2(const double x)
+// {
+//     return gsl_pow_2(x);
+// }
+#endif
 
 /**
    Calculates std::exp(x^2) * erfc(x)
