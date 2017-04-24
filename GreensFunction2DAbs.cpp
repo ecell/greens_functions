@@ -1,3 +1,5 @@
+#include "compat.h"
+
 #include <iomanip>
 #include <cmath>
 #include <boost/format.hpp>

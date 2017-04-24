@@ -2,6 +2,7 @@
 #define __GREENSFUNCTION_HPP
 
 #include "Defs.hpp"
+
 namespace greens_functions{
 
 class GreensFunction
