@@ -25,8 +25,8 @@ namespace greens_functions
 const Real GreensFunction3DRadAbs::TOLERANCE = 1e-8;
 const Real GreensFunction3DRadAbs::THETA_TOLERANCE = 1e-5;
 const Real GreensFunction3DRadAbs::MIN_T_FACTOR = 1e-8;
-const unsigned int GreensFunction3DRadAbs::MAX_ORDER;
-const unsigned int GreensFunction3DRadAbs::MAX_ALPHA_SEQ;
+// const unsigned int GreensFunction3DRadAbs::MAX_ORDER;
+// const unsigned int GreensFunction3DRadAbs::MAX_ALPHA_SEQ;
 
 GreensFunction3DRadAbs::GreensFunction3DRadAbs(
     Real D, Real kf, Real r0, Real Sigma, Real a)

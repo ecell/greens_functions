@@ -46,8 +46,8 @@ const Real GreensFunction2DRadAbs::SCAN_START = 0.001;
 const Real GreensFunction2DRadAbs::FRACTION_SCAN_INTERVAL = .5;
 const Real GreensFunction2DRadAbs::CONVERGENCE_ASSUMED = 25;
 const Real GreensFunction2DRadAbs::INTERVAL_MARGIN = .33; 
-const unsigned int GreensFunction2DRadAbs::MAX_ORDER;
-const unsigned int GreensFunction2DRadAbs::MAX_ALPHA_SEQ;
+// const unsigned int GreensFunction2DRadAbs::MAX_ORDER;
+// const unsigned int GreensFunction2DRadAbs::MAX_ALPHA_SEQ;
 
 // This is the constructor
 GreensFunction2DRadAbs::

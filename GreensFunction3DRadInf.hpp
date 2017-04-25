@@ -29,7 +29,7 @@ private:
 
     static const Real MIN_T;
 
-    static const unsigned int MAX_ORDER;
+    static const unsigned int MAX_ORDER = 70;
 
     static const Real H;
     
