@@ -527,7 +527,7 @@ GreensFunction2DRadAbs::getAlphaRoot0( const Real low,  // root lies between low
 
     gsl_function F = 
     {       	    
-        reinterpret_cast<typeof(F.function)>
+        reinterpret_cast<double (*)(double, void*)>
         ( &GreensFunction2DRadAbs::f_alpha0_aux_F ),
         &params 
     };
@@ -561,7 +561,7 @@ GreensFunction2DRadAbs::getAlphaRootN( const Real low,  // root lies between low
     
     gsl_function F = 
     {
-        reinterpret_cast<typeof(F.function)>
+        reinterpret_cast<double (*)(double, void*)>
         ( &GreensFunction2DRadAbs::f_alpha_aux_F ),
         &params
     };
@@ -991,7 +991,7 @@ Real GreensFunction2DRadAbs::drawTime( const Real rnd) const
     p_survival_table_params params = { this, psurvTable, rnd };
     gsl_function F = 
     {
-        reinterpret_cast<typeof(F.function)>( &p_survival_table_F ),
+        reinterpret_cast<double (*)(double, void*)>( &p_survival_table_F ),
         &params 
     };
 
@@ -1145,7 +1145,7 @@ Real GreensFunction2DRadAbs::drawR( const Real rnd,
 
     gsl_function F = 
         {
-            reinterpret_cast<typeof(F.function)>( &p_int_r_F ),
+            reinterpret_cast<double (*)(double, void*)>( &p_int_r_F ),
             &params 
         };
 
@@ -1595,7 +1595,7 @@ GreensFunction2DRadAbs::drawTheta( const Real rnd,
     // and the required parameters.
     gsl_function F = 
     {
-        reinterpret_cast<typeof(F.function)>( &ip_theta_F ), // ip_theta_F is 
+        reinterpret_cast<double (*)(double, void*)>( &ip_theta_F ), // ip_theta_F is 
                                                              // theta pdf function.
         &params 
     // reinterpret_cast converts any pointer type to any other pointer type.

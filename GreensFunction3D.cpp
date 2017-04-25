@@ -112,7 +112,7 @@ Real GreensFunction3D::drawR(Real rnd, Real t) const
 
     gsl_function F = 
         {
-            reinterpret_cast<typeof(F.function)>( &ip_r_F ),
+            reinterpret_cast<double (*)(double, void*)>( &ip_r_F ),
             &params 
         };
 
@@ -218,7 +218,7 @@ Real GreensFunction3D::drawTheta(Real rnd, Real r, Real t) const
 
     gsl_function F = 
         {
-            reinterpret_cast<typeof(F.function)>( &ip_theta_F ),
+            reinterpret_cast<double (*)(double, void*)>( &ip_theta_F ),
             &params 
         };
 
