@@ -28,8 +28,10 @@ const Real GreensFunction1DRadAbs::L_TYPICAL = 1E-8;
 const Real GreensFunction1DRadAbs::T_TYPICAL = 1E-6;
 const Real GreensFunction1DRadAbs::EPSILON = 1E-10;
 const Real GreensFunction1DRadAbs::PDENS_TYPICAL = 1;
-// const GreensFunction1DRadAbs::uint GreensFunction1DRadAbs::MAX_TERMS = 500;
-// const GreensFunction1DRadAbs::uint GreensFunction1DRadAbs::MIN_TERMS = 20;
+#ifndef WIN32_MSC
+const GreensFunction1DRadAbs::uint GreensFunction1DRadAbs::MAX_TERMS;
+const GreensFunction1DRadAbs::uint GreensFunction1DRadAbs::MIN_TERMS;
+#endif
 const Real GreensFunction1DRadAbs::CUTOFF_H = 6.0;
 
 // This is the appropriate definition of the function defining
