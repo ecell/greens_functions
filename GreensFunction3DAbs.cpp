@@ -27,8 +27,8 @@ const Real GreensFunction3DAbs::TOLERANCE = 1e-8;
 const Real GreensFunction3DAbs::THETA_TOLERANCE = 1e-5;
 const Real GreensFunction3DAbs::MIN_T = 1e-18;
 #ifndef WIN32_MSC
-const unsigned int MAX_ORDER;
-const unsigned int MAX_ALPHA_SEQ;
+const unsigned int GreensFunction3DAbs::MAX_ORDER;
+const unsigned int GreensFunction3DAbs::MAX_ALPHA_SEQ;
 #endif
 
 typedef GreensFunction3DAbs GF3DA;
