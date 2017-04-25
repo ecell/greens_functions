@@ -16,7 +16,7 @@
 #include <gsl/gsl_sf_bessel.h>
 
 #include "findRoot.hpp"
-
+#include "freeFunctions.hpp"
 #include "GreensFunction2DAbsSym.hpp"
 
 namespace greens_functions

@@ -6,6 +6,7 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_roots.h>
 
+#include "freeFunctions.hpp"
 #include "GreensFunction3DSym.hpp"
 
 namespace greens_functions

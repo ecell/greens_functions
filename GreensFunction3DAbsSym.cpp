@@ -15,6 +15,7 @@
 #include <gsl/gsl_roots.h>
 
 #include "findRoot.hpp"
+#include "freeFunctions.hpp"
 #include "GreensFunction3DAbsSym.hpp"
 
 /**
