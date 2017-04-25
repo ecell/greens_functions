@@ -5,11 +5,12 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include <math.h>
+
 #if defined( __cplusplus )
 #include <cmath>
 #include <limits>
 #else
-#include <math.h>
 #include <limits.h>
 #endif
 

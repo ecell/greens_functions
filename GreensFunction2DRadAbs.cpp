@@ -1339,7 +1339,7 @@ GreensFunction2DRadAbs::makep_mTable( RealVector& p_mTable,
             p_m_prev_abs = p_m_abs;                             // store the previous term
             const Real p_m( this->p_m( m, r, t ) / p_0 );       // get the next term
 
-            if( ! std::isfinite( p_m ) )                        // if the calculated value is not valid->exit
+            if( ! isfinite( p_m ) )                        // if the calculated value is not valid->exit
             {
 //                    log_.warn("makep_mTable: invalid value (p_m = %.16g, m=%u)", p_m, m);
                     break;
@@ -1482,7 +1482,7 @@ GreensFunction2DRadAbs::makedp_m_at_aTable( RealVector& p_mTable,
             // }
             // END DEBUG
 
-            if( ! std::isfinite( p_m ) ) // if the calculated value is not valid->exit
+            if( ! isfinite( p_m ) ) // if the calculated value is not valid->exit
             {
 //                    log_.warn("makedp_m_at_aTable: invalid value (p_m=%.16g, m=%u, t=%.16g, p_0=%.16g)", p_m, m, t, p_0);
                     break;
