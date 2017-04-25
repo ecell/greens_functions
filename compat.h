@@ -5,12 +5,11 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include <math.h>
-
 #if defined( __cplusplus )
 #include <cmath>
 #include <limits>
 #else
+#include <math.h>
 #include <limits.h>
 #endif
 
@@ -39,6 +38,10 @@ inline int isfinite( double x )
 {
 	return x == x && x != INFINITY && -x != INFINITY;
 }
+#else
+#ifdef __cplusplus
+using std::isfinite;
+#endif
 #endif
 
 #endif // __COMPAT_HPP
