@@ -77,8 +77,14 @@ namespace greens_functions
             }
         }
         if(n == num_term_use)
-            std::cout << "warning: too slow convergence in p_surv: t = "
-                      << t << ", " << this->dump();
+        {
+            std::ostringstream oss;
+            oss << "GF2RWA: too slow convergence in p_surv ";
+            oss << "t = " << t << ", " << this->dump();
+            throw std::runtime_error(oss.str());
+//             std::cout << "warning: too slow convergence in p_surv: t = "
+//                       << t << ", " << this->dump();
+        }
 
         return (2e0 * sum / a);
     }
@@ -140,8 +146,14 @@ namespace greens_functions
             }
         }
         if(n == num_term_use)
-            std::cout << "warning: too slow convergence in p_int_r: r = "
-                      << r << ", t = " << t << ", " << this->dump();
+        {
+            std::ostringstream oss;
+            oss << "GF2RWA: too slow convergence in p_int_r ";
+            oss << "t = " << t << ", " << this->dump();
+            throw std::runtime_error(oss.str());
+//             std::cout << "warning: too slow convergence in p_int_r: r = "
+//                       << r << ", t = " << t << ", " << this->dump();
+        }
 
         return (2e0 * r * sum / (a*a));
     }
@@ -253,9 +265,16 @@ namespace greens_functions
             }
         }
         if(n == num_term_use)
-            std::cout << "warning: too slow convergence in p_int_theta_1st: r = "
-                      << r << ", theta = " << theta << ", t = " << t << ", "
-                      << this->dump();
+        {
+            std::ostringstream oss;
+            oss << "GF2RWA: too slow convergence in p_int_theta_1st r = " << r;
+            oss << ", theta = " << theta << ", t = " << t << ", " << this->dump();
+            throw std::runtime_error(oss.str());
+
+//             std::cout << "warning: too slow convergence in p_int_theta_1st: r = "
+//                       << r << ", theta = " << theta << ", t = " << t << ", "
+//                       << this->dump();
+        }
 
         return (4e0 * theta * sum / (this->phi_ * a * a));
     }
@@ -357,10 +376,15 @@ namespace greens_functions
                 }
             }
             if(m == num_in_term_use)
-                std::cout << "warning: too slow convergence in p_int_theta_2nd m: "
-                          << "r = " << r << ", theta = " << theta << ", t = "
-                          << t << ", " << this->dump();
-
+            {
+                std::ostringstream oss;
+                oss << "GF2RWA: too slow convergence in p_int_theta_2nd m: r = " << r;
+                oss << ", theta = " << theta << ", t = " << t << ", " << this->dump();
+                throw std::runtime_error(oss.str());
+//                 std::cout << "warning: too slow convergence in p_int_theta_2nd m: "
+//                           << "r = " << r << ", theta = " << theta << ", t = "
+//                           << t << ", " << this->dump();
+            }
 //             if(in_sum == 0e0)
 //                 break;
 
@@ -381,9 +405,15 @@ namespace greens_functions
             }
         }
         if(n == num_out_term_use)
-            std::cout << "warning: too slow convergence in p_int_theta_2nd n: "
-                      << "r = " << r << ", theta = " << theta << ", t = " << t
-                      << ", " << this->dump();
+        {
+            std::ostringstream oss;
+            oss << "GF2RWA: too slow convergence in p_int_theta_2nd n: r = " << r;
+            oss << ", theta = " << theta << ", t = " << t << ", " << this->dump();
+            throw std::runtime_error(oss.str());
+//             std::cout << "warning: too slow convergence in p_int_theta_2nd n: "
+//                       << "r = " << r << ", theta = " << theta << ", t = " << t
+//                       << ", " << this->dump();
+        }
 
         return (16e0 * sum / (M_PI * a * a));
     }
@@ -548,11 +578,17 @@ namespace greens_functions
                 }
             }
             if(m == num_in_term_use)
-                std::cout << "warning: too slow convergence in p_int_theta_2nd m: "
-                          << "theta = " << theta << ", t = "
-                          << t << ", " << this->dump();
+            {
+                std::ostringstream oss;
+                oss << "GF2RWA: too slow convergence in dp_int_theta_2nd m: ";
+                oss << "theta = " << theta << ", t = " << t << ", " << this->dump();
+                throw std::runtime_error(oss.str());
 
-//             if(in_sum == 0e0)
+//                 std::cout << "warning: too slow convergence in p_int_theta_2nd m: "
+//                           << "theta = " << theta << ", t = "
+//                           << t << ", " << this->dump();
+            }
+            //             if(in_sum == 0e0)
 //                 break;
 
             term = in_sum * sin(bessel_order * theta) / n;
@@ -572,9 +608,15 @@ namespace greens_functions
             }
         }
         if(n == num_out_term_use)
-            std::cout << "warning: too slow convergence in p_int_theta_2nd n: theta = "
-                      << theta << ", t = " << t
-                      << ", " << this->dump();
+        {
+            std::ostringstream oss;
+            oss << "GF2RWA: too slow convergence in dp_int_theta_2nd n: ";
+            oss << "theta = " << theta << ", t = " << t << ", " << this->dump();
+            throw std::runtime_error(oss.str());
+//             std::cout << "warning: too slow convergence in p_int_theta_2nd n: theta = "
+//                       << theta << ", t = " << t
+//                       << ", " << this->dump();
+        }
 
         return (8e0 * sum / (M_PI * a * a));
     }
