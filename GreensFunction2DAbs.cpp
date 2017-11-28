@@ -1,3 +1,5 @@
+#include "compat.h"
+
 #include <iomanip>
 #include <cmath>
 #include <boost/format.hpp>
@@ -367,7 +369,7 @@ const Real GreensFunction2DAbs::drawTime(const Real rnd) const
 
     gsl_function F = 
     {
-        reinterpret_cast<typeof(F.function)>(&p_survival_F), &params
+        reinterpret_cast<double (*)(double, void*)>(&p_survival_F), &params
     };
 
     // this is not so accurate because
@@ -446,7 +448,7 @@ const Real GreensFunction2DAbs::drawR(const Real rnd, const Real t) const
 
     gsl_function F =
     {
-        reinterpret_cast<typeof(F.function)>(&p_r_F), &params
+        reinterpret_cast<double (*)(double, void*)>(&p_r_F), &params
     };
 
     const Real low(0e0);
@@ -519,7 +521,7 @@ const Real GreensFunction2DAbs::drawTheta(const Real rnd,
 
     gsl_function F =
     {
-        reinterpret_cast<typeof(F.function)>(&p_theta_F), &params
+        reinterpret_cast<double (*)(double, void*)>(&p_theta_F), &params
     };
 
     const Real low(0e0);

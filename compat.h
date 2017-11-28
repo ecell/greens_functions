@@ -2,7 +2,7 @@
 #define COMPAT_HPP
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif /* HAVE_CONFIG_H */
 
 #if defined( __cplusplus )
@@ -38,6 +38,10 @@ inline int isfinite( double x )
 {
 	return x == x && x != INFINITY && -x != INFINITY;
 }
+#else
+#ifdef __cplusplus
+using std::isfinite;
+#endif
 #endif
 
 #endif // __COMPAT_HPP

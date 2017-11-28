@@ -46,8 +46,10 @@ const Real GreensFunction2DRadAbs::SCAN_START = 0.001;
 const Real GreensFunction2DRadAbs::FRACTION_SCAN_INTERVAL = .5;
 const Real GreensFunction2DRadAbs::CONVERGENCE_ASSUMED = 25;
 const Real GreensFunction2DRadAbs::INTERVAL_MARGIN = .33; 
+#ifndef WIN32_MSC
 const unsigned int GreensFunction2DRadAbs::MAX_ORDER;
 const unsigned int GreensFunction2DRadAbs::MAX_ALPHA_SEQ;
+#endif
 
 // This is the constructor
 GreensFunction2DRadAbs::
@@ -527,7 +529,7 @@ GreensFunction2DRadAbs::getAlphaRoot0( const Real low,  // root lies between low
 
     gsl_function F = 
     {       	    
-        reinterpret_cast<typeof(F.function)>
+        reinterpret_cast<double (*)(double, void*)>
         ( &GreensFunction2DRadAbs::f_alpha0_aux_F ),
         &params 
     };
@@ -561,7 +563,7 @@ GreensFunction2DRadAbs::getAlphaRootN( const Real low,  // root lies between low
     
     gsl_function F = 
     {
-        reinterpret_cast<typeof(F.function)>
+        reinterpret_cast<double (*)(double, void*)>
         ( &GreensFunction2DRadAbs::f_alpha_aux_F ),
         &params
     };
@@ -991,7 +993,7 @@ Real GreensFunction2DRadAbs::drawTime( const Real rnd) const
     p_survival_table_params params = { this, psurvTable, rnd };
     gsl_function F = 
     {
-        reinterpret_cast<typeof(F.function)>( &p_survival_table_F ),
+        reinterpret_cast<double (*)(double, void*)>( &p_survival_table_F ),
         &params 
     };
 
@@ -1049,7 +1051,8 @@ Real GreensFunction2DRadAbs::drawTime( const Real rnd) const
 
 
 // This determines based on the flux at a certain time, if the 'escape' was a reaction or a proper escape
-EventKind GreensFunction2DRadAbs::drawEventType( const Real rnd, 
+GreensFunction2DRadAbs::EventKind
+GreensFunction2DRadAbs::drawEventType( const Real rnd, 
                                        const Real t     ) const
 {
   
@@ -1144,7 +1147,7 @@ Real GreensFunction2DRadAbs::drawR( const Real rnd,
 
     gsl_function F = 
         {
-            reinterpret_cast<typeof(F.function)>( &p_int_r_F ),
+            reinterpret_cast<double (*)(double, void*)>( &p_int_r_F ),
             &params 
         };
 
@@ -1338,7 +1341,7 @@ GreensFunction2DRadAbs::makep_mTable( RealVector& p_mTable,
             p_m_prev_abs = p_m_abs;                             // store the previous term
             const Real p_m( this->p_m( m, r, t ) / p_0 );       // get the next term
 
-            if( ! std::isfinite( p_m ) )                        // if the calculated value is not valid->exit
+            if( ! isfinite( p_m ) )                        // if the calculated value is not valid->exit
             {
 //                    log_.warn("makep_mTable: invalid value (p_m = %.16g, m=%u)", p_m, m);
                     break;
@@ -1481,7 +1484,7 @@ GreensFunction2DRadAbs::makedp_m_at_aTable( RealVector& p_mTable,
             // }
             // END DEBUG
 
-            if( ! std::isfinite( p_m ) ) // if the calculated value is not valid->exit
+            if( ! isfinite( p_m ) ) // if the calculated value is not valid->exit
             {
 //                    log_.warn("makedp_m_at_aTable: invalid value (p_m=%.16g, m=%u, t=%.16g, p_0=%.16g)", p_m, m, t, p_0);
                     break;
@@ -1594,7 +1597,7 @@ GreensFunction2DRadAbs::drawTheta( const Real rnd,
     // and the required parameters.
     gsl_function F = 
     {
-        reinterpret_cast<typeof(F.function)>( &ip_theta_F ), // ip_theta_F is 
+        reinterpret_cast<double (*)(double, void*)>( &ip_theta_F ), // ip_theta_F is 
                                                              // theta pdf function.
         &params 
     // reinterpret_cast converts any pointer type to any other pointer type.

@@ -1,19 +1,25 @@
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
-
 #include <cassert>
 
 #include "compat.h"
+
+#ifndef NO_BESSEL_TABLE
 #include "SphericalBesselTable.hpp"
+#endif
+
 #include "SphericalBesselGenerator.hpp"
 
 namespace greens_functions
 {
 
+#ifndef NO_BESSEL_TABLE
 static inline double hermite_interp(double x, 
                                     double x0, double dx, 
                                     double const* y_array)
+#else
+static inline double hermite_interp(double x, 
+                                    double x0, double dx, 
+                                    std::vector<double> const& y_array)
+#endif
 {
     const double hinv = 1.0 / dx;
 
@@ -32,8 +38,13 @@ static inline double hermite_interp(double x,
         + x_lo * x_lo * (y_hi + x_hi * (2 * y_hi - ydot_hi));
 }
 
+#ifndef NO_BESSEL_TABLE
 inline static Real interp(Real x_start, Real delta_x,
                           Real const* yTable, Real x)
+#else
+inline static Real interp(Real x_start, Real delta_x,
+                          std::vector<double> const& yTable, Real x)
+#endif
 {
     return hermite_interp(x, x_start, delta_x, yTable);
 }
@@ -53,8 +64,6 @@ SphericalBesselGenerator const& SphericalBesselGenerator::instance()
     static const SphericalBesselGenerator sphericalBesselGenerator;
     return sphericalBesselGenerator;
 }
-
-
 
 UnsignedInteger SphericalBesselGenerator::getMinNJ()
 {
@@ -76,11 +85,11 @@ UnsignedInteger SphericalBesselGenerator::getMaxNY()
     return sb_table::sy_table_max;
 }
 
+#ifndef NO_BESSEL_TABLE
 static sb_table::Table const* getSJTable(UnsignedInteger n)
 {
     return sb_table::sj_table[n];
 }
-
 
 static sb_table::Table const* getSYTable(UnsignedInteger n)
 {
@@ -100,6 +109,31 @@ static inline Real _y_table(UnsignedInteger n, Real z)
 
     return interp(tablen->x_start, tablen->delta_x, tablen->y, z);
 }
+#else
+sb_table::Table const* SphericalBesselGenerator::getSJTable(UnsignedInteger n) const
+{
+    return &sj_table_[n];
+}
+
+sb_table::Table const* SphericalBesselGenerator::getSYTable(UnsignedInteger n) const
+{
+    return &sy_table_[n];
+}
+
+Real SphericalBesselGenerator::_j_table(UnsignedInteger n, Real z) const
+{
+    sb_table::Table const* tablen(getSJTable(n));
+
+    return interp(tablen->x_start, tablen->delta_x, tablen->y, z);
+}
+
+Real SphericalBesselGenerator::_y_table(UnsignedInteger n, Real z) const
+{
+    sb_table::Table const* tablen(getSYTable(n));
+
+    return interp(tablen->x_start, tablen->delta_x, tablen->y, z);
+}
+#endif
 
 static inline Real _j_smalln(UnsignedInteger n, Real z)
 {

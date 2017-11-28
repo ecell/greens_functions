@@ -1,3 +1,5 @@
+#include "compat.h"
+
 #include <sstream>
 #include <iostream>
 #include <cstdlib>
@@ -26,8 +28,10 @@ const Real GreensFunction1DAbsSinkAbs::L_TYPICAL = 1E-8;
 const Real GreensFunction1DAbsSinkAbs::T_TYPICAL = 1E-6;
 const Real GreensFunction1DAbsSinkAbs::EPSILON = 1E-10;
 const Real GreensFunction1DAbsSinkAbs::PDENS_TYPICAL = 1;
-const GreensFunction1DAbsSinkAbs::uint GreensFunction1DAbsSinkAbs::MAX_TERMS = 500;
-const GreensFunction1DAbsSinkAbs::uint GreensFunction1DAbsSinkAbs::MIN_TERMS = 20;
+#ifndef WIN32_MSC
+const GreensFunction1DAbsSinkAbs::uint GreensFunction1DAbsSinkAbs::MAX_TERMS;
+const GreensFunction1DAbsSinkAbs::uint GreensFunction1DAbsSinkAbs::MIN_TERMS;
+#endif
 const Real GreensFunction1DAbsSinkAbs::CUTOFF_H = 6.0;
 
 
@@ -653,7 +657,7 @@ Real GreensFunction1DAbsSinkAbs::flux_sink(Real t) const
 
 /* Determine which event has occured, an escape or a reaction. Based on the
    fluxes through the boundaries and the sink at the given time. */
-EventKind 
+GreensFunction1DAbsSinkAbs::EventKind 
 GreensFunction1DAbsSinkAbs::drawEventType( Real rnd, Real t ) const
 {
     THROW_UNLESS( std::invalid_argument, rnd < 1.0 && rnd >= 0.0 );

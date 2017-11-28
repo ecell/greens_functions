@@ -1,3 +1,5 @@
+#include "compat.h"
+
 #include <iomanip>
 #include <cmath>
 #include <boost/format.hpp>
@@ -764,7 +766,7 @@ namespace greens_functions
 
         gsl_function F = 
         {
-            reinterpret_cast<typeof(F.function)>(&p_survival_F), &params
+            reinterpret_cast<double (*)(double, void*)>(&p_survival_F), &params
         };
 
         // this is not so accurate because
@@ -847,7 +849,7 @@ namespace greens_functions
 
         gsl_function F =
         {
-            reinterpret_cast<typeof(F.function)>(&p_r_F), &params
+            reinterpret_cast<double (*)(double, void*)>(&p_r_F), &params
         };
 
         const Real low(0e0);
@@ -950,7 +952,7 @@ namespace greens_functions
             dp_theta_params params = {this, t, new_random_number * int_phi};
 
             gsl_function F = {
-                reinterpret_cast<typeof(F.function)>(&dp_theta_F), &params
+                reinterpret_cast<double (*)(double, void*)>(&dp_theta_F), &params
             };
 
             theta = findRoot(F, solver, low, high, 1e-18, 1e-12,
@@ -962,7 +964,7 @@ namespace greens_functions
             p_theta_params params = {this, t, r, new_random_number * int_phi};
 
             gsl_function F = {
-                reinterpret_cast<typeof(F.function)>(&p_theta_F), &params
+                reinterpret_cast<double (*)(double, void*)>(&p_theta_F), &params
             };
 
             theta = findRoot(F, solver, low, high, 1e-18, 1e-12,

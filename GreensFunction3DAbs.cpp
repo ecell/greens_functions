@@ -1,7 +1,3 @@
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
-
 #include "compat.h"
 
 #include <stdexcept>
@@ -30,6 +26,10 @@ namespace greens_functions
 const Real GreensFunction3DAbs::TOLERANCE = 1e-8;
 const Real GreensFunction3DAbs::THETA_TOLERANCE = 1e-5;
 const Real GreensFunction3DAbs::MIN_T = 1e-18;
+#ifndef WIN32_MSC
+const unsigned int GreensFunction3DAbs::MAX_ORDER;
+const unsigned int GreensFunction3DAbs::MAX_ALPHA_SEQ;
+#endif
 
 typedef GreensFunction3DAbs GF3DA;
 
@@ -618,7 +618,7 @@ GF3DA::drawTime(Real rnd) const
    p_survival_params params = { this, rnd };
 
    gsl_function F = {
-       reinterpret_cast<typeof(F.function)>(&p_survival_F),
+       reinterpret_cast<double (*)(double, void*)>(&p_survival_F),
        &params 
    };
 
@@ -720,7 +720,7 @@ GF3DA::drawR(Real rnd, Real t) const
     p_int_r_params params = { this, t, rnd * psurv };
 
     gsl_function F = {
-        reinterpret_cast<typeof(F.function)>(&p_int_r_F),
+        reinterpret_cast<double (*)(double, void*)>(&p_int_r_F),
         &params 
     };
 
@@ -830,7 +830,7 @@ GF3DA::drawTheta(Real rnd, Real r, Real t) const
     ip_theta_params params = { this, r, t, p_nTable, rnd * ip_theta_pi };
 
     gsl_function F = {
-        reinterpret_cast<typeof(F.function)>(&ip_theta_F),
+        reinterpret_cast<double (*)(double, void*)>(&ip_theta_F),
         &params 
     };
 
@@ -871,9 +871,10 @@ GF3DA::drawTheta(Real rnd, Real r, Real t) const
     return theta;
 }
 
-EventKind GF3DA::drawEventType(Real rnd, Real t) const
+GF3DA::EventKind GF3DA::drawEventType(Real rnd, Real t) const
 {
-    assert(0);
+    assert(false);
+    return GF3DA::IV_ESCAPE;  //XXX: DUMMY
 }
 
 //

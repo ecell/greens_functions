@@ -87,14 +87,14 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawEventType)
   GreensFunction3DRadAbs gf( D, kf, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  EventKind eventType( gf.drawEventType( 0.5, t ) );
-  BOOST_CHECK( (eventType == IV_ESCAPE) || (eventType == IV_REACTION) );
+  GreensFunction3DRadAbs::EventKind eventType( gf.drawEventType( 0.5, t ) );
+  BOOST_CHECK( (eventType == GreensFunction3DRadAbs::IV_ESCAPE) || (eventType == GreensFunction3DRadAbs::IV_REACTION) );
 
   eventType = gf.drawEventType(0.0, t);
-  BOOST_CHECK_EQUAL(eventType, IV_REACTION);
+  BOOST_CHECK_EQUAL(eventType, GreensFunction3DRadAbs::IV_REACTION);
 
   eventType = gf.drawEventType(0.9999999, t);
-  BOOST_CHECK_EQUAL(eventType, IV_ESCAPE);
+  BOOST_CHECK_EQUAL(eventType, GreensFunction3DRadAbs::IV_ESCAPE);
 }
 
 BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawEventType_smallt)
@@ -104,14 +104,14 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawEventType_smallt)
 
   Real t( gf.drawTime( 0.999 ) );
 
-  EventKind eventType( gf.drawEventType( 0.5, t ) );
-  BOOST_CHECK( (eventType == IV_ESCAPE) || (eventType == IV_REACTION) );
+  GreensFunction3DRadAbs::EventKind eventType( gf.drawEventType( 0.5, t ) );
+  BOOST_CHECK( (eventType == GreensFunction3DRadAbs::IV_ESCAPE) || (eventType == GreensFunction3DRadAbs::IV_REACTION) );
 
   eventType = gf.drawEventType(0.0, t);
-  BOOST_CHECK_EQUAL(eventType, IV_REACTION);
+  BOOST_CHECK_EQUAL(eventType, GreensFunction3DRadAbs::IV_REACTION);
 
   eventType = gf.drawEventType(0.9999999, t);
-//  BOOST_CHECK_EQUAL(eventType, IV_ESCAPE); it fails and it is comment-outed in python code, too.
+//  BOOST_CHECK_EQUAL(eventType, GreensFunction3DRadAbs::IV_ESCAPE); it fails and it is comment-outed in python code, too.
 }
 
 /*

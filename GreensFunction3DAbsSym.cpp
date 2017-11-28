@@ -1,7 +1,3 @@
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
-
 #include "compat.h"
 
 #include <sstream>
@@ -19,6 +15,7 @@
 #include <gsl/gsl_roots.h>
 
 #include "findRoot.hpp"
+#include "freeFunctions.hpp"
 #include "GreensFunction3DAbsSym.hpp"
 
 /**
@@ -198,7 +195,7 @@ Real GreensFunction3DAbsSym::p_r_fourier(Real r, Real t) const
         ++n;
     }
 
-    const Real factor(1.0 / (sqrt(2) * PIsq * pow(D * t, 1.5)));
+    const Real factor(1.0 / (sqrt(2.0) * PIsq * pow(D * t, 1.5)));
 
     return value * factor;
 } 
@@ -240,7 +237,7 @@ Real GreensFunction3DAbsSym::drawTime(Real rnd) const
 
     gsl_function F = 
         {
-            reinterpret_cast<typeof(F.function)>(&p_survival_F),
+            reinterpret_cast<double (*)(double, void*)>(&p_survival_F),
             &params 
         };
 
@@ -369,7 +366,7 @@ Real GreensFunction3DAbsSym::drawR(Real rnd, Real t) const
 
         assert(psurv >= 0.0);
 
-        F.function = reinterpret_cast<typeof(F.function)>(&p_r_F);
+        F.function = reinterpret_cast<double (*)(double, void*)>(&p_r_F);
     }
     else
     {
@@ -381,7 +378,7 @@ Real GreensFunction3DAbsSym::drawR(Real rnd, Real t) const
         }
 
         psurv = 1.0;
-        F.function = reinterpret_cast<typeof(F.function)>(&p_r_free_F);
+        F.function = reinterpret_cast<double (*)(double, void*)>(&p_r_free_F);
     }
 
     const Real target(psurv * rnd);

@@ -2,7 +2,12 @@
 #define __GREENSFUNCTION_HPP
 
 #include "Defs.hpp"
+
 namespace greens_functions{
+
+class GreensFunction
+{
+public:
 
 enum EventKind
     {
@@ -10,8 +15,6 @@ enum EventKind
         IV_REACTION
     };
 
-class GreensFunction
-{
 public:
     GreensFunction( const Real D )
       : D( D ) {}

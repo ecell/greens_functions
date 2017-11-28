@@ -4,11 +4,6 @@
 // Author, amongst others: Laurens Bossen.
 // FOM Insitute AMOLF
 
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
-
 #include <string>
 #include <stdexcept>
 #include <gsl/gsl_errno.h>

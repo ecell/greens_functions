@@ -1,7 +1,3 @@
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
-
 #include <stdexcept>
 #include <sstream>
 
@@ -10,6 +6,7 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_roots.h>
 
+#include "freeFunctions.hpp"
 #include "GreensFunction3DSym.hpp"
 
 namespace greens_functions
@@ -90,7 +87,7 @@ Real GreensFunction3DSym::drawR(Real rnd, Real t) const
 
     gsl_function F = 
         {
-            reinterpret_cast<typeof(F.function)>( &ip_r_F ),
+            reinterpret_cast<double (*)(double, void*)>( &ip_r_F ),
             &params 
         };
 

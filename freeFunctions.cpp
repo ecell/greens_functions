@@ -1,7 +1,3 @@
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
-
 #include "compat.h"
 
 #include <algorithm>
@@ -10,11 +6,43 @@
 #include <gsl/gsl_roots.h>
 #include <gsl/gsl_errno.h>
 
+#ifdef WIN32_MSC
+#include <gsl/gsl_sf_erf.h>
+#endif
+
+
 //#include "Logger.hpp"
 #include "freeFunctions.hpp"
 
 namespace greens_functions
 {
+
+#ifdef WIN32_MSC
+double erf(const double x)
+{
+    return gsl_sf_erf(x);
+}
+
+double expm1(const double x)
+{
+    return gsl_expm1(x);
+}
+
+double erfc(const double x)
+{
+    return gsl_sf_erfc(x);
+}
+
+// double pow_2(const double x)
+// {
+//     return x * x;
+// }
+#else
+// double pow_2(const double x)
+// {
+//     return gsl_pow_2(x);
+// }
+#endif
 
 /**
    Calculates std::exp(x^2) * erfc(x)
@@ -584,7 +612,7 @@ Real g_bd_1D(Real r, Real sigma, Real t, Real D, Real v)
     const Real s_plus_r_plus_vt(sigma + r + vt);
     const Real s_min_r_min_vt(sigma - r - vt);
 
-    const Real result(erfl(s_plus_r_plus_vt * sqrtDt4_r) + erfl(s_min_r_min_vt * sqrtDt4_r));
+    const Real result(erf(s_plus_r_plus_vt * sqrtDt4_r) + erf(s_min_r_min_vt * sqrtDt4_r));
 
     return 0.5 * result;
 }
@@ -623,7 +651,7 @@ Real I_bd_1D(Real sigma, Real t, Real D, Real v)
 
     const Real arg1(-(2*sigma + vt)*(2*sigma + vt)/Dt4);
     const Real term1(expl( -vt*vt/Dt4 ) - expl( arg1 ));
-    const Real term2(vt*erfl( vt/sqrt4Dt ) - (2*sigma + vt)*erfl( (2*sigma + vt)/sqrt4Dt ));
+    const Real term2(vt*erf( vt/sqrt4Dt ) - (2*sigma + vt)*erf( (2*sigma + vt)/sqrt4Dt ));
     const Real result(1./2*(sqrt4Dt/sqrtPi*term1 + term2 + 2*sigma));
 
     return result;
@@ -687,9 +715,9 @@ Real I_bd_r_1D(Real r, Real sigma, Real t, Real D, Real v)
     const Real temp2(expl( -vt*vt/Dt4 ) - expl( -twospvt_sq/Dt4 ));
     const Real term1(sqrt4Dt/sqrtPi*( temp1 + temp2 ));
 
-    const Real term2(vt*erfl(vt/sqrt4Dt) - (2*sigma + vt)*erfl( (2*sigma + vt)/sqrt4Dt ));
-    const Real term3((r - sigma + vt)*erfl( (sigma - r - vt)/sqrt4Dt ));
-    const Real term4((r + sigma + vt)*erfl( (r + sigma + vt)/sqrt4Dt ));
+    const Real term2(vt*erf(vt/sqrt4Dt) - (2*sigma + vt)*erf( (2*sigma + vt)/sqrt4Dt ));
+    const Real term3((r - sigma + vt)*erf( (sigma - r - vt)/sqrt4Dt ));
+    const Real term4((r + sigma + vt)*erf( (r + sigma + vt)/sqrt4Dt ));
     const Real result(1./2*(term1 + term2 + term3 + term4));
     
     return result;
@@ -735,7 +763,7 @@ Real drawR_gbd_3D(Real rnd, Real sigma, Real t, Real D)
 
     gsl_function F =
     {
-        reinterpret_cast<typeof(F.function)>(&I_gbd_r_3D_F),
+        reinterpret_cast<double (*)(double, void*)>(&I_gbd_r_3D_F),
         &params
     };
 
@@ -786,7 +814,7 @@ Real drawR_gbd_1D(Real rnd, Real sigma, Real t, Real D, Real v)
 
     gsl_function F =
     {
-        reinterpret_cast<typeof(F.function)>(&I_gbd_r_1D_F),
+        reinterpret_cast<double (*)(double, void*)>(&I_gbd_r_1D_F),
         &params
     };
 

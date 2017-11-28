@@ -1,3 +1,5 @@
+#include "compat.h"
+
 #include <sstream>
 #include <iostream>
 #include <cstdlib>
@@ -26,8 +28,10 @@ const Real GreensFunction1DRadAbs::L_TYPICAL = 1E-8;
 const Real GreensFunction1DRadAbs::T_TYPICAL = 1E-6;
 const Real GreensFunction1DRadAbs::EPSILON = 1E-10;
 const Real GreensFunction1DRadAbs::PDENS_TYPICAL = 1;
-const GreensFunction1DRadAbs::uint GreensFunction1DRadAbs::MAX_TERMS = 500;
-const GreensFunction1DRadAbs::uint GreensFunction1DRadAbs::MIN_TERMS = 20;
+#ifndef WIN32_MSC
+const GreensFunction1DRadAbs::uint GreensFunction1DRadAbs::MAX_TERMS;
+const GreensFunction1DRadAbs::uint GreensFunction1DRadAbs::MIN_TERMS;
+#endif
 const Real GreensFunction1DRadAbs::CUTOFF_H = 6.0;
 
 // This is the appropriate definition of the function defining
@@ -511,7 +515,7 @@ Real GreensFunction1DRadAbs::fluxRatioRadTot (Real t) const
 /* Determine which event has occured, an escape or a reaction. Based on the
    fluxes through the boundaries at the given time. Beware: if t is not a
    first passage time you still get an answer! */
-EventKind
+GreensFunction1DRadAbs::EventKind
 GreensFunction1DRadAbs::drawEventType( Real rnd, Real t )
 const
 {
