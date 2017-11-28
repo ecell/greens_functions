@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
+# XXX remove `cmake_policy set old` later
+cmake_policy(SET CMP0048 OLD)
+project(greens_functions)
 enable_testing()
 
 set (CPP_FILES
@@ -26,6 +29,7 @@ set (HPP_FILES
 # add_definitions("-DHAVE_DECL_INFINITY -Wall")
 add_definitions(-DHAVE_CONFIG_H)
 
+include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("#include <math.h>
 int main() { double a = INFINITY; return (int)a * 0; }"
     HAVE_DECL_INFINITY)
@@ -36,48 +40,56 @@ check_cxx_source_compiles("#include <math.h>
 int main() { double a, b; sincos(0., &a, &b); return 0; }"
     HAVE_SINCOS)
 
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file(${PROJECT_SOURCE_DIR}/config.h.in
+               ${PROJECT_BINARY_DIR}/config.h)
+message(STATUS "config.h was generated: ${PROJECT_BINARY_DIR}/config.h")
+include_directories(${PROJECT_BINARY_DIR})
+include_directories(${PROJECT_BINARY_DIR}/greens_functions)
 
 find_library(GSL_LIBRARIES gsl)
-find_library(GSL_CBLAS_LIBRARIES gslcblas)
-
-if (NOT NO_BESSEL_TABLE)
-    add_subdirectory(tablegen)
+if(GSL_LIBRARIES)
+    message(STATUS      "GNU Scientific Library found: ${GSL_LIBRARIES}")
+else()
+    message(FATAL_ERROR "GNU Scientific Library could not be found. stop configuring.")
 endif()
 
-#add_executable(main
-#    main.cpp ${CPP_FILES} ${HPP_FILES} "compat.h")
+find_library(GSL_CBLAS_LIBRARIES gslcblas)
+if(GSL_CBLAS_LIBRARIES)
+    message(STATUS      "GSL CBLAS Library found: ${GSL_CBLAS_LIBRARIES}")
+else()
+    message(FATAL_ERROR "GSL CBLAS Library could not be found. stop configuring.")
+endif()
 
-#target_link_libraries(main
-#    ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
+if (NOT NO_BESSEL_TABLE)
+    message(STATUS "prepairing to generate BesselTable.")
+    add_subdirectory(tablegen)
+else()
+    message(STATUS "NO_BESSEL_TABLE is defined. stop generating BesselTable.")
+endif()
 
 add_library(greens_functions SHARED
-    ${CPP_FILES} ${HPP_FILES} "${CMAKE_CURRENT_BINARY_DIR}/config.h")
-
+    ${CPP_FILES} ${HPP_FILES} "${PROJECT_BINARY_DIR}/config.h")
 target_link_libraries(greens_functions
     ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
 
 if (NOT NO_BESSEL_TABLE)
+    message(STATUS "adding dependency to BesselTable.")
     add_dependencies(greens_functions BesselTables)
 
     install(FILES ${HPP_FILES}
-        "${CMAKE_CURRENT_BINARY_DIR}/SphericalBesselTable.hpp"
-        "${CMAKE_CURRENT_BINARY_DIR}/CylindricalBesselTable.hpp"
+        "${PROJECT_BINARY_DIR}/SphericalBesselTable.hpp"
+        "${PROJECT_BINARY_DIR}/CylindricalBesselTable.hpp"
         DESTINATION "include/greens_functions")
 endif()
-
-include_directories(${PROJECT_BINARY_DIR}/greens_functions)
 
 install(TARGETS greens_functions DESTINATION lib)
 install(FILES ${HPP_FILES} DESTINATION "include/greens_functions")
 
 # # python wrapper
-# 
+#
 # find_library(BOOST_PYTHON boost_python)
 # include_directories("/usr/include/python2.7")
-# 
+#
 # add_library( _greens_functions SHARED
 #     python/greens_functions.cpp ${CPP_FILES} ${HPP_FILES} "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 # target_link_libraries( _greens_functions
