@@ -1,0 +1,41 @@
+dist: trusty
+sudo: false
+language: cpp
+matrix:
+  include:
+  - os: linux
+    compiler: gcc
+  - os: linux
+    compiler: clang
+  - os: osx
+    compiler: clang
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - cmake
+    - clang
+    - libboost-dev
+    - libgsl0-dev
+
+before_install:
+- if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+    brew update;
+    brew install gsl;
+  fi
+
+script:
+- set -ev
+- if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+    bash -c 'cmake -DCMAKE_INSTALL_PREFIX=~/local . && make && make test && make install';
+    rm CMakeCache.txt;
+  fi
+- if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+    sudo bash -c 'cmake -DCMAKE_INSTALL_PREFIX=/usr/local . && make && make test && make install';
+    rm CMakeCache.txt;
+  fi
+- set +e
+
+cache: false
