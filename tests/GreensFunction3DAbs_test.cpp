@@ -57,8 +57,8 @@ BOOST_AUTO_TEST_CASE(GF3DABs_DrawR)
   BOOST_CHECK( 0.0 <= r1 && r1 <= a);
   BOOST_CHECK( 0.0 <= r2 && r2 <= a);
 
-  BOOST_CHECK( abs(r1) <= 1e-15 );
-  BOOST_CHECK_CLOSE( abs(r2 - a), 0.0, 0.0001);
+  BOOST_CHECK_SMALL( std::abs(r1), 1e-15 );
+  BOOST_CHECK_SMALL( std::abs(r2 - a), 1e-6);
 }
 
 BOOST_AUTO_TEST_CASE(GF3DABs_DrawR_zerot)
