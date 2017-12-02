@@ -30,11 +30,9 @@ script:
 - set -ev
 - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
     bash -c 'cmake -DCMAKE_INSTALL_PREFIX=~/local . && make && make test && make install';
-    rm CMakeCache.txt;
   fi
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then
     sudo bash -c 'cmake -DCMAKE_INSTALL_PREFIX=/usr/local . && make && make test && make install';
-    rm CMakeCache.txt;
   fi
 - set +e
 
