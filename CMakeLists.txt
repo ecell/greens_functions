@@ -62,7 +62,7 @@ endif()
 
 if (NOT NO_BESSEL_TABLE)
     message(STATUS "prepairing to generate BesselTable.")
-    add_subdirectory(tablegen)
+    add_subdirectory("${PROJECT_SOURCE_DIR}/tablegen")
 else()
     message(STATUS "NO_BESSEL_TABLE is defined. stop generating BesselTable.")
 endif()
@@ -95,4 +95,4 @@ install(FILES ${HPP_FILES} DESTINATION "include/greens_functions")
 # target_link_libraries( _greens_functions
 #     ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES} ${BOOST_PYTHON})
 
-add_subdirectory(tests)
+add_subdirectory("${PROJECT_SOURCE_DIR}/tests")
