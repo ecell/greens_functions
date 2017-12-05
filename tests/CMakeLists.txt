@@ -1,16 +1,17 @@
 set(TEST_NAMES
     GreensFunction3D_test GreensFunction3DAbs_test GreensFunction3DAbsSym_test
-    GreensFunction3DRadAbs_test GreensFunction3DRadInf_test GreensFunction3DSym_test 
+    GreensFunction3DRadAbs_test GreensFunction3DRadInf_test GreensFunction3DSym_test
     GreensFunction1DAbsAbs_test GreensFunction1DRadAbs_test
     GreensFunction2DAbs_test GreensFunction2DRefWedgeAbs_test
 )
 
-set(test_library_dependencies)
-find_library(BOOST_UNITTEST_FRAMEWORK_LIBRARY boost_unit_test_framework)
-if (BOOST_UNITTEST_FRAMEWORK_LIBRARY)
+set(test_library_dependencies "")
+find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+if (Boost_UNIT_TEST_FRAMEWORK_FOUND)
 	add_definitions(-DBOOST_TEST_DYN_LINK)
 	add_definitions(-DUNITTEST_FRAMEWORK_LIBRARY_EXIST)
-	set(test_library_dependencies boost_unit_test_framework)
+    link_directories(${Boost_LIBRARY_DIRS})
+    set(test_library_dependencies ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 endif()
 
 foreach(TEST_NAME ${TEST_NAMES})
