@@ -46,6 +46,8 @@ message(STATUS "config.h was generated: ${PROJECT_BINARY_DIR}/config.h")
 include_directories(${PROJECT_BINARY_DIR})
 include_directories(${PROJECT_BINARY_DIR}/greens_functions)
 
+find_package(Boost REQUIRED)
+
 find_library(GSL_LIBRARIES gsl)
 if(GSL_LIBRARIES)
     message(STATUS      "GNU Scientific Library found: ${GSL_LIBRARIES}")

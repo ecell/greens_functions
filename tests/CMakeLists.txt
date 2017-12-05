@@ -6,7 +6,7 @@ set(TEST_NAMES
 )
 
 set(test_library_dependencies "")
-find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+find_package(Boost COMPONENTS unit_test_framework)
 if (Boost_UNIT_TEST_FRAMEWORK_FOUND)
 	add_definitions(-DBOOST_TEST_DYN_LINK)
 	add_definitions(-DUNITTEST_FRAMEWORK_LIBRARY_EXIST)
