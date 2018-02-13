@@ -13,8 +13,8 @@ class GreensFunction2DAbsSym
     GreensFunction2DAbsSym(const Real D, const Real a): D_(D), a_(a) {}
     virtual ~GreensFunction2DAbsSym() {}
 
-    Real D() const throw() {return this->D_;}
-    Real a() const throw() {return this->a_;}
+    Real getD() const throw() {return this->D_;}
+    Real geta() const throw() {return this->a_;}
 
     Real drawTime(const Real rnd) const;
     Real drawR   (const Real rnd, const Real t) const;
@@ -37,7 +37,7 @@ class GreensFunction2DAbsSym
         const Real absolute_;
         const Real relative_;
 
-        tolerance(const Real abs, const Real rel)
+        tolerance_t(const Real abs, const Real rel)
             : absolute_(abs), relative_(rel)
         {}
 
@@ -54,7 +54,7 @@ class GreensFunction2DAbsSym
         const Real target_;
 
         p_survival_equation_t(const GreensFunction2DAbsSym& gf, const Real rnd)
-            : gf(gf), target_(1.0 - rnd)
+            : gf_(gf), target_(1.0 - rnd)
         {}
 
         Real operator()(const Real t) const
@@ -71,7 +71,7 @@ class GreensFunction2DAbsSym
 
         p_int_r_equation_t(const GreensFunction2DAbsSym& gf,
                            const Real target, const Real t)
-            : gf(gf), t_(t) target_(target)
+            : gf_(gf), t_(t), target_(target)
         {}
 
         Real operator()(const Real r) const
@@ -88,7 +88,7 @@ class GreensFunction2DAbsSym
 
         p_int_r_free_equation_t(const GreensFunction2DAbsSym& gf,
                                 const Real target, const Real t)
-            : gf(gf), t_(t) target_(target)
+            : gf_(gf), t_(t), target_(target)
         {}
 
         Real operator()(const Real r) const

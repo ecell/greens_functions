@@ -25,7 +25,7 @@ Real GreensFunction2DAbsSym::p_survival(const Real t) const
     for(Integer n=1; n<=N_MAX; ++n)
     {
         const Real aAn    = gsl_sf_bessel_zero_J0(n);
-        const Real An     = aAn / a;
+        const Real An     = aAn / this->a_;
         const Real J1_aAn = gsl_sf_bessel_J1(aAn);
         const Real term   = std::exp(-Dt * An * An) / (An * J1_aAn);
         sum += term;
@@ -35,7 +35,7 @@ Real GreensFunction2DAbsSym::p_survival(const Real t) const
             break;
         }
     }
-    return (2.0 / a) * sum;
+    return (2.0 / a_) * sum;
 }
 
 Real GreensFunction2DAbsSym::p_int_r_free(const Real r, const Real t) const
@@ -58,7 +58,7 @@ Real GreensFunction2DAbsSym::p_int_r(const Real r, const Real t) const
     for(Integer n=1; n<=N_MAX; ++n)
     {
         const Real aAn    = gsl_sf_bessel_zero_J0(n);
-        const Real An     = aAn / a;
+        const Real An     = aAn / a_;
         const Real rAn    = r * An;
         const Real J1_aAn = gsl_sf_bessel_J1(aAn);
         const Real J1_rAn = gsl_sf_bessel_J1(rAn);
@@ -71,7 +71,7 @@ Real GreensFunction2DAbsSym::p_int_r(const Real r, const Real t) const
             break;
         }
     }
-    return 2.0 / (a * a) * sum;
+    return (2.0 / (a_ * a_)) * sum;
 }
 
 Real GreensFunction2DAbsSym::drawTime(const Real rnd) const
@@ -81,11 +81,11 @@ Real GreensFunction2DAbsSym::drawTime(const Real rnd) const
         throw std::invalid_argument(boost::str(boost::format(
             "GreensFunction2DAbsSym: rnd(%1%) must be in [0, 1)") % rnd));
     }
-    if(this->D_ == 0.0 || a == std::numeric_limits<Real>::infinity())
+    if(this->D_ == 0.0 || this->a_ == std::numeric_limits<Real>::infinity())
     {
         return std::numeric_limits<Real>::infinity();
     }
-    if(a == 0.0)
+    if(this->a_ == 0.0)
     {
         return 0.0;
     }
@@ -94,7 +94,7 @@ Real GreensFunction2DAbsSym::drawTime(const Real rnd) const
 
     // Find a good interval to determine the first passage time in
     // a guess: msd = sqrt(2*d*D*t)
-    const Real t_guess = a * a / (4.0 * D);
+    const Real t_guess = a_ * a_ / (4.0 * D_);
     const Real value   = p_survival_eq(t_guess);
 
     Real low        = t_guess;
@@ -125,7 +125,7 @@ Real GreensFunction2DAbsSym::drawTime(const Real rnd) const
             low_value = p_survival_eq(low);
 
             if(std::abs(low) <= t_guess * 1e-6 ||
-               std::abs(value - value_prev) < CUTOFF)
+               std::abs(low_value - low_value_prev) < CUTOFF)
             {
                 return low;
             }
@@ -135,19 +135,19 @@ Real GreensFunction2DAbsSym::drawTime(const Real rnd) const
 
     tolerance_t tol(/*absolute = */1e-18, /*relative = */1e-12);
     boost::uintmax_t iter = 100;
-    const std::pair<Real, Real> t = boost::math::toms748_solve(p_survival_eq,
-            low, high, low_value, high_value, tol, iter);
+    const std::pair<Real, Real> t = boost::math::tools::toms748_solve(
+            p_survival_eq, low, high, low_value, high_value, tol, iter);
     if(iter == 100)
     {
         throw std::runtime_error(boost::str(boost::format(
             "GreensFunction2DAbsSym::drawTime: failed to find a root:"
             "rnd = %1%, high = %2%, low = %3%, iter = %4%") %
-            rnd & high % low % iter));
+            rnd % high % low % iter));
     }
     return t.first;
 }
 
-Real GreensFunction2DAbsSym::drawR(const Real rnd, const Real t) const 
+Real GreensFunction2DAbsSym::drawR(const Real rnd, const Real t) const
 {
     if(!(0.0 <= rnd && rnd < 1.0))
     {
@@ -159,7 +159,7 @@ Real GreensFunction2DAbsSym::drawR(const Real rnd, const Real t) const
         throw std::invalid_argument(boost::str(boost::format(
             "GreensFunction2DAbsSym::drawR: t(%1%) must be positive") % t));
     }
-    if(a == 0.0 || t == 0.0 || D == 0.0)
+    if(a_ == 0.0 || t == 0.0 || D_ == 0.0)
     {
         return 0.0;
     }
@@ -173,14 +173,14 @@ Real GreensFunction2DAbsSym::drawR(const Real rnd, const Real t) const
     const tolerance_t tol(/*absolute = */1e-18, /*relative = */1e-12);
     boost::uintmax_t  iter = 100;
 
-    const std::pair<Real, Real> r = boost::math::toms748_solve(
+    const std::pair<Real, Real> r = boost::math::tools::toms748_solve(
             p_int_r_eq, low, high, tol, iter);
     if(iter == 100)
     {
         throw std::runtime_error(boost::str(boost::format(
             "GreensFunction2DAbsSym::drawR: failed to find a root:"
             "rnd = %1%, t = %2%, p_survival = %3%, iter = %4%") %
-            rnd & t % psurv % iter));
+            rnd % t % psurv % iter));
     }
     return r.first;
 
