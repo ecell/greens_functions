@@ -1,6 +1,6 @@
 #include "GreensFunction2DAbsSym.hpp"
 #include <gsl/gsl_sf_bessel.h>
-// #include <boost/math/special_functions/bessel.hpp>
+#include <boost/math/special_functions/bessel.hpp>
 #include <boost/math/special_functions/erf.hpp>
 #include <boost/math/tools/roots.hpp>
 #include <boost/math/constants/constants.hpp>
@@ -27,7 +27,7 @@ Real GreensFunction2DAbsSym::p_survival(const Real t) const
     {
         const Real aAn    = gsl_sf_bessel_zero_J0(n);
         const Real An     = aAn / this->a_;
-        const Real J1_aAn = gsl_sf_bessel_J1(aAn);
+        const Real J1_aAn = boost::math::cyl_bessel_j(1, aAn);
         const Real term   = std::exp(-Dt * An * An) / (An * J1_aAn);
         sum += term;
 
@@ -61,8 +61,8 @@ Real GreensFunction2DAbsSym::p_int_r(const Real r, const Real t) const
         const Real aAn    = gsl_sf_bessel_zero_J0(n);
         const Real An     = aAn / a_;
         const Real rAn    = r * An;
-        const Real J1_aAn = gsl_sf_bessel_J1(aAn);
-        const Real J1_rAn = gsl_sf_bessel_J1(rAn);
+        const Real J1_aAn = boost::math::cyl_bessel_j(1, aAn);
+        const Real J1_rAn = boost::math::cyl_bessel_j(1, rAn);
         const Real term   = std::exp(-Dt * An * An) * r * J1_rAn /
                             (An * J1_aAn * J1_aAn);
         sum += term;
