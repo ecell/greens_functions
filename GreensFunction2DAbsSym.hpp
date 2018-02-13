@@ -70,7 +70,7 @@ class GreensFunction2DAbsSym
         const Real target_;
 
         p_int_r_equation_t(const GreensFunction2DAbsSym& gf,
-                           const Real target, const Real t)
+                           const Real t, const Real target)
             : gf_(gf), t_(t), target_(target)
         {}
 
