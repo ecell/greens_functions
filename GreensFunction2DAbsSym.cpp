@@ -7,6 +7,7 @@
 #include <boost/cstdint.hpp>
 #include <exception>
 #include <stdexcept>
+#include <iostream>
 #include <cmath>
 
 namespace greens_functions
@@ -55,7 +56,7 @@ Real GreensFunction2DAbsSym::p_int_r(const Real r, const Real t) const
 //    const Real maxn( ( a / M_PI ) * sqrt( log( exp( DtPIsq_asq ) / CUTOFF ) /
 //                                          ( D * t ) ) );
     Real sum = 0.0;
-    for(Integer n=1; n<=N_MAX; ++n)
+    for(Integer n = 1; n <= N_MAX; ++n)
     {
         const Real aAn    = gsl_sf_bessel_zero_J0(n);
         const Real An     = aAn / a_;
@@ -65,8 +66,7 @@ Real GreensFunction2DAbsSym::p_int_r(const Real r, const Real t) const
         const Real term   = std::exp(-Dt * An * An) * r * J1_rAn /
                             (An * J1_aAn * J1_aAn);
         sum += term;
-
-        if(std::abs(term / sum) < CUTOFF)
+        if(!(std::abs(term / sum) > CUTOFF)) // including term == sum == 0.0.
         {
             break;
         }
