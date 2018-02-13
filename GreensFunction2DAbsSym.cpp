@@ -1,23 +1,13 @@
-#include "compat.h"
-
-#include <sstream>
-#include <iostream>
-#include <exception>
-#include <vector>
-
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_sf_trig.h>
-#include <gsl/gsl_sum.h>
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_interp.h>
-#include <gsl/gsl_sf_expint.h>
-#include <gsl/gsl_sf_elljac.h>
-#include <gsl/gsl_roots.h>
-#include <gsl/gsl_sf_bessel.h>
-
-#include "findRoot.hpp"
-#include "freeFunctions.hpp"
 #include "GreensFunction2DAbsSym.hpp"
+#include <gsl/gsl_sf_bessel.h>
+// #include <boost/math/special_functions/bessel.hpp>
+#include <boost/math/special_functions/erf.hpp>
+#include <boost/math/tools/roots.hpp>
+#include <boost/math/constants/constants.hpp>
+#include <boost/cstdint.hpp>
+#include <exception>
+#include <stdexcept>
+#include <cmath>
 
 namespace greens_functions
 {
@@ -26,288 +16,207 @@ const Real GreensFunction2DAbsSym::CUTOFF = 1e-10;
 const Real GreensFunction2DAbsSym::CUTOFF_H = 6.0;
 
 // an alternative form, which is not very convergent.
-const Real 
-GreensFunction2DAbsSym::p_survival( const Real t ) const
+Real GreensFunction2DAbsSym::p_survival(const Real t) const
 {
-  
-    const Real D( getD() );
-    const Real a( geta() );
-    const Real Dt( -D * t );
+    const Integer N_MAX = 100;
+    const Real    Dt    = this->D_ * t;
 
-    const Integer N( 100 );	// number of terms to use
-    Real sum( 0. );
-    Real aAn (0);
-    Real An (0);
-    Real J1_aAn(0);
-    Real term(0);
-
-    const Real threshold( CUTOFF );	// 
-
-    //std::cout << "p_survival_2D ";
-    //std::cout << "time: " << t << std::endl;
-    for( Integer n( 1 ); n <= N; ++n )
+    Real sum(0.0);
+    for(Integer n=1; n<=N_MAX; ++n)
     {
-        aAn = gsl_sf_bessel_zero_J0(n);		// gsl roots of J0(aAn)
-        An = aAn/a;
-        J1_aAn = gsl_sf_bessel_J1(aAn);
-        term = (exp(An*An*Dt))/(An*J1_aAn);
+        const Real aAn    = gsl_sf_bessel_zero_J0(n);
+        const Real An     = aAn / a;
+        const Real J1_aAn = gsl_sf_bessel_J1(aAn);
+        const Real term   = std::exp(-Dt * An * An) / (An * J1_aAn);
         sum += term;
 
-        //std::cout << n << " " << aAn << " " << J1_aAn << " " << term << " " << value << std::endl;
-
-        if( fabs( term/sum ) < threshold )
+        if(std::abs(term / sum) < CUTOFF)
         {
-            // normal exit.
-            //std::cout << n << std::endl;
             break;
         }
     }
-    return (2.0/a) * sum;
-} 
-
-
-const Real 
-GreensFunction2DAbsSym::p_int_r_free( const Real r, const Real t ) const
-{
-  
-    const Real D( getD() );
-    const Real Dt( D * t );
-    const Real sqrtDt( sqrt( Dt ) );
-    const Real sqrtPI( sqrt( M_PI ) );
-
-    return erf( r / ( sqrtDt + sqrtDt ) )
-        - r * exp( - r * r / ( 4.0 * Dt ) ) / ( sqrtPI * sqrtDt );
+    return (2.0 / a) * sum;
 }
 
-
-const Real 
-GreensFunction2DAbsSym::p_int_r( const Real r, 
-                                    const Real t ) const
+Real GreensFunction2DAbsSym::p_int_r_free(const Real r, const Real t) const
 {
-  
-    const Real a( geta() );
-    const Real D( getD() );
-    const Real Dt( -D * t );
-    Real J1_aAn, J1_rAn;
-    Real aAn, rAn, An;
-    Real term;
-    Real sum( 0.0 );
-    int n(1);
+    const Real Dt     = this->D_ * t;
+    const Real sqrtDt = std::sqrt(Dt);
+    const Real sqrtPI = boost::math::constants::root_pi<Real>();
 
-//    const Real maxn( ( a / M_PI ) * sqrt( log( exp( DtPIsq_asq ) / CUTOFF ) / 
+    return boost::math::erf(r / (sqrtDt + sqrtDt)) -
+           r * std::exp(-r * r / (4.0 * Dt)) / (sqrtPI * sqrtDt);
+}
+
+Real GreensFunction2DAbsSym::p_int_r(const Real r, const Real t) const
+{
+    const Real Dt = this->D_ * t;
+    const Integer N_MAX = 10000;
+//    const Real maxn( ( a / M_PI ) * sqrt( log( exp( DtPIsq_asq ) / CUTOFF ) /
 //                                          ( D * t ) ) );
-
-    const Integer N_MAX( 10000 );
-    const Real threshold( CUTOFF );
-
-    do
+    Real sum = 0.0;
+    for(Integer n=1; n<=N_MAX; ++n)
     {
-        aAn = gsl_sf_bessel_zero_J0(n);         // gsl roots of J0(aAn)
-        An  = aAn/a;
-        rAn = r*An;
-        J1_aAn = gsl_sf_bessel_J1(aAn);
-        J1_rAn = gsl_sf_bessel_J1(rAn);
-        term = (exp(An*An*Dt) * r * J1_rAn) / (An*J1_aAn*J1_aAn);
+        const Real aAn    = gsl_sf_bessel_zero_J0(n);
+        const Real An     = aAn / a;
+        const Real rAn    = r * An;
+        const Real J1_aAn = gsl_sf_bessel_J1(aAn);
+        const Real J1_rAn = gsl_sf_bessel_J1(rAn);
+        const Real term   = std::exp(-Dt * An * An) * r * J1_rAn /
+                            (An * J1_aAn * J1_aAn);
         sum += term;
-        n++;
 
-        //std::cout << n << " " << aAn << " " << J1_aAn << " " << term << " " << value << std::endl;
+        if(std::abs(term / sum) < CUTOFF)
+        {
+            break;
+        }
     }
-    while (fabs( term/sum ) > threshold && n <= N_MAX);
-
-    return (2.0/(a*a)) * sum;
-} 
-
-
-const Real
-GreensFunction2DAbsSym::p_survival_F( const Real t,
-                                          const p_survival_params* params )
-{
-  
-    const GreensFunction2DAbsSym* const gf( params->gf ); 
-    const Real rnd( params->rnd );
-
-    return 1 - gf->p_survival( t ) - rnd;
+    return 2.0 / (a * a) * sum;
 }
 
-
-const Real 
-GreensFunction2DAbsSym::drawTime( const Real rnd ) const
+Real GreensFunction2DAbsSym::drawTime(const Real rnd) const
 {
-  
-    THROW_UNLESS( std::invalid_argument, rnd < 1.0 && rnd >= 0.0 );
-
-    const Real a( geta() );
-
-    if( getD() == 0.0 || a == INFINITY )
+    if(!(0.0 <= rnd && rnd < 1.0))
     {
-            return INFINITY;
+        throw std::invalid_argument(boost::str(boost::format(
+            "GreensFunction2DAbsSym: rnd(%1%) must be in [0, 1)") % rnd));
     }
-    if( a == 0.0 )
+    if(this->D_ == 0.0 || a == std::numeric_limits<Real>::infinity())
     {
-            return 0.0;
+        return std::numeric_limits<Real>::infinity();
     }
-
-    p_survival_params params = { this, rnd };
-
-    gsl_function F = 
-    {
-            reinterpret_cast<double (*)(double, void*)>( &p_survival_F ), &params 
-    };
-
-    //for (Real t=0.0001; t<=1; t+=0.0001)
-    //{	std::cout << t << " " << GSL_FN_EVAL( &F, t) << std::endl;
-    //}
-
-    // Find a good interval to determine the first passage time in
-    const Real t_guess( a * a / ( 4. * D ) );   // construct a guess: msd = sqrt (2*d*D*t)
-    Real value( GSL_FN_EVAL( &F, t_guess ) );
-    Real low( t_guess );
-    Real high( t_guess );
-
-    // scale the interval around the guess such that the function straddles
-    if( value < 0.0 )               // if the guess was too low
-    {
-            do
-            {       high *= 10;     // keep increasing the upper boundary until the function straddles
-                    value = GSL_FN_EVAL( &F, high );
-
-                    if( fabs( high ) >= t_guess * 1e6 )
-                    {
-//                            log_.warn("Couldn't adjust high. F(%.16g) = %.16g", high, value);
-                            throw std::exception();
-                    }
-            }
-            while ( value <= 0.0 );
-    }
-    else                            // if the guess was too high
-    {
-            Real value_prev( value );
-            do
-            {       low *= .1;      // keep decreasing the lower boundary until the function straddles
-                    value = GSL_FN_EVAL( &F, low );     // get the accompanying value
-
-                    if( fabs( low ) <= t_guess * 1e-6 || fabs( value - value_prev ) < CUTOFF )
-                    {
-//                            log_.warn("Couldn't adjust high. F(%.16g) = %.16g", low, value);
-                            return low;
-                    }
-                    value_prev = value;
-            }
-            while ( value >= 0.0 );
-    }
-
-    // find the root
-    const gsl_root_fsolver_type* solverType( gsl_root_fsolver_brent );  // a new solver type brent
-    gsl_root_fsolver* solver( gsl_root_fsolver_alloc( solverType ) );   // make a new solver instance
-    const Real t( findRoot( F, solver, low, high, 1e-18, 1e-12,
-                        "GreensFunction2DAbsSym::drawTime" ) );
-    gsl_root_fsolver_free( solver );
-
-    return t;
-}
-
-
-const Real
-GreensFunction2DAbsSym::p_r_free_F( const Real r,
-                                        const p_r_params* params )
-{
-  
-    const GreensFunction2DAbsSym* const gf( params->gf ); 
-    const Real t( params->t );
-    const Real target( params->target );
-
-    return gf->p_int_r_free( r, t ) - target;
-}
-
-
-const Real
-GreensFunction2DAbsSym::p_r_F( const Real r,
-                                  const p_r_params* params )
-{
-  
-    const GreensFunction2DAbsSym* const gf( params->gf ); 
-    const Real t( params->t );
-    const Real target( params->target );
-
-    return gf->p_int_r( r, t ) - target;
-}
-
-
-const Real 
-GreensFunction2DAbsSym::drawR( const Real rnd, const Real t ) const 
-{
-  
-    THROW_UNLESS( std::invalid_argument, rnd <= 1.0 && rnd >= 0.0 );
-    THROW_UNLESS( std::invalid_argument, t >= 0.0 );
-
-    const Real a( geta() );
-    const Real D( getD() );
-
-    if( a == 0.0 || t == 0.0 || D == 0.0 )
+    if(a == 0.0)
     {
         return 0.0;
     }
 
-    //const Real thresholdDistance( this->CUTOFF_H * sqrt( 4.0 * D * t ) );
+    p_survival_equation_t p_survival_eq(*this, rnd);
 
-    gsl_function F;
-    Real psurv;
+    // Find a good interval to determine the first passage time in
+    // a guess: msd = sqrt(2*d*D*t)
+    const Real t_guess = a * a / (4.0 * D);
+    const Real value   = p_survival_eq(t_guess);
 
-//  if( a <= thresholdDistance )	// if the domain is not so big, the boundaries are felt
-//  {
-        psurv = p_survival( t );
-        //psurv = p_int_r( a, t );
-        //printf("dr %g %g\n",psurv, p_survival( t ));
-        //assert( fabs(psurv - p_int_r( a, t )) < psurv * 1e-8 );
+    Real low        = t_guess;
+    Real high       = t_guess;
+    Real low_value  = value;
+    Real high_value = value;
 
-        assert( psurv > 0.0 );
-
-        F.function = reinterpret_cast<double (*)(double, void*)>( &p_r_F );
-/*  }
-    else				// if the domain is very big, just use the free solution
+    // scale the interval around the guess such that the function straddles
+    if(value < 0.0)
     {
-        // p_int_r < p_int_r_free
-        if( p_int_r_free( a, t ) < rnd )	// if the particle is outside the domain?
+        while(high_value < 0.0)
         {
-            std::cerr << "p_int_r_free( a, t ) < rnd, returning a." 
-                      << std::endl;
-            return a;
+            high *= 10.0;
+            high_value = p_survival_eq(high);
+            if(std::abs(high) >= t_guess * 1e6)
+            {
+                throw std::runtime_error(
+                        "GreensFunction2DAbsSym: couldn't adjust high.");
+            }
         }
-
-        psurv = 1.0;
-        F.function = reinterpret_cast<double (*)(double, void*)>( &p_r_free_F );
     }
-*/
-    const Real target( psurv * rnd );
-    p_r_params params = { this, t, target };
+    else
+    {
+        Real low_value_prev = low_value;
+        while(low_value >= 0.0)
+        {
+            low *= 0.1;
+            low_value = p_survival_eq(low);
 
-    F.params = &params;
+            if(std::abs(low) <= t_guess * 1e-6 ||
+               std::abs(value - value_prev) < CUTOFF)
+            {
+                return low;
+            }
+            low_value_prev = low_value;
+        }
+    }
 
-
-    const Real low( 0.0 );
-    const Real high( a );
-    //const Real high( std::min( thresholdDistance, a ) );
-
-    const gsl_root_fsolver_type* solverType( gsl_root_fsolver_brent );
-    gsl_root_fsolver* solver( gsl_root_fsolver_alloc( solverType ) );
-
-    const Real r( findRoot( F, solver, low, high, 1e-18, 1e-12,
-                            "GreensFunction2DAbsSym::drawR" ) );
-  
-    gsl_root_fsolver_free( solver );
-
-    return r;
+    tolerance_t tol(/*absolute = */1e-18, /*relative = */1e-12);
+    boost::uintmax_t iter = 100;
+    const std::pair<Real, Real> t = boost::math::toms748_solve(p_survival_eq,
+            low, high, low_value, high_value, tol, iter);
+    if(iter == 100)
+    {
+        throw std::runtime_error(boost::str(boost::format(
+            "GreensFunction2DAbsSym::drawTime: failed to find a root:"
+            "rnd = %1%, high = %2%, low = %3%, iter = %4%") %
+            rnd & high % low % iter));
+    }
+    return t.first;
 }
 
-
-const std::string GreensFunction2DAbsSym::dump() const
+Real GreensFunction2DAbsSym::drawR(const Real rnd, const Real t) const 
 {
-    std::ostringstream ss;
-    ss << "D = " << this->getD() << ", a = " << this->geta() << std::endl;
-    return ss.str();
-}    
-/*
-Logger& GreensFunction2DAbsSym::log_(
-        Logger::get_logger("GreensFunction2DAbsSym"));*/
+    if(!(0.0 <= rnd && rnd < 1.0))
+    {
+        throw std::invalid_argument(boost::str(boost::format(
+            "GreensFunction2DAbsSym::drawR: rnd(%1%) must be in [0,1)") % rnd));
+    }
+    if(t < 0.0)
+    {
+        throw std::invalid_argument(boost::str(boost::format(
+            "GreensFunction2DAbsSym::drawR: t(%1%) must be positive") % t));
+    }
+    if(a == 0.0 || t == 0.0 || D == 0.0)
+    {
+        return 0.0;
+    }
+    const Real psurv = this->p_survival(t);
+    const p_int_r_equation_t p_int_r_eq(*this, t, psurv * rnd);
+
+    assert(psurv > 0.0);
+
+    const Real low  = 0.0;
+    const Real high = this->a_;
+    const tolerance_t tol(/*absolute = */1e-18, /*relative = */1e-12);
+    boost::uintmax_t  iter = 100;
+
+    const std::pair<Real, Real> r = boost::math::toms748_solve(
+            p_int_r_eq, low, high, tol, iter);
+    if(iter == 100)
+    {
+        throw std::runtime_error(boost::str(boost::format(
+            "GreensFunction2DAbsSym::drawR: failed to find a root:"
+            "rnd = %1%, t = %2%, p_survival = %3%, iter = %4%") %
+            rnd & t % psurv % iter));
+    }
+    return r.first;
+
+// //  if( a <= thresholdDistance )	// if the domain is not so big, the boundaries are felt
+// //  {
+//         psurv = p_survival( t );
+//         //psurv = p_int_r( a, t );
+//         //printf("dr %g %g\n",psurv, p_survival( t ));
+//         //assert( fabs(psurv - p_int_r( a, t )) < psurv * 1e-8 );
+//
+//         assert( psurv > 0.0 );
+//         F.function = reinterpret_cast<double (*)(double, void*)>( &p_r_F );
+// /*  }
+//     else				// if the domain is very big, just use the free solution
+//     {
+//         // p_int_r < p_int_r_free
+//         if( p_int_r_free( a, t ) < rnd )	// if the particle is outside the domain?
+//         {
+//             std::cerr << "p_int_r_free( a, t ) < rnd, returning a." 
+//                       << std::endl;
+//             return a;
+//         }
+//
+//         psurv = 1.0;
+//         F.function = reinterpret_cast<double (*)(double, void*)>( &p_r_free_F );
+//     }
+// */
+//
+//     //const Real high( std::min( thresholdDistance, a ) );
+//
+//     const gsl_root_fsolver_type* solverType( gsl_root_fsolver_brent );
+//     gsl_root_fsolver* solver( gsl_root_fsolver_alloc( solverType ) );
+//
+//     const Real r( findRoot( F, solver, low, high, 1e-18, 1e-12,
+//                             "GreensFunction2DAbsSym::drawR" ) );
+//     gsl_root_fsolver_free( solver );
+//     return r;
 }
+} // greens_functions
