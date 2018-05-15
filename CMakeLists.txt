@@ -30,13 +30,13 @@ set (HPP_FILES
 add_definitions(-DHAVE_CONFIG_H)
 
 include(CheckCXXSourceCompiles)
-check_cxx_source_compiles("#include <math.h>
+check_cxx_source_compiles("#include <cmath>
 int main() { double a = INFINITY; return (int)a * 0; }"
     HAVE_DECL_INFINITY)
-check_cxx_source_compiles("#include <math.h>
-int main() { isfinite(0.); return 0; }"
+check_cxx_source_compiles("#include <cmath>
+int main() { bool b = std::isfinite(0.); return 0; }"
     HAVE_ISFINITE)
-check_cxx_source_compiles("#include <math.h>
+check_cxx_source_compiles("#include <cmath>
 int main() { double a, b; sincos(0., &a, &b); return 0; }"
     HAVE_SINCOS)
 
