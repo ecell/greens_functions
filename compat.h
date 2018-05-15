@@ -33,6 +33,14 @@ inline int isfinite( double x )
 	return x == x && x != INFINITY && -x != INFINITY;
 }
 } // greens_functions
+#else // std::isfinite found (compiler supports c++11!)
+namespace greens_functions
+{
+inline int isfinite( double x )
+{
+	return static_cast<int>(std::isfinite(x));
+}
+} // greens_functions
 #endif
 
 #endif // COMPAT_HPP
