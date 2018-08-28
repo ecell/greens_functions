@@ -1345,7 +1345,7 @@ GreensFunction2DRadAbs::makep_mTable( RealVector& p_mTable,
         {
             std::cerr << boost::format("p_m didn't converge "
                 "(m=%1%, t=%2%, r0=%3%, r=%4%, t_est=%5%, continuing...") %
-                m % t % getr0() % r % gsl_pow_2( r - getr0() ) / getD();
+                m % t % getr0() % r % (gsl_pow_2( r - getr0() ) / getD());
             std::cerr << dump() << std::endl;
             break;
         }
@@ -1482,7 +1482,7 @@ GreensFunction2DRadAbs::makedp_m_at_aTable( RealVector& p_mTable,
         m++;
         if( m >= this->MAX_ORDER ) // If the number of terms is too large
         {
-            std::cerrr << boost::format("dp_m didn't converge (m=%1%), continuing...") % m;
+            std::cerr << boost::format("dp_m didn't converge (m=%1%), continuing...") % m;
             break;
         }
 
