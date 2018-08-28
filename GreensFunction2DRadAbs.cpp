@@ -446,7 +446,8 @@ const void GreensFunction2DRadAbs::GiveRootInterval(
     high = alpha_x_scan_table_[n] + interval;
     if (low <= 0) // TODO this check should be redundant
     {
-//        log_.error("Left alpha search interval boundary < 0.");//low = EPSILON/L_TYPICAL;
+        //low = EPSILON/L_TYPICAL;
+        std::cerr << "Left alpha search interval boundary < 0.\n";
         throw std::exception();
     }
 
@@ -677,9 +678,11 @@ const Real GreensFunction2DRadAbs::getAlpha( size_t n,               // order
         {
             if (alphaTable[j] != 0)
             {
-//                log_.error("tried accessing root that's not 0. Didn't search..");
-//                log_.error("    i = %g, oldSize = %g, j = %g", i, oldSize, j);
-            }  else
+                std::cerr << "tried accessing root that's not 0. Didn't search..\n";
+                std::cerr << boost::format("    i = %1%, oldSize = %2%, j = %3%\n") %
+                                           i % oldSize % j;
+            }
+            else
             {
                 // Method 1. SCANNING. If the roots are not expected to lie close enough
                 // to the estimate, use the "scanning" procedure to find an interval
@@ -848,13 +851,16 @@ GreensFunction2DRadAbs::p_survival_table( const        Real t,
 
     // If the estimated # terms needed for convergence is bigger than number
     // of terms summed over (MAX_ALPHA_SEQ), give error.
-//    if( maxi == this->MAX_ALPHA_SEQ )
-//        log_.warn("p_survival_table (used by drawTime) couldn't converge; max terms reached: %u", maxi);
+    if( maxi == this->MAX_ALPHA_SEQ )
+    {
+        std::cerr << boost::format("p_survival_table (used by drawTime) "
+                "couldn't converge; max terms reached: %1%\n") % maxi;
+    }
 
     if( psurvTable.size() < maxi + 1 )           // if the dimensions are good then this means
     {                                            // that the table is filled
-       getAlpha( 0, maxi );                      // this updates the table of roots
-       this->createPsurvTable( psurvTable);      // then the table is filled with data
+        getAlpha( 0, maxi );                      // this updates the table of roots
+        this->createPsurvTable( psurvTable);      // then the table is filled with data
     }
         // A sum over terms is performed, where convergence is assumed. It is not
     // clear if this is a just assumption.
@@ -1004,37 +1010,42 @@ Real GreensFunction2DRadAbs::drawTime( const Real rnd) const
     // adjust high and low to make sure that f( low ) and f( high ) straddle.
     Real value( GSL_FN_EVAL( &F, t_guess ) );
 
-    if( value < 0.0 )                   // if the function is below zero at the guess the upper
-    {                                   // boundary should be moved (passed the zero point)
-            do
-            {
-                    high *= 10;
-                    value = GSL_FN_EVAL( &F, high );
+    if( value < 0.0 )  // if the function is below zero at the guess the upper
+    {                  // boundary should be moved (passed the zero point)
+        do
+        {
+            high *= 10;
+            value = GSL_FN_EVAL( &F, high );
 
-                    if( fabs( high ) >= 1e10 )	// if high time is way too high forget about it
-                    {
-//                            log_.warn("Couldn't adjust high. F(%.16g) = %.16g; r0 = %.16g,", high, GSL_FN_EVAL( &F, high ), r0);
-                            std::cerr << dump() << std::endl;
-                            throw std::exception();
-                    }
+            if( fabs( high ) >= 1e10 )	// if high time is way too high forget about it
+            {
+                std::cerr << boost::format(
+                    "Couldn't adjust high. F(%1%) = %2%; r0 = %3%,") %
+                    high % GSL_FN_EVAL( &F, high ) % r0;
+
+                std::cerr << dump() << std::endl;
+                throw std::exception();
             }
-            while ( value < 0.0 );
+        }
+        while ( value < 0.0 );
     }
     else                                // if the function is over zero (or at zero!) then the lower
     {                                   // boundary should be moved
-            Real value_prev( value );
-            do
-            {       low *= .1;      // keep decreasing the lower boundary until the function straddles
-                    value = GSL_FN_EVAL( &F, low );     // get the accompanying value
+        Real value_prev( value );
+        do
+        {
+            low *= .1;      // keep decreasing the lower boundary until the function straddles
+            value = GSL_FN_EVAL( &F, low );     // get the accompanying value
 
-                    if( fabs( low ) <= minT || fabs( value - value_prev ) < EPSILON*this->T_TYPICAL )
-                    {
-//                            log_.warn("Couldn't adjust low. F(%.16g) = %.16g", low, value);
-                            return low;
-                    }
-                    value_prev = value;
+            if( fabs( low ) <= minT || fabs( value - value_prev ) < EPSILON*this->T_TYPICAL )
+            {
+                std::cerr << boost::format("Couldn't adjust low. F(%1%) = %2%"
+                        ) % low % value;
+                return low;
             }
-            while ( value >= 0.0 );
+            value_prev = value;
+        }
+        while ( value >= 0.0 );
     }
 
     // find the intersection of the cummulative survival probability and the randomly generated number
@@ -1169,7 +1180,7 @@ Real GreensFunction2DRadAbs::drawR( const Real rnd,
             {
                 if( GSL_FN_EVAL( &F, a ) < 0.0 )        // something is very wrong, this should never happen
                 {
-//                    log_.warn("drawR: p_int_r_table( a ) < 0.0. Returning a.");
+                    std::cerr << "drawR: p_int_r_table(a) < 0.0. Returning a.\n";
                     return a;
                 }
                 high = a;
@@ -1190,7 +1201,8 @@ Real GreensFunction2DRadAbs::drawR( const Real rnd,
             {
                 if( GSL_FN_EVAL( &F, sigma ) > 0.0 )
                 {
-//                    log_.warn("drawR: p_int_r_table( sigma ) > 0.0. Returning sigma.");
+                    std::cerr << "drawR: p_int_r_table(sigma) > 0.0. "
+                                 "Returning sigma.\n";
                     return sigma;
                 }
 
@@ -1328,27 +1340,28 @@ GreensFunction2DRadAbs::makep_mTable( RealVector& p_mTable,
     unsigned int m( 1 );
     do
     {
-            m++;
-            if( m >= this->MAX_ORDER ) // If the number of terms is too large
-            {
-/*                    log_.warn("p_m didn't converge (m=%u, t=%.16g, r0=%.16g, r=%.16g, t_est=%.16g, continuing...",
-                               m, t, getr0(), r, gsl_pow_2( r - getr0() ) / getD()
-                             );*/
-                    std::cerr << dump() << std::endl;
-                    break;
-            }
+        m++;
+        if( m >= this->MAX_ORDER ) // If the number of terms is too large
+        {
+            std::cerr << boost::format("p_m didn't converge "
+                "(m=%1%, t=%2%, r0=%3%, r=%4%, t_est=%5%, continuing...") %
+                m % t % getr0() % r % gsl_pow_2( r - getr0() ) / getD();
+            std::cerr << dump() << std::endl;
+            break;
+        }
 
-            p_m_prev_abs = p_m_abs;                             // store the previous term
-            const Real p_m( this->p_m( m, r, t ) / p_0 );       // get the next term
+        p_m_prev_abs = p_m_abs;                             // store the previous term
+        const Real p_m( this->p_m( m, r, t ) / p_0 );       // get the next term
 
-            if( ! isfinite( p_m ) )                        // if the calculated value is not valid->exit
-            {
-//                    log_.warn("makep_mTable: invalid value (p_m = %.16g, m=%u)", p_m, m);
-                    break;
-            }
+        if( ! isfinite( p_m ) )                        // if the calculated value is not valid->exit
+        {
+            std::cerr << boost::format(
+                    "makep_mTable: invalid value (p_m = %1%, m=%2%)") % p_m % m;
+            break;
+        }
 
-            p_mTable.push_back( p_m );  // put the result in the table
-            p_m_abs = fabs( p_m );      // take the absolute value
+        p_mTable.push_back( p_m );  // put the result in the table
+        p_m_abs = fabs( p_m );      // take the absolute value
     }
     while (p_m_abs >= threshold || p_m_prev_abs >= threshold || p_m_abs >= p_m_prev_abs );
 
@@ -1466,32 +1479,34 @@ GreensFunction2DRadAbs::makedp_m_at_aTable( RealVector& p_mTable,
     unsigned int m( 1 );
     do
     {
-            m++;
-            if( m >= this->MAX_ORDER ) // If the number of terms is too large
-            {
-//                    log_.warn("dp_m didn't converge (m=%u), continuing...", m);
-                    break;
-            }
+        m++;
+        if( m >= this->MAX_ORDER ) // If the number of terms is too large
+        {
+            std::cerrr << boost::format("dp_m didn't converge (m=%1%), continuing...") % m;
+            break;
+        }
 
+        p_m_prev_abs = p_m_abs;                             // store the previous term
+        const Real p_m( this->dp_m_at_a( m, t ) / p_0 );    // get the next term
 
-            p_m_prev_abs = p_m_abs;                             // store the previous term
-            const Real p_m( this->dp_m_at_a( m, t ) / p_0 );    // get the next term
+        // DEBUG (something to check in the future?)
+        if (p_m_abs == 0)
+        {
+           std::cerr << "Zero valued term found, but convergence is:" <<
+               p_mTable[p_mTable.size()-1-1]/p_mTable[p_mTable.size()-2-1];
+        }
+        // END DEBUG
 
-            // DEBUG (something to check in the future?)
-            // if (p_m_abs == 0) {
-            //    std::cerr << "Zero valued term found, but convergence is:" <<
-            //        p_mTable[p_mTable.size()-1-1]/p_mTable[p_mTable.size()-2-1];
-            // }
-            // END DEBUG
+        if( ! isfinite( p_m ) ) // if the calculated value is not valid->exit
+        {
+            std::cerr << "makedp_m_at_aTable: invalid value "
+                      << boost::format("(p_m=%1%, m=%2%, t=%3%, p_0=%4%)") %
+                      p_m % m % t % p_0;
+            break;
+        }
 
-            if( ! isfinite( p_m ) ) // if the calculated value is not valid->exit
-            {
-//                    log_.warn("makedp_m_at_aTable: invalid value (p_m=%.16g, m=%u, t=%.16g, p_0=%.16g)", p_m, m, t, p_0);
-                    break;
-            }
-
-            p_mTable.push_back( p_m );                              // put the result in the table
-            p_m_abs = fabs( p_m );                                  // take the absolute value
+        p_mTable.push_back( p_m );                              // put the result in the table
+        p_m_abs = fabs( p_m );                                  // take the absolute value
     }
     while (p_m_abs >= threshold || p_m_prev_abs >= threshold || p_m_abs >= p_m_prev_abs );
     // truncate when converged enough.
