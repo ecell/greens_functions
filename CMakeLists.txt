@@ -47,6 +47,7 @@ include_directories(${PROJECT_BINARY_DIR})
 include_directories(${PROJECT_BINARY_DIR}/greens_functions)
 
 find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
 
 find_library(GSL_LIBRARIES gsl)
 if(GSL_LIBRARIES)
