@@ -21,49 +21,14 @@
 #include <gsl/gsl_roots.h>
 #include "PairGreensFunction.hpp"
 
-namespace greens_functions{
+namespace greens_functions
+{
 
 class GreensFunction2DRadAbs
     : public PairGreensFunction
 {
   public:
     typedef std::vector<Real> RealVector;
-
-  private:
-    // Error tolerance used by default.
-    static const Real TOLERANCE;
-
-    // SphericalBesselGenerator's accuracy, used by some
-    // theta-related calculations.
-
-    static const Real MIN_T_FACTOR;
-
-    static const Real L_TYPICAL; // typical length scale
-    static const Real T_TYPICAL; // typical time scale
-    static const Real EPSILON; // relative numeric error
-    // TESTING temporarily increased; was 1e-12
-
-    static const unsigned int MAX_ORDER = 30; // The maximum number of m terms
-    static const unsigned int MAX_ALPHA_SEQ = 500; // The maximum number of n terms
-
-    // Parameters for alpha-root finding
-    // ======
-    // See getAlpha() in cpp file for more information.
-    //
-    // Parameters for scanning method
-    // Left boundary of 1st search interval 1st root
-    static const Real SCAN_START;
-    // Length of the scanning interval relative to estimated interval
-    static const Real FRACTION_SCAN_INTERVAL; // TODO CHANGED THIS FROM .5 to .2
-
-    // Other paramters
-    // After CONVERGENCE_ASSUMED subsequent roots that lay within +/-
-    // INTERVAL_MARGIN from the distance to which the distance is known to
-    // converge, it is assumed all following roots have a distances inbetween
-    // that don't deviate for more than INTERVAL_MARGIN from the distance to
-    // which the roots are known to converge (Pi/(a-sigma)).
-    static const Real CONVERGENCE_ASSUMED;
-    static const Real INTERVAL_MARGIN;
 
   public:
 
@@ -72,8 +37,8 @@ class GreensFunction2DRadAbs
         : PairGreensFunction(D, kf, r0, Sigma), a(a),
           h(kf / (D * 2.0 * boost::math::constants::pi<Real>() * Sigma)),
           estimated_alpha_root_distance_(
-                  boost::math::constants::pi<Real>() / (a - Sigma))
-        //^ observed convergence of distance roots f_alpha().
+              // observed convergence of distance roots f_alpha().
+              boost::math::constants::pi<Real>() / (a - Sigma))
     {
         if(a < this->getSigma()) // check (outer boundary > innter boundary)
         {
@@ -120,6 +85,8 @@ class GreensFunction2DRadAbs
     Real dp_m_alpha_at_a(const unsigned int n, const unsigned int m,
                          const Real t) const;
 
+    const char* getName() const {return "GreensFunction2DRadAbs";}
+
 // -------------------------------------------------------------------------- //
 //  methods below are kept public for debugging purpose.
 // -------------------------------------------------------------------------- //
@@ -160,8 +127,6 @@ class GreensFunction2DRadAbs
     Real givePDFR    (const Real r,     const Real t) const;
 
     void dumpRoots(int n);
-
-    const char* getName() const {return "GreensFunction2DRadAbs";}
 
 protected:
 
@@ -226,7 +191,7 @@ protected:
     struct p_survival_table_params
     {
         const GreensFunction2DRadAbs* const gf;
-    //    const Real r0;
+        // const Real r0;
         RealVector& table;
         const Real rnd;
     };
@@ -238,7 +203,7 @@ protected:
     {
         const GreensFunction2DRadAbs* const gf;
         const Real t;
-    //    const Real r0;
+        // const Real r0;
         const RealVector& Y0_aAnTable;
         const RealVector& J0_aAnTable;
         const RealVector& Y0J1J0Y1Table;
@@ -252,7 +217,7 @@ protected:
     {
         const GreensFunction2DRadAbs* const gf;
         const Real r;
-    //    const Real r0;
+        // const Real r0;
         const Real t;
         const RealVector& p_nTable;
         const Real value;
@@ -260,6 +225,41 @@ protected:
 
     static Real ip_theta_F(const Real theta,
                            const ip_theta_params* const params);
+
+  private:
+    // Error tolerance used by default.
+    static const Real TOLERANCE;
+
+    // SphericalBesselGenerator's accuracy, used by some
+    // theta-related calculations.
+    static const Real MIN_T_FACTOR;
+
+    static const Real L_TYPICAL; // typical length scale
+    static const Real T_TYPICAL; // typical time scale
+    static const Real EPSILON; // relative numeric error
+    // TESTING temporarily increased; was 1e-12
+
+    static const unsigned int MAX_ORDER = 30; // The maximum number of m terms
+    static const unsigned int MAX_ALPHA_SEQ = 500; // The maximum number of n terms
+
+    // Parameters for alpha-root finding
+    // ======
+    // See getAlpha() in cpp file for more information.
+    //
+    // Parameters for scanning method
+    // Left boundary of 1st search interval 1st root
+    static const Real SCAN_START;
+    // Length of the scanning interval relative to estimated interval
+    static const Real FRACTION_SCAN_INTERVAL; // TODO CHANGED THIS FROM .5 to .2
+
+    // Other paramters
+    // After CONVERGENCE_ASSUMED subsequent roots that lay within +/-
+    // INTERVAL_MARGIN from the distance to which the distance is known to
+    // converge, it is assumed all following roots have a distances inbetween
+    // that don't deviate for more than INTERVAL_MARGIN from the distance to
+    // which the roots are known to converge (Pi/(a-sigma)).
+    static const Real CONVERGENCE_ASSUMED;
+    static const Real INTERVAL_MARGIN;
 
 private:
 
@@ -292,11 +292,7 @@ private:
     // we're within margin of the distance to which they're expected to
     // converge.
     mutable boost::array<int, MAX_ORDER+1> alpha_correctly_estimated_;
-
-//    static Logger& log_;
-
 };
 
-
-};
+} // greens_functions
 #endif // GREENS_FUNCTION_2D_RAD_ABS_HPP
