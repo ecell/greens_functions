@@ -19,3 +19,7 @@ foreach(TEST_NAME ${TEST_NAMES})
     target_link_libraries(${TEST_NAME} greens_functions ${test_library_dependencies} )
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 endforeach(TEST_NAME)
+
+
+add_executable(dump_GreensFunction2DRadAbs dump_GreensFunction2DRadAbs.cpp)
+target_link_libraries(dump_GreensFunction2DRadAbs greens_functions)
