@@ -176,7 +176,10 @@ protected:
     };
 
     static Real f_alpha0_aux_F(const Real alpha,
-                               const f_alpha0_aux_params* const params);
+                               const f_alpha0_aux_params* const params)
+    {
+        return params->gf->f_alpha0(alpha);
+    }
 
     struct f_alpha_aux_params
     {
@@ -186,7 +189,10 @@ protected:
     };
 
     static Real f_alpha_aux_F(const Real alpha,
-                                    const f_alpha_aux_params* const params);
+                              const f_alpha_aux_params* const params)
+    {
+        return params->gf->f_alpha(alpha, params->n);
+    }
 
     struct p_survival_table_params
     {
@@ -197,7 +203,10 @@ protected:
     };
 
     static Real p_survival_table_F(const Real t,
-                                   const p_survival_table_params* const params);
+                                   const p_survival_table_params* const params)
+    {
+        return params->rnd - params->gf->p_survival_table(t, params->table);
+    }
 
     struct p_int_r_params
     {
@@ -210,8 +219,11 @@ protected:
         const Real rnd;
     };
 
-    static Real p_int_r_F(const Real r,
-                                const p_int_r_params* const params);
+    static Real p_int_r_F(const Real r, const p_int_r_params* const params)
+    {
+        return params->gf->p_int_r_table(r, params->Y0_aAnTable,
+                params->J0_aAnTable, params->Y0J1J0Y1Table) - params->rnd;
+    }
 
     struct ip_theta_params
     {
@@ -224,7 +236,12 @@ protected:
     };
 
     static Real ip_theta_F(const Real theta,
-                           const ip_theta_params* const params);
+                           const ip_theta_params* const params)
+    {
+        const Real one_div_two_pi = boost::math::constants::one_div_two_pi<Real>();
+        return theta * one_div_two_pi + params->gf->ip_theta_table(
+                theta, params->p_nTable) * one_div_two_pi * 2 - params->value;
+    }
 
   private:
     // Error tolerance used by default.

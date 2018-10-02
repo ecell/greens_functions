@@ -114,23 +114,6 @@ GreensFunction2DRadAbs::f_alpha0( const Real alpha ) const
     return rho1 - rho2;
 }
 
-
-// Wraps function of which we need to find roots alpha.
-//
-// Params contains pointer to gf object (params.gf), where f_alpha is the member
-// function of which we have to find the roots. This function is thus a mere
-// wrapper of f_alpha.
-Real
-GreensFunction2DRadAbs::f_alpha0_aux_F( const Real alpha,
-                                                const f_alpha0_aux_params* const params )
-{
-    // create pointer to Green's Function object
-    const GreensFunction2DRadAbs* const gf( params->gf );
-
-    return gf->f_alpha0( alpha );
-}
-
-
 // f_alpha() Calculates the value of the mathematical function f_alpha(). The
 // roots (y=0) of this function are constants in the Green's Functions.
 Real GreensFunction2DRadAbs::f_alpha( const Real alpha,
@@ -163,21 +146,6 @@ Real GreensFunction2DRadAbs::f_alpha( const Real alpha,
 //  return (rho1 - rho2);
 
 }
-
-
-// Simply a wrapper for f_alpha().
-Real
-GreensFunction2DRadAbs::f_alpha_aux_F( const Real alpha,
-                                                const f_alpha_aux_params* const params )
-{
-    // Params contains pointer to gf object (params.gf), which has f_alpha() as
-    // a member.
-    const GreensFunction2DRadAbs* const gf( params->gf );
-    const Integer n( params->n );
-
-    return gf->f_alpha( alpha, n );
-}
-
 
 // calculates the constant part of the i-th term for the survival probability
 Real
@@ -889,38 +857,6 @@ GreensFunction2DRadAbs::p_int_r_table( const Real r,
     return p*M_PI*M_PI_2;
 }
 
-
-// Used by drawTime
-// Wrapper for p_survival_table for the interator to find the root for drawTime
-Real
-GreensFunction2DRadAbs::p_survival_table_F( const Real t,
-                                            const p_survival_table_params* params )
-{
-
-    const GreensFunction2DRadAbs* const gf( params->gf ); // the current gf (not sure why this is here)
-    RealVector& table( params->table ); // table is empty but will be filled in p_survival_table
-    const Real rnd( params->rnd );
-
-    return rnd - gf->p_survival_table( t, table );
-}
-
-
-// a wrapper to make p_int_r_table available to the iterator calculating the root
-Real
-GreensFunction2DRadAbs::p_int_r_F( const Real r,
-                                   const p_int_r_params* params )
-{
-
-    const GreensFunction2DRadAbs* const gf( params->gf );
-    const RealVector& Y0_aAnTable( params->Y0_aAnTable );
-    const RealVector& J0_aAnTable( params->J0_aAnTable );
-    const RealVector& Y0J1J0Y1Table( params->Y0J1J0Y1Table );
-    const Real rnd( params->rnd );
-
-    return gf->p_int_r_table( r, Y0_aAnTable, J0_aAnTable, Y0J1J0Y1Table) - rnd;
-}
-
-
 // Draws a first passage time, this could be an escape (through the outer boundary) or a reaction (through
 // the inner boundary)
 Real GreensFunction2DRadAbs::drawTime( const Real rnd) const
@@ -1513,21 +1449,6 @@ GreensFunction2DRadAbs::ip_theta_table( const Real theta,
                                 maxm ) );
     return p;
 }
-
-
-// function to iterate when drawing the theta
-Real
-GreensFunction2DRadAbs::ip_theta_F( const Real theta,
-                                    const ip_theta_params* params )
-{
-
-    const GreensFunction2DRadAbs* const gf( params->gf );
-    const RealVector& p_nTable( params->p_nTable ); // table with useful constants
-    const Real value( params->value );
-
-    return theta/(M_PI*2) + (gf->ip_theta_table( theta, p_nTable )/M_PI) - value;
-}
-
 
 // This method draws a theta given a certain r and time (and intial condition of course)
 Real
