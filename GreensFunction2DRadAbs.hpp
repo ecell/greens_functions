@@ -16,6 +16,7 @@
 #include <vector>
 #include <boost/tuple/tuple.hpp>
 #include <boost/function.hpp>
+#include <boost/format.hpp>
 #include <boost/array.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <gsl/gsl_roots.h>
@@ -44,9 +45,9 @@ class GreensFunction2DRadAbs
         {
             throw std::invalid_argument((boost::format(
                 "GreensFunction2DRadAbs: a >= sigma : a=%.16g, sigma=%.16g")
-                % a % sigma).str());
+                % a % Sigma).str());
         }
-        GreensFunction2DRadAbs::clearAlphaTable();
+        this->clearAlphaTable();
     }
     virtual ~GreensFunction2DRadAbs() {}
 
