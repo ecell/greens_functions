@@ -45,7 +45,7 @@ public:
 
     Real drawTime( const Real ) const
     {
-        return INFINITY;
+        return std::numeric_limits<Real>::infinity();
     }
     
     Real drawR( const Real rnd, const Real t ) const;

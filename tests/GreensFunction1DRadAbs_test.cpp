@@ -30,16 +30,16 @@ BOOST_AUTO_TEST_CASE(GF1DRadAbs_DrawTime)
   GreensFunction1DRadAbs gf( D, v, kf, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
   std::cout << "GreensFunction1DRadAbs_test : test_DrawTime(0.5) : t = " << t << std::endl;
 /*
   t = gf.drawTime( 0.0 );
-  BOOST_CHECK(0.0 <= t && t < INFINITY);
+  BOOST_CHECK(0.0 <= t && t < std::numeric_limits<Real>::infinity());
   std::cout << "GreensFunction1DRadAbs_test : test_DrawTime(0.0) : t = " << t << std::endl;//error. std::exception. because of "while(value <= 0.0)"
 */
 /*
   t = gf.drawTime( 1 - 1e-16 );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
   std::cout << "GreensFunction1DRadAbs_test : test_DrawTime(1 - 1e-16) : t = " << t << std::endl;
   std::cout << std::endl;
   error. t = 0 */
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(GF1DRadAbs_DrawTime_a_near_sigma)
   GreensFunction1DRadAbs gf( D, v, kf, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
   std::cout << "GreensFunction1DRadAbs_test : test_DrawTime_a_near_sigma : t = " << t << std::endl;
   std::cout << std::endl;
 }
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(GF1DRadAbs_DrawTime_r0_equal_sigma_kf_zero)
   GreensFunction1DRadAbs gf( D, v, kf, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
   std::cout << "GreensFunction1DRadAbs_test : test_DrawTime_r0_equal_sigma_kf_zero : t = " << t << std::endl;
   std::cout << std::endl;
 }
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(GF1DRadAbs_DrawTime_r0_equal_sigma_kf_large)
   GreensFunction1DRadAbs gf( D, v, kf, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
   std::cout << "GreensFunction1DRadAbs_test : test_DrawTime_r0_equal_sigma_kf_large : t = " << t << std::endl;
   std::cout << std::endl;
 }

@@ -25,13 +25,13 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawTime)
   GreensFunction3DRadAbs gf( D, kf, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
 
   t = gf.drawTime( 0.0 );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
 
   t = gf.drawTime( 1 - 1e-16 );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
 }
 
 BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawTime_a_equal_sigma)
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawTime_a_near_sigma)
   GreensFunction3DRadAbs gf( D, kf, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
 }
 
 BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawTime_r0_equal_a)
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawTime_r0_equal_sigma_kf_zero)
   GreensFunction3DRadAbs gf( D, kf, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
 }
 
 BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawTime_r0_equal_sigma_kf_large)
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawTime_r0_equal_sigma_kf_large)
   GreensFunction3DRadAbs gf( D, kf, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
 }
 
 BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawEventType)

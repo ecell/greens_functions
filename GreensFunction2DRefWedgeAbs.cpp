@@ -757,8 +757,8 @@ namespace greens_functions
         const Real a = this->a_;
         const Real D = this->D_;
 
-        if(D == 0e0 || a == INFINITY || rnd == 1e0)
-            return INFINITY;
+        if(D == 0e0 || a == std::numeric_limits<Real>::infinity() || rnd == 1e0)
+            return std::numeric_limits<Real>::infinity();
         if(a == this->r0_ || rnd == 0e0)
             return 0e0;
 

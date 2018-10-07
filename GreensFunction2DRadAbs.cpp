@@ -796,7 +796,7 @@ GreensFunction2DRadAbs::guess_maxi( const Real t ) const
 
     const unsigned int safety( 2 );
 
-    if( t >= INFINITY )
+    if( t >= std::numeric_limits<Real>::infinity() )
     {
         return safety;
     }

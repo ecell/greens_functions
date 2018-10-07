@@ -223,9 +223,9 @@ Real GreensFunction3DAbsSym::drawTime(Real rnd) const
 
     const Real a(geta());
 
-    if (D == 0.0 || a == INFINITY)
+    if (D == 0.0 || a == std::numeric_limits<Real>::infinity())
     {
-        return INFINITY;
+        return std::numeric_limits<Real>::infinity();
     }
 
     if (a == 0.0)

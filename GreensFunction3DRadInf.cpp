@@ -251,11 +251,11 @@ Real GreensFunction3DRadInf::drawTime(Real rnd) const
     Real high(100);
 
     {
-        const Real maxp(p_reaction(INFINITY));
+        const Real maxp(p_reaction(std::numeric_limits<Real>::infinity()));
 
         if(rnd >= maxp)
         {
-            return INFINITY;
+            return std::numeric_limits<Real>::infinity();
         }
     }
 

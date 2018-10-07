@@ -360,8 +360,8 @@ const Real
 const Real GreensFunction2DAbs::drawTime(const Real rnd) const
 {
     THROW_UNLESS(std::invalid_argument, 0.0<=rnd && rnd <= 1.0);
-    if(D == 0e0 || a == INFINITY || rnd == 1e0)
-        return INFINITY;
+    if(D == 0e0 || a == std::numeric_limits<Real>::infinity() || rnd == 1e0)
+        return std::numeric_limits<Real>::infinity();
     if(a == r0 || rnd == 0e0)
         return 0e0;
 

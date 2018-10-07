@@ -139,9 +139,9 @@ GreensFunction2DAbsSym::drawTime( const Real rnd ) const
 
     const Real a( geta() );
 
-    if( getD() == 0.0 || a == INFINITY )
+    if( getD() == 0.0 || a == std::numeric_limits<Real>::infinity() )
     {
-            return INFINITY;
+            return std::numeric_limits<Real>::infinity();
     }
     if( a == 0.0 )
     {

@@ -24,13 +24,13 @@ BOOST_AUTO_TEST_CASE(GF2DAbs_DrawTime)
     GreensFunction2DAbs gf(D, r0, a);
  
     Real t(gf.drawTime(0.5));
-    BOOST_CHECK(0.0 < t && t < INFINITY);
+    BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
  
     t = gf.drawTime(0.0);
     BOOST_CHECK_EQUAL(t, 0e0);
 
     t = gf.drawTime(1.0);
-    BOOST_CHECK_EQUAL(t, INFINITY);
+    BOOST_CHECK_EQUAL(t, std::numeric_limits<Real>::infinity());
 }
 
 BOOST_AUTO_TEST_CASE(GF2DAbs_DrawTime_r0_equal_a)
