@@ -1,0 +1,295 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[top=2.1cm,left=2.0cm,right=2.0cm,footskip=2.0cm]{geometry}
+
+\lstset{
+    language = C++,
+}
+\newcommand{\crd}[1]{{\mathbf{#1}}}
+\newcommand{\inlinecode}[1]{{\colorbox[rgb]{0.9,0.9,0.9}{\lstinline|#1|}}}
+
+\begin{document}
+
+\title{GreensFunction2DRadAbs}
+\author{Toru Niina}
+\maketitle
+
+\section{Overview}
+
+This GF corresponds to the following equation.
+
+\begin{eqnarray}
+    D\nabla^2 P(r, \theta, t) &=& \frac{\partial P}{\partial t}\\
+    P(r, \theta, 0) &=& \delta(r - r_0)\delta(\theta) \\
+    % replace \frac{h}{k} -> k
+    kP(\sigma) &=& \left.\frac{\partial P}{\partial r}\right|_{r=\sigma} \\
+    P(a)  &=& 0
+\end{eqnarray}
+
+Here, $\sigma < r_0 < a$. In the context of reaction-diffusion system,
+$-k$ corresponds to the reaction rate $k_a$ because
+$-\left.\frac{\partial P}{\partial r}\right|_{r=a}$ corresponds to the inward
+flux which means how fast the particle escapes through the boundary. Note that
+the macroscopic reaction rate is equal to the value $k_a / 2\sigma\pi D$.
+
+\subsection{Green's Function}
+
+From ``Heat Conduction Using Green's Functions 2nd edition'' $R31\Phi00$,
+the precise form of the Green's function is given as the following.
+We can choose $\tau = 0$ and also $\theta_0 = 0$ without loss of generality.
+
+\begin{eqnarray}
+    P(r, \theta, t | r_0, \theta_0 = 0, \tau = 0) &=& \frac{1}{\sigma^2}
+    \sum_{m=1}^{\infty}\Bigg[
+        \frac{1}{2\pi N(\beta_{m0})}
+        \exp\left(-\beta_{m0}^2\cfrac{D t}{\sigma^2}\right)
+        R_{m0}(\beta_{m0}, r) R_{m0}(\beta_{m0}, r_0) +
+        \nonumber\\
+        & &\sum_{n=1}^{\infty} \frac{1}{\pi N(\beta_{mn})}
+        \exp\left(-\beta_{mn}^2\cfrac{D t}{\sigma^2}\right)
+        R_{m0}(\beta_{mn}, r) R_{m0}(\beta_{mn}, r_0)\cos(n\theta) \Bigg] \\
+    R_{mn}(\beta_{mn}, r) &=& S_{mn}J_n\left(\beta_{mn} \frac{r}{\sigma}\right) -
+                              V_{mn}Y_n\left(\beta_{mn} \frac{r}{\sigma}\right) \\
+    S_{mn} &:=& \beta_{mn}Y'_n(\beta_{mn}) - \sigma kY_n(\beta_{mn}) \\
+    V_{mn} &:=& \beta_{mn}J'_n(\beta_{mn}) - \sigma kJ_n(\beta_{mn}) \\
+    \frac{1}{N(\beta_{mn})} &:=& \frac{\pi^2}{2}
+        \frac{\beta_{mn}^2 J^2_n\left(\beta_{mn}\cfrac{a}{\sigma}\right)}
+             {C_{mn} J_n^2\left(\beta_{mn}\cfrac{a}{\sigma}\right) - V_{mn}^2} \\
+    C_{mn} &:=& (-\sigma k)^2 + \beta_{mn}^2 \left[1 - \left(\frac{n}{\beta_{mn}}\right)^2\right]
+\end{eqnarray}
+
+Here, $\beta_{mn}$'s are the positive roots of
+\begin{eqnarray}
+    S_{mn} J_n\left(\beta_{mn}\frac{a}{\sigma}\right) -
+    V_{mn} Y_n\left(\beta_{mn}\frac{a}{\sigma}\right) = 0
+\end{eqnarray}
+
+By using these relationships
+
+\begin{eqnarray}
+    J'_n(x) &=&  \frac{n}{x}J_n(x) - J_{n+1}(x) \\
+    Y'_n(x) &=&  \frac{n}{x}Y_n(x) - Y_{n+1}(x)
+\end{eqnarray}
+
+and with some re-arrangements,
+
+\begin{eqnarray}
+    S_{mn} &=& \beta_{mn}Y'_n(\beta_{mn}) - \sigma kY_n(\beta_{mn}) \\
+    V_{mn} &=& \beta_{mn}J'_n(\beta_{mn}) - \sigma kJ_n(\beta_{mn}) \\
+    0      &=& S_{mn} J_n\left(\beta_{mn}\frac{a}{\sigma}\right) -
+               V_{mn} Y_n\left(\beta_{mn}\frac{a}{\sigma}\right) \\
+               %
+           &=& J_n\left(\beta_{mn}\frac{a}{\sigma}\right)
+                  \left[\beta_{mn}Y'_n(\beta_{mn}) - \sigma kY_n(\beta_{mn})\right] - \\
+           & & Y_n\left(\beta_{mn}\frac{a}{\sigma}\right)
+                  \left[\beta_{mn}J'_n(\beta_{mn}) - \sigma kJ_n(\beta_{mn})\right] \\
+               %
+           &=& \beta_{mn}Y'_n(\beta_{mn})J_n\left(\beta_{mn}\frac{a}{\sigma}\right) -
+               \sigma k   Y_n(\beta_{mn})J_n\left(\beta_{mn}\frac{a}{\sigma}\right) -\\
+           & & \beta_{mn}J'_n(\beta_{mn})Y_n\left(\beta_{mn}\frac{a}{\sigma}\right) +
+               \sigma k   J_n(\beta_{mn})Y_n\left(\beta_{mn}\frac{a}{\sigma}\right) \\
+\end{eqnarray}
+
+By converting $\beta_{mn} / \sigma = \alpha_{mn}$ assuming $\sigma \ne 0$, the equation to solve becomes
+
+\begin{eqnarray}
+    0 &=& \sigma \alpha_{mn}Y'_n(\sigma\alpha_{mn})J_n(a\alpha_{mn}) -
+          \sigma k           Y_n(\sigma\alpha_{mn})J_n(a\alpha_{mn}) -\\
+      & & \sigma \alpha_{mn}J'_n(\sigma\alpha_{mn})Y_n(a\alpha_{mn}) +
+          \sigma k           J_n(\sigma\alpha_{mn})Y_n(a\alpha_{mn}) \\
+\Leftrightarrow
+    0 &=&        \alpha_{mn}Y'_n(\sigma\alpha_{mn})J_n(a\alpha_{mn}) -
+                 k           Y_n(\sigma\alpha_{mn})J_n(a\alpha_{mn}) -\\
+      & &        \alpha_{mn}J'_n(\sigma\alpha_{mn})Y_n(a\alpha_{mn}) +
+                 k           J_n(\sigma\alpha_{mn})Y_n(a\alpha_{mn})
+\end{eqnarray}
+
+For $n = 0$,
+
+\begin{eqnarray}
+    0 &=& -\alpha_{m0}Y_1(\sigma\alpha_{m0})J_0(a\alpha_{m0}) -
+          k           Y_0(\sigma\alpha_{m0})J_0(a\alpha_{m0}) \\
+      & & +\alpha_{m0}J_1(\sigma\alpha_{m0})Y_0(a\alpha_{m0}) +
+          k           J_0(\sigma\alpha_{m0})Y_0(a\alpha_{m0}) \\
+      &=& (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))Y_0(a\alpha_{m0}) -\\
+      & & (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))J_0(a\alpha_{m0})
+\end{eqnarray}
+
+otherwise,
+
+\begin{eqnarray}
+    0 &=& \alpha_{mn}\left(\frac{n}{\sigma\alpha_{mn}}Y_n(\sigma\alpha_{mn}) - Y_{n+1}(\sigma\alpha_{mn})\right)J_n\left(a\alpha_{mn}\right) - kY_n(\sigma\alpha_{mn})J_n\left(a\alpha_{mn}\right) -\\
+      & & \alpha_{mn}\left(\frac{n}{\sigma\alpha_{mn}}J_n(\sigma\alpha_{mn}) - J_{n+1}(\sigma\alpha_{mn})\right)Y_n\left(a\alpha_{mn}\right) + kJ_n(\sigma\alpha_{mn})Y_n\left(a\alpha_{mn}\right)  \\
+      &=& \left(\frac{n}{\sigma}Y_n(\sigma\alpha_{mn}) - \alpha_{mn}Y_{n+1}(\sigma\alpha_{mn})\right)J_n\left(a\alpha_{mn}\right) - kY_n(\sigma\alpha_{mn})J_n\left(a\alpha_{mn}\right) -\\
+      & & \left(\frac{n}{\sigma}J_n(\sigma\alpha_{mn}) - \alpha_{mn}J_{n+1}(\sigma\alpha_{mn})\right)Y_n\left(a\alpha_{mn}\right) + kJ_n(\sigma\alpha_{mn})Y_n\left(a\alpha_{mn}\right) \\
+\end{eqnarray}
+
+By re-arranging this,
+
+\begin{eqnarray}
+    0 &=& \left(\frac{n}{\sigma}Y_n(\sigma\alpha_{mn}) - \alpha_{mn}Y_{n+1}(\sigma\alpha_{mn}) - kY_n(\sigma\alpha_{mn})\right) J_n(a\alpha_{mn}) -\\
+      & & \left(\frac{n}{\sigma}J_n(\sigma\alpha_{mn}) - \alpha_{mn}J_{n+1}(\sigma\alpha_{mn}) - kJ_n(\sigma\alpha_{mn})\right) Y_n(a\alpha_{mn})\\
+\Leftrightarrow
+    0 &=& \left(\left(\frac{n}{\sigma} - k\right) Y_n(\sigma\alpha_{mn}) - \alpha_{mn}Y_{n+1}(\sigma\alpha_{mn})\right) J_n(a\alpha_{mn}) -\\
+      & & \left(\left(\frac{n}{\sigma} - k\right) J_n(\sigma\alpha_{mn}) - \alpha_{mn}J_{n+1}(\sigma\alpha_{mn})\right) Y_n(a\alpha_{mn})\\
+\Leftrightarrow
+    0 &=& \Big((n - \sigma k) Y_n(\sigma\alpha_{mn}) - \sigma\alpha_{mn}Y_{n+1}(\sigma\alpha_{mn})\Big) J_n(a\alpha_{mn}) -\\
+      & & \Big((n - \sigma k) J_n(\sigma\alpha_{mn}) - \sigma\alpha_{mn}J_{n+1}(\sigma\alpha_{mn})\Big) Y_n(a\alpha_{mn})\\
+\end{eqnarray}
+
+\inlinecode{f_alpha0} and \inlinecode{f_alpha} calculate these equations.
+
+For the simplicity, after this, $\beta_{mn}$ will be replaced by $\sigma\alpha_{mn}$.
+With $\sigma\alpha_{mn}$, the Green's function are given as
+
+\begin{eqnarray}
+    P(r, \theta, t | r_0, \theta_0 = 0, \tau = 0) &=& \frac{1}{\sigma^2}
+    \sum_{m=1}^{\infty}\Bigg[
+        \frac{1}{2\pi N(\sigma\alpha_{m0})} \exp(-\alpha_{m0}^2Dt)
+        R_{m0}(\sigma\alpha_{m0}, r) R_{m0}(\sigma\alpha_{m0}, r_0) +
+        \nonumber\\
+        & &\sum_{n=1}^{\infty} \frac{1}{\pi N(\sigma\alpha_{mn})}
+        \exp(-\alpha_{mn}^2Dt)
+        R_{m0}(\sigma\alpha_{mn}, r) R_{m0}(\sigma\alpha_{mn}, r_0)\cos(n\theta) \Bigg] \\
+    R_{mn}(\sigma\alpha_{mn}, r) &=&
+        S_{mn}J_n(r\alpha_{mn}) -
+        V_{mn}Y_n(r\alpha_{mn}) \\
+    S_{mn} &:=& \sigma(\alpha_{mn}Y'_n(\sigma\alpha_{mn}) - kY_n(\sigma\alpha_{mn})) \\
+    V_{mn} &:=& \sigma(\alpha_{mn}J'_n(\sigma\alpha_{mn}) - kJ_n(\sigma\alpha_{mn})) \\
+    \frac{1}{N(\sigma\alpha_{mn})} &:=& \frac{\pi^2}{2}
+        \frac{\sigma^2\alpha_{mn}^2 J^2_n(a\alpha_{mn})}
+             {C_{mn} J_n^2(a\alpha_{mn}) - V_{mn}^2} \\
+    C_{mn} &:=& \sigma^2k^2 + \sigma^2\alpha_{mn}^2 - n^2
+\end{eqnarray}
+
+
+\subsection{p\_survival}
+
+To obtain the survival probability, we need to integrate the Green's function
+accoring to the whole area.
+
+\begin{eqnarray}
+    P_{\mathrm{surv}}(t) &=& \int_\sigma^a \int_0^{2\pi} P(r, \theta, t) rd\theta dr\\
+        &=& \int_\sigma^a \int_0^{2\pi}  \frac{1}{\sigma^2}
+            \sum_{m=1}^{\infty}\Bigg[
+                \frac{1}{2\pi N(\sigma\alpha_{m0})} \exp(-\alpha_{m0}^2Dt)
+                R_{m0}(\sigma\alpha_{m0}, r) R_{m0}(\sigma\alpha_{m0}, r_0) +
+                \nonumber\\
+                & &\sum_{n=1}^{\infty} \frac{1}{\pi N(\sigma\alpha_{mn})}
+                \exp(-\alpha_{mn}^2Dt)
+                R_{m0}(\sigma\alpha_{mn}, r) R_{m0}(\sigma\alpha_{mn}, r_0)\cos(n\theta)
+            \Bigg] r d\theta dr\\
+        &=& \int_\sigma^a \int_0^{2\pi} \frac{1}{\sigma^2} \sum_{m=1}^{\infty} \Bigg[
+                \frac{1}{2\pi N(\sigma\alpha_{m0})} \exp(-\alpha_{m0}^2Dt)
+                R_{m0}(\sigma\alpha_{m0}, r) R_{m0}(\sigma\alpha_{m0}, r_0)\Bigg] r d\theta dr +
+                \nonumber\\
+        & &\int_\sigma^a \int_0^{2\pi} \frac{1}{\sigma^2} \sum_{m=1}^{\infty} \Bigg[
+            \sum_{n=1}^{\infty} \frac{1}{\pi N(\sigma\alpha_{mn})}
+                \exp(-\alpha_{mn}^2Dt)
+                R_{m0}(\sigma\alpha_{mn}, r) R_{m0}(\sigma\alpha_{mn}, r_0)\cos(n\theta)
+            \Bigg] r d\theta dr\\
+\end{eqnarray}
+
+By performing integration around $0 < \theta < 2\pi$, the second term which
+includes $\cos(n\theta)$ vanishes.
+
+\begin{eqnarray}
+    P_{\mathrm{surv}}(t)
+        &=& \int_0^{2\pi}d\theta \int_\sigma^a \frac{1}{\sigma^2} \sum_{m=1}^{\infty} \Bigg[
+            \frac{1}{2\pi N(\sigma\alpha_{m0})} \exp(-\alpha_{m0}^2Dt)
+            R_{m0}(\sigma\alpha_{m0}, r) R_{m0}(\sigma\alpha_{m0}, r_0)
+            \Bigg] rdr \nonumber\\
+        &=& \frac{1}{\sigma^2} \sum_{m=1}^{\infty} \Bigg[
+            \frac{1}{N(\sigma\alpha_{m0})} \exp(-\alpha_{m0}^2Dt)
+            \int_\sigma^a R_{m0}(\sigma\alpha_{m0}, r) R_{m0}(\sigma\alpha_{m0}, r_0)
+            rdr \Bigg] \nonumber\\
+\end{eqnarray}
+
+calculating the integration,
+\begin{eqnarray}
+    & & \int_\sigma^a R_{m0}(\sigma\alpha_{m0}, r) R_{m0}(\sigma\alpha_{m0}, r_0) rdr \nonumber\\
+    &=& \int_\sigma^a \left(S_{m0} J_0\left(\sigma\alpha_{m0} \frac{r}{\sigma}\right) -
+                            V_{m0} Y_0\left(\sigma\alpha_{m0} \frac{r}{\sigma}\right)\right)
+                      \left(S_{m0} J_0\left(\sigma\alpha_{m0} \frac{r_0}{\sigma}\right) -
+                            V_{m0} Y_0\left(\sigma\alpha_{m0} \frac{r_0}{\sigma}\right)\right)rdr\\
+    &=& \int_\sigma^a \Big(S_{m0} J_0(\alpha_{m0} r  ) - V_{m0} Y_0(\alpha_{m0} r  )\Big)
+                      \Big(S_{m0} J_0(\alpha_{m0} r_0) - V_{m0} Y_0(\alpha_{m0} r_0)\Big)rdr\\
+    &=& \int_\sigma^a \Big(
+            S_{m0}^2     J_0(\alpha_{m0} r) J_0(\alpha_{m0} r_0) -
+            S_{m0}V_{m0} J_0(\alpha_{m0} r) Y_0(\alpha_{m0} r_0) - \nonumber\\
+    & &     S_{m0}V_{m0} Y_0(\alpha_{m0} r) J_0(\alpha_{m0} r_0) +
+            V_{m0}^2     Y_0(\alpha_{m0} r) Y_0(\alpha_{m0} r_0)
+        \Big)rdr\\
+    &=& S_{m0}^2     J_0(\alpha_{m0} r_0) \int_\sigma^a J_0(\alpha_{m0} r) rdr -
+        S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \int_\sigma^a J_0(\alpha_{m0} r) rdr + \nonumber\\
+    & & V_{m0}^2     Y_0(\alpha_{m0} r_0) \int_\sigma^a Y_0(\alpha_{m0} r) rdr -
+        S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \int_\sigma^a Y_0(\alpha_{m0} r) rdr   \nonumber
+\end{eqnarray}
+
+Here, by using the following equation, we can calculate the above integral.
+
+\begin{eqnarray}
+    \int xJ_0(x) dx &=& xJ_1(x)\\
+    \int xY_0(x) dx &=& xY_1(x)
+\end{eqnarray}
+
+By converting the variables,
+
+\begin{eqnarray}
+    \int_\sigma^a J_0(\alpha_{m0}r) rdr
+    &=& \frac{1}{\alpha_{m0}}  \int_\sigma^a J_0(\alpha_{m0}r) \alpha_{m0}r dr \\
+    &=& \frac{1}{\alpha_{m0}^2}\int_{\alpha_{m0}\sigma}^{\alpha_{m0}a} J_0(x) x dx \\
+    &=& \frac{1}{\alpha_{m0}^2}\Big[\alpha_{m0}a J_1(\alpha_{m0}a) - \alpha_{m0}\sigma J_1(\alpha_{m0}\sigma) \Big] \\
+    &=& \frac{1}{\alpha_{m0}}  \Big[aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma) \Big] \\
+\end{eqnarray}
+
+By assigning this,
+
+\begin{eqnarray}
+    & & \Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big] \int_\sigma^a J_0(\alpha_{m0} r) rdr + \nonumber\\
+    & & \Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big] \int_\sigma^a Y_0(\alpha_{m0} r) rdr   \nonumber\\
+    &=& \frac{1}{\alpha_{m0}^2}\Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a J_1(\alpha_{m0}a) - \alpha_{m0}\sigma J_1(\alpha_{m0}\sigma) \Big] + \nonumber\\
+    & & \frac{1}{\alpha_{m0}^2}\Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a Y_1(\alpha_{m0}a) - \alpha_{m0}\sigma Y_1(\alpha_{m0}\sigma) \Big]   \nonumber\\
+\end{eqnarray}
+
+Then the survival probability is
+
+\begin{eqnarray}
+    P_{\mathrm{surv}}(t)
+        &=& \frac{1}{\sigma^2} \frac{\pi^2}{2}\sum_{m=1}^{\infty}
+            \frac{\alpha_{m0}^2 J^2_0(a\alpha_{m0})}{(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) - (\alpha_{m0}J'_0(\sigma\alpha_{m0}) - kJ_0(\sigma\alpha_{m0}))^2}
+            \frac{\exp(-\alpha_{m0}^2Dt)}{\alpha_{m0}^2}\Bigg[\nonumber\\
+        & & \Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a J_1(\alpha_{m0}a) - \alpha_{m0}\sigma J_1(\alpha_{m0}\sigma) \Big] + \nonumber\\
+        & & \Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a Y_1(\alpha_{m0}a) - \alpha_{m0}\sigma Y_1(\alpha_{m0}\sigma) \Big]\Bigg]\nonumber\\
+        &=& \frac{\pi^2}{2\sigma^2} \sum_{m=1}^{\infty}
+            \frac{J^2_0(a\alpha_{m0}) \exp(-\alpha_{m0}^2Dt)}{(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) - (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+            \Bigg[\nonumber\\
+        & & \Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a J_1(\alpha_{m0}a) - \alpha_{m0}\sigma J_1(\alpha_{m0}\sigma) \Big] + \nonumber\\
+        & & \Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a Y_1(\alpha_{m0}a) - \alpha_{m0}\sigma Y_1(\alpha_{m0}\sigma) \Big]\Bigg]\nonumber
+\end{eqnarray}
+
+
+
+%     R_{mn}(\beta_{mn}, r) &=& S_{mn}J_n\left(\beta_{mn} \frac{r}{\sigma}\right) -
+%                               V_{mn}Y_n\left(\beta_{mn} \frac{r}{\sigma}\right) \\
+%     R_{m0}(\beta_{m0}, r) &=& S_{m0}J_n\left(\beta_{m0} \frac{r}{\sigma}\right) -
+%                               V_{m0}Y_n\left(\beta_{m0} \frac{r}{\sigma}\right) \\
+%     R_{m0}(\beta_{m0}, r) &=& S_{m0} J_n\left(\beta_{m0} \frac{r}{\sigma}\right) -
+%                               V_{m0} Y_n\left(\beta_{m0} \frac{r}{\sigma}\right) \\
+%     S_{m0} &:=& -\beta_{m0}Y_1(\beta_{m0}) - \sigma kY_0(\beta_{m0}) \\
+%     V_{m0} &:=& -\beta_{m0}J_1(\beta_{m0}) - \sigma kJ_0(\beta_{m0}) \\
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
