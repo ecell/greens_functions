@@ -26,24 +26,24 @@ set (HPP_FILES
     findRoot.hpp funcSum.hpp freeFunctions.hpp PairGreensFunction.hpp
 )
 
-# add_definitions("-DHAVE_DECL_INFINITY -Wall")
 add_definitions(-DHAVE_CONFIG_H)
 
+# check some functions are supported or not...
 include(CheckCXXSourceCompiles)
+
 check_cxx_source_compiles("#include <cmath>
-int main() { double a = INFINITY; return (int)a * 0; }"
-    HAVE_DECL_INFINITY)
-check_cxx_source_compiles("#include <cmath>
-int main() { bool b = std::isfinite(0.); return 0; }"
-    HAVE_ISFINITE)
-check_cxx_source_compiles("#include <cmath>
-int main() { double a, b; sincos(0., &a, &b); return 0; }"
-    HAVE_SINCOS)
+    int main() {
+        double a, b;
+        sincos(0., &a, &b);
+        return 0;
+    }" ECELL_GREENS_FUNCITONS_HAVE_SINCOS)
 
 configure_file(${PROJECT_SOURCE_DIR}/config.h.in
                ${PROJECT_BINARY_DIR}/config.h)
 message(STATUS "config.h was generated: ${PROJECT_BINARY_DIR}/config.h")
-include_directories(${PROJECT_BINARY_DIR})
+
+
+include_directories(${PROJECT_BINARY_DIR}) # to include config.h
 include_directories(${PROJECT_BINARY_DIR}/greens_functions)
 
 find_package(Boost REQUIRED)

@@ -31,20 +31,20 @@ BOOST_AUTO_TEST_CASE(GF1DAbsABs_DrawTime)
   GreensFunction1DAbsAbs gf( D, v, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
   std::cout << std::endl;
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawTime : t = " << t << std::endl;
 
   t = gf.drawTime( 0.0 );
-  BOOST_CHECK(0.0 < t && t< INFINITY);
+  BOOST_CHECK(0.0 < t && t< std::numeric_limits<Real>::infinity());
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawTime : t = " << t << std::endl;
 
   t = gf.drawTime( 1e-16 ) ;
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawTime : t = " << t << std::endl;
 
   t = gf.drawTime( 1 - 1e-16 );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawTime : t = " << t << std::endl;
   std::cout << std::endl;
 }
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(GF1DAbsAbs_DrawTime_a_near_sigma)
   GreensFunction1DAbsAbs gf( D, v, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  BOOST_CHECK(0.0 < t && t < INFINITY);
+  BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawTime_a_near_sigma : t = " << t << std::endl;
   std::cout << std::endl;
 }
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(GF1DAbsAbs_DrawTime_r0_equal_sigma)
   GreensFunction1DAbsAbs gf( D, v, r0, sigma, a );
 
   Real t( gf.drawTime( 0.5 ) );
-  BOOST_CHECK( 0.0 <= t && t < INFINITY );
+  BOOST_CHECK( 0.0 <= t && t < std::numeric_limits<Real>::infinity() );
   std::cout << "GreensFunction1DAbsAbs_test : test_DrawTime_r0_equal_sigma : t = " << t << std::endl;
   std::cout << std::endl;
 }

@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(GF3DSym_no_test_ip_r_infinity_is_one)
 
   Real r(2.5e-8), t(1e-5), ip;
 
-  ip = gf.ip_r(INFINITY, t);
+  ip = gf.ip_r(std::numeric_limits<Real>::infinity(), t);
   BOOST_CHECK((ip == 1.0));
 }
 /*

@@ -127,7 +127,7 @@ GreensFunction1DRadAbs::uint GreensFunction1DRadAbs::guess_maxi(Real const& t) c
 {
     const uint safety(2);
 
-    if (t >= INFINITY)
+    if (t >= std::numeric_limits<Real>::infinity())
     {
         return safety;
     }
@@ -401,7 +401,7 @@ Real GreensFunction1DRadAbs::prob_r (Real r, Real t) const
         // the probability density function is a delta function
         if (r == r0)
         {
-            return INFINITY;
+            return std::numeric_limits<Real>::infinity();
         }
         else
         {
@@ -588,9 +588,9 @@ Real GreensFunction1DRadAbs::drawTime (Real rnd) const
     const Real k(this->getk());
     const Real D(this->getD());
 
-    if ( D == 0.0 || L == INFINITY )
+    if ( D == 0.0 || L == std::numeric_limits<Real>::infinity() )
     {
-        return INFINITY;
+        return std::numeric_limits<Real>::infinity();
     }
 
     if ( rnd > 1 - EPSILON || L < 0.0 || fabs(a-r0) < EPSILON*L )

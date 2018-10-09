@@ -41,7 +41,7 @@ GreensFunction1DAbsAbs::uint GreensFunction1DAbsAbs::guess_maxi(Real const& t) c
 {
     const uint safety(2);
 
-    if (t >= INFINITY)
+    if (t >= std::numeric_limits<Real>::infinity())
     {
         return safety;
     }
@@ -240,7 +240,7 @@ Real GreensFunction1DAbsAbs::prob_r (Real r, Real t) const
 	// the probability density function is a delta function
         if (r == r0)
         {
-            return INFINITY;
+            return std::numeric_limits<Real>::infinity();
         }
         else
         {      
@@ -313,7 +313,7 @@ GreensFunction1DAbsAbs::leaves(Real t) const
     {
         // The flux of a zero domain is INFINITY. Also if the particle 
         // started on the left boundary (leaking out immediately).
-        return INFINITY;
+        return std::numeric_limits<Real>::infinity();
     }
     else if ( t < EPSILON*this->t_scale )
     {
@@ -367,7 +367,7 @@ GreensFunction1DAbsAbs::leavea(Real t) const
     {
         // The flux of a zero domain is INFINITY. Also if the particle 
         // started on the right boundary (leaking out immediately).
-        return INFINITY;
+        return std::numeric_limits<Real>::infinity();
     }
     else if ( t < EPSILON*this->t_scale )
     {
@@ -478,7 +478,7 @@ GreensFunction1DAbsAbs::drawTime (Real rnd) const
 
     if (D == 0.0 )
     {
-        return INFINITY;
+        return std::numeric_limits<Real>::infinity();
     }
     else if ( L < 0.0 || fabs(a-r0) < EPSILON*L || fabs(r0-sigma) > (1.0 - EPSILON)*L )
     {
