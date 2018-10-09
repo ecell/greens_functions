@@ -1,4 +1,5 @@
 #include <sstream>
+#include <limits>
 #include <boost/format.hpp>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_roots.h>
@@ -16,10 +17,10 @@ GreensFunction3D::~GreensFunction3D()
 {
     ; // do nothing
 }
-    
+
 Real GreensFunction3D::drawTime(Real rnd) const
 {
-    return INFINITY;
+    return std::numeric_limits<Real>::infinity();
 }
 
 Real GreensFunction3D::p_r(Real r, Real t) const

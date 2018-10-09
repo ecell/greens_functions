@@ -1,46 +1,74 @@
-#if !defined( COMPAT_HPP )
-#define COMPAT_HPP
+#ifndef ECELL_GREENS_FUNCTIONS_COMPAT_HPP
+#define ECELL_GREENS_FUNCTIONS_COMPAT_HPP
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif /* HAVE_CONFIG_H */
-
 #include <cmath>
 #include <limits>
 
-#if !HAVE_DECL_INFINITY
-#  ifndef INFINITY
-#    define INFINITY ( std::numeric_limits< double >::infinity() )
-#  endif
-#endif /* HAVE_DECL_INFINITY */
-
-#if !defined( HAVE_SINCOS )
+#ifndef ECELL_GREENS_FUNCTIONS_HAVE_SINCOS
 namespace greens_functions
 {
 inline void sincos( double x, double* s, double* c )
 {
-    *s = sin( x );
-    *c = cos( x );
+    *s = std::sin(x);
+    *c = std::cos(x);
 }
 } // greens_functions
-#endif /* !HAVE_SINCOS */
+#endif /* HAVE_SINCOS */
 
-#if !defined( HAVE_ISFINITE )
+#if __cplusplus >= 201103L
+
+// after C++11, std::isfinite is defined in <cmath> header.
 namespace greens_functions
 {
-inline int isfinite( double x )
+
+inline bool isfinite(float x)
 {
-	return x == x && x != INFINITY && -x != INFINITY;
+    return std::isfinite(x);
 }
+inline bool isfinite(double x)
+{
+    return std::isfinite(x);
+}
+inline bool isfinite(long double x)
+{
+    return std::isfinite(x);
+}
+
 } // greens_functions
-#else // std::isfinite found (compiler supports c++11!)
+#else
+
+// it means that the compiler still does not compatible with C++11 or
+// the user compiles this without -std=c++(11|14|17) flag.
 namespace greens_functions
 {
-inline int isfinite( double x )
-{
-	return static_cast<int>(std::isfinite(x));
-}
-} // greens_functions
-#endif
 
-#endif // COMPAT_HPP
+namespace detail
+{
+template<typename T>
+inline bool isfinite_impl(T x)
+{
+    // return (not nan && not +inf && not -inf);
+    // if x was nan, all the comparison including `x == x` would be false!
+    return (x == x) && (x !=  std::numeric_limits<T>::infinity()) &&
+                       (x != -std::numeric_limits<T>::infinity());
+}
+} // detail
+
+inline bool isfinite(float x)
+{
+    return detail::isfinite_impl(x);
+}
+inline bool isfinite(double x)
+{
+    return detail::isfinite_impl(x);
+}
+inline bool isfinite(long double x)
+{
+    return detail::isfinite_impl(x);
+}
+
+} // greens_functions
+#endif // ISFINITE
+
+#endif // ECELL_GREENS_FUNCTIONS_COMPAT_HPP

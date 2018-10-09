@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTime)
     for(int i=1; i < resolution; ++i)
     {
         t = gf.drawTime(randomnum);
-        BOOST_CHECK(0.0 < t && t < INFINITY);
+        BOOST_CHECK(0.0 < t && t < std::numeric_limits<Real>::infinity());
         randomnum += drandom;
     }
 
@@ -39,13 +39,13 @@ BOOST_AUTO_TEST_CASE(GF2DRefWedgeAbs_DrawTime)
     BOOST_CHECK_EQUAL(t, 0e0);
 
     t = gf.drawTime(/*rnd = */1.0);
-    BOOST_CHECK_EQUAL(t, INFINITY);
+    BOOST_CHECK_EQUAL(t, std::numeric_limits<Real>::infinity());
 
     Real drand = 0.01;
     for(int i=1; i < 100; ++i)
     {
         Real t = gf.drawTime(drand * i);
-        BOOST_CHECK(0e0 < t && t < INFINITY);
+        BOOST_CHECK(0e0 < t && t < std::numeric_limits<Real>::infinity());
     }
 }
 
