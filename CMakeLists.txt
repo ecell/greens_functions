@@ -30,13 +30,12 @@ add_definitions(-DHAVE_CONFIG_H)
 
 # check some functions are supported or not...
 include(CheckCXXSourceCompiles)
-
 check_cxx_source_compiles("#include <cmath>
     int main() {
         double a, b;
         sincos(0., &a, &b);
         return 0;
-    }" ECELL_GREENS_FUNCITONS_HAVE_SINCOS)
+    }" ECELL_GREENS_FUNCTIONS_HAVE_SINCOS)
 
 configure_file(${PROJECT_SOURCE_DIR}/config.h.in
                ${PROJECT_BINARY_DIR}/config.h)
