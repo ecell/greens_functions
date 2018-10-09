@@ -137,7 +137,8 @@ BOOST_AUTO_TEST_CASE(GF3DRadInf_DrawTheta_zerot)
   Real D( 1e-12 ), kf( 1e-8 ), r0( 5e-8 ), sigma( 1e-8 );
   GreensFunction3DRadInf gf( D, kf, r0, sigma );
 
-  Real t( 0.0 ), r( 5e-8 );
+  Real t( 0.0 );
+  // Real t( 0.0 ), r( 5e-8 );
 
   Real theta( gf.drawTheta( 0.5, r0, t ) );
   BOOST_CHECK_EQUAL( 0.0, theta );
@@ -266,7 +267,8 @@ BOOST_AUTO_TEST_CASE(GF3DRadInf_ip_theta_pi_is_p_irr)
 
   Real ip( gf.ip_theta( M_PI, r, t ) * ( 2 * M_PI * r * r ) );
   Real pirr( p_irr(r, t, r0, kf, D, sigma) );
-  Real pcorr( gf.p_corr(M_PI, r, t) * ( 2 * M_PI * r * r ) );
+  gf.p_corr(M_PI, r, t);
+  // Real pcorr( gf.p_corr(M_PI, r, t) * ( 2 * M_PI * r * r ) );
   Real pfree( gf.p_free(M_PI, r, t) * ( 2 * M_PI * r * r ) );
 
   Real dif( fabs(pirr - pfree) );

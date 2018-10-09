@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawTheta)
 
 BOOST_AUTO_TEST_CASE(GF3DRadAbs_DrawTheta_zero_t)
 {
-  Real D( 1e-12 ), kf( 1e-8 ), sigma( 1e-8 ), a( 1e-7 ), r0( 5e-8 ), r(5e-8);
+  Real D( 1e-12 ), kf( 1e-8 ), sigma( 1e-8 ), a( 1e-7 ), r0( 5e-8 );
   GreensFunction3DRadAbs gf( D, kf, r0, sigma, a );
 
   Real t( 0.0 );
@@ -354,13 +354,13 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_ip_theta_squeezed)
   GreensFunction3DRadAbs gf( D, kf, r0, sigma, a );
 
   Real t( 1e-10 );
-  Real ip( gf.ip_theta(1, r, t) );
+  gf.ip_theta(1, r, t);
 
   r = 1.0000001e-8;
   r0 = 1.0000001e-8;
-  
+
   GreensFunction3DRadAbs gf2( D, kf, r0, sigma, a );
-  ip = gf.ip_theta( 1,r,t );
+  gf.ip_theta( 1,r,t );
 }
 
 BOOST_AUTO_TEST_CASE(GF3DRadAbs_drawTheta_r0_equal_sigma)
@@ -488,7 +488,7 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_p_int_r_at_a_is_p_survival)
   Real D( 1e-12 ), kf( 1e-8 ), sigma( 1e-8 ), a( 1e-7 ), r0( 5e-8 );
   GreensFunction3DRadAbs gf( D, kf, r0, sigma, a );
 
-  Real t( 1e-3 ), r( r0 );
+  Real t( 1e-3 );
 
   Real pintr( gf.p_int_r( a, t ) );
   Real psurv( gf.p_survival( t ) );
@@ -500,7 +500,7 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_p_int_r_at_s_is_zero)
   Real D( 1e-12 ), kf( 1e-8 ), sigma( 1e-8 ), a( 1e-7 ), r0( 5e-8 );
   GreensFunction3DRadAbs gf( D, kf, r0, sigma, a );
 
-  Real t( 1e-3 ), r( r0 );
+  Real t( 1e-3 );
 
   Real pintr( gf.p_int_r( sigma, t ) );
   BOOST_CHECK_EQUAL( 0.0, pintr );
@@ -609,7 +609,7 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_dp_theta_at_a_is_leavea)
   Real D( 1e-12 ), kf( 1e-8 ), sigma( 1e-8 ), a( 1e-7 ), r0( 9e-8 );
   GreensFunction3DRadAbs gf( D, kf, r0, sigma, a );
 
-  Real t( 1e-4 ), r( r0 );
+  Real t( 1e-4 );
 
   Real leavea( gf.leavea(t) * M_PI * a * a * 2 );
   Real iptheta( gf.idp_theta(M_PI, a, t) * M_PI * a * a );
