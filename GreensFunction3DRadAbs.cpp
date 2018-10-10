@@ -556,7 +556,8 @@ void
 GreensFunction3DRadAbs::updateAlphaTable(const unsigned int n,
                                                   const Real t) const
 {
-    if (!(n >= 0 && n <= this->MAX_ORDER))
+    // if (!(n >= 0 && n <= this->MAX_ORDER))
+    if (n > this->MAX_ORDER)
     {
         throw std::range_error((boost::format("GreensFunction3DRadAbs: n >= 0 && n <= this->MAX_ORDER : n=%.16g, this->MAX_ORDER=%.16g") % n % this->MAX_ORDER).str());
     }
