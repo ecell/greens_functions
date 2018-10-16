@@ -204,40 +204,30 @@ includes $\cos(n\theta)$ vanishes.
             \Bigg] rdr \nonumber\\
         &=& \frac{1}{\sigma^2} \sum_{m=1}^{\infty} \Bigg[
             \frac{1}{N(\sigma\alpha_{m0})} \exp(-\alpha_{m0}^2Dt)
-            \int_\sigma^a R_{m0}(\sigma\alpha_{m0}, r) R_{m0}(\sigma\alpha_{m0}, r_0)
-            rdr \Bigg] \nonumber\\
+            R_{m0}(\sigma\alpha_{m0}, r_0)
+            \int_\sigma^a R_{m0}(\sigma\alpha_{m0}, r) rdr \Bigg] \nonumber\\
 \end{eqnarray}
-
+%
 calculating the integration,
+%
 \begin{eqnarray}
-    & & \int_\sigma^a R_{m0}(\sigma\alpha_{m0}, r) R_{m0}(\sigma\alpha_{m0}, r_0) rdr \nonumber\\
-    &=& \int_\sigma^a \left(S_{m0} J_0\left(\sigma\alpha_{m0} \frac{r}{\sigma}\right) -
-                            V_{m0} Y_0\left(\sigma\alpha_{m0} \frac{r}{\sigma}\right)\right)
-                      \left(S_{m0} J_0\left(\sigma\alpha_{m0} \frac{r_0}{\sigma}\right) -
-                            V_{m0} Y_0\left(\sigma\alpha_{m0} \frac{r_0}{\sigma}\right)\right)rdr\\
-    &=& \int_\sigma^a \Big(S_{m0} J_0(\alpha_{m0} r  ) - V_{m0} Y_0(\alpha_{m0} r  )\Big)
-                      \Big(S_{m0} J_0(\alpha_{m0} r_0) - V_{m0} Y_0(\alpha_{m0} r_0)\Big)rdr\\
-    &=& \int_\sigma^a \Big(
-            S_{m0}^2     J_0(\alpha_{m0} r) J_0(\alpha_{m0} r_0) -
-            S_{m0}V_{m0} J_0(\alpha_{m0} r) Y_0(\alpha_{m0} r_0) - \nonumber\\
-    & &     S_{m0}V_{m0} Y_0(\alpha_{m0} r) J_0(\alpha_{m0} r_0) +
-            V_{m0}^2     Y_0(\alpha_{m0} r) Y_0(\alpha_{m0} r_0)
-        \Big)rdr\\
-    &=& S_{m0}^2     J_0(\alpha_{m0} r_0) \int_\sigma^a J_0(\alpha_{m0} r) rdr -
-        S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \int_\sigma^a J_0(\alpha_{m0} r) rdr + \nonumber\\
-    & & V_{m0}^2     Y_0(\alpha_{m0} r_0) \int_\sigma^a Y_0(\alpha_{m0} r) rdr -
-        S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \int_\sigma^a Y_0(\alpha_{m0} r) rdr   \nonumber
+    & & \int_\sigma^a R_{m0}(\sigma\alpha_{m0}, r) rdr \nonumber\\
+    &=& \int_\sigma^a S_{m0}J_0(r\alpha_{m0}) - V_{m0}Y_0(r\alpha_{m0}) rdr \nonumber\\
+    &=& S_{m0} \int_\sigma^a J_0(r\alpha_{m0}) rdr -
+        V_{m0} \int_\sigma^a Y_0(r\alpha_{m0}) rdr \nonumber\\
+%
+%        S_{mn}J_n(r\alpha_{mn}) - V_{mn}Y_n(r\alpha_{mn})
 \end{eqnarray}
-
-Here, by using the following equation, we can calculate the above integral.
-
+%
+The integrations of the Bessel functions in this form are well-known.
+%
 \begin{eqnarray}
     \int xJ_0(x) dx &=& xJ_1(x)\\
     \int xY_0(x) dx &=& xY_1(x)
 \end{eqnarray}
-
+%
 By converting the variables,
-
+%
 \begin{eqnarray}
     \int_\sigma^a J_0(\alpha_{m0}r) rdr
     &=& \frac{1}{\alpha_{m0}}  \int_\sigma^a J_0(\alpha_{m0}r) \alpha_{m0}r dr \\
@@ -245,42 +235,626 @@ By converting the variables,
     &=& \frac{1}{\alpha_{m0}^2}\Big[\alpha_{m0}a J_1(\alpha_{m0}a) - \alpha_{m0}\sigma J_1(\alpha_{m0}\sigma) \Big] \\
     &=& \frac{1}{\alpha_{m0}}  \Big[aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma) \Big] \\
 \end{eqnarray}
-
-By assigning this,
-
+%
+By $J_0$ can be substituted by $Y_0$.
+Using these results, the integrations can be calculated.
+%
 \begin{eqnarray}
-    & & \Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big] \int_\sigma^a J_0(\alpha_{m0} r) rdr + \nonumber\\
-    & & \Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big] \int_\sigma^a Y_0(\alpha_{m0} r) rdr   \nonumber\\
-    &=& \frac{1}{\alpha_{m0}^2}\Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a J_1(\alpha_{m0}a) - \alpha_{m0}\sigma J_1(\alpha_{m0}\sigma) \Big] + \nonumber\\
-    & & \frac{1}{\alpha_{m0}^2}\Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a Y_1(\alpha_{m0}a) - \alpha_{m0}\sigma Y_1(\alpha_{m0}\sigma) \Big]   \nonumber\\
+    & & \int_\sigma^a R_{m0}(\sigma\alpha_{m0}, r) rdr \nonumber\\
+    &=& \frac{S_{m0}}{\alpha_{m0}} \left(aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma)\right) -
+        \frac{V_{m0}}{\alpha_{m0}} \left(aY_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma)\right) \nonumber
+\end{eqnarray}
+%
+So the survival probability become
+%
+\begin{eqnarray}
+        P_{\mathrm{surv}}(t)
+    &=& \frac{1}{\sigma^2} \sum_{m=1}^{\infty} \Bigg[
+        \frac{1}{N(\sigma\alpha_{m0})} \exp(-\alpha_{m0}^2Dt)
+        R_{m0}(\sigma\alpha_{m0}, r_0)
+        \frac{1}{\alpha_{m0}}
+        \nonumber\\
+    & & \Big(
+        S_{m0} \left(aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma)\right) -
+        V_{m0} \left(aY_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma)\right)
+        \Big)
+        \Bigg] \nonumber\\
+\end{eqnarray}
+%
+Expanding other terms...
+%
+\begin{eqnarray}
+    S_{m0} &=& \sigma(\alpha_{m0}Y'_0(\sigma\alpha_{m0}) - kY_0(\sigma\alpha_{m0})) \\
+    V_{m0} &=& \sigma(\alpha_{m0}J'_0(\sigma\alpha_{m0}) - kJ_0(\sigma\alpha_{m0})) \\
+    \frac{1}{N(\sigma\alpha_{m0})} &:=&
+        \frac{\pi^2}{2}
+        \frac{\sigma^2\alpha_{m0}^2 J^2_0(a\alpha_{m0})}
+             {C_{m0} J_0^2(a\alpha_{m0}) - V_{m0}^2} \\
+    C_{m0} &=& \sigma^2k^2 + \sigma^2\alpha_{m0}^2\\
+\end{eqnarray}
+%
+This can further be simplified,
+%
+\begin{eqnarray}
+    S_{m0} &=& -\sigma(\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0})) \\
+    V_{m0} &=& -\sigma(\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0})) \\
+    \frac{1}{N(\sigma\alpha_{m0})} &=&
+        \frac{\pi^2}{2}
+        \frac{\sigma^2\alpha_{m0}^2 J^2_0(a\alpha_{m0})}
+             {(\sigma^2k^2 + \sigma^2\alpha_{m0}^2) J_0^2(a\alpha_{m0}) -
+              \sigma^2(\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2} \\
+           &=& \frac{\pi^2}{2}
+        \frac{\alpha_{m0}^2 J^2_0(a\alpha_{m0})}
+             {(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) -
+              (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2} \\
+    R_{m0}(\sigma\alpha_{m0}, r_0) &=& S_{m0}J_0(r_0\alpha_{m0}) - V_{m0}Y_0(r_0\alpha_{m0})
+\end{eqnarray}
+%
+Substituting them all,
+%
+\begin{eqnarray}
+        P_{\mathrm{surv}}(t)
+    &=& \frac{1}{\sigma^2} \sum_{m=1}^{\infty} \Bigg[
+        \frac{1}{N(\sigma\alpha_{m0})} \exp(-\alpha_{m0}^2Dt)
+        R_{m0}(\sigma\alpha_{m0}, r_0)
+        \frac{1}{\alpha_{m0}}
+        \nonumber\\
+    & & \Big(
+        S_{m0} \left(aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma)\right) -
+        V_{m0} \left(aY_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma)\right)
+        \Big)
+        \Bigg] \nonumber\\
+    &=& \frac{1}{\sigma^2} \sum_{m=1}^{\infty}
+    \Bigg[
+        \frac{\pi^2}{2}
+        \frac{\alpha_{m0}^2 J^2_0(a\alpha_{m0})}
+             {(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) -
+              (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+        \exp(-\alpha_{m0}^2Dt)
+        \nonumber\\
+    & & \Big(S_{m0}J_0(r_0\alpha_{m0}) - V_{m0}Y_0(r_0\alpha_{m0})\Big)
+        \nonumber\\
+    & & \frac{1}{\alpha_{m0}}\Big(
+        S_{m0} \left(aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma)\right) -
+        V_{m0} \left(aY_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma)\right)
+        \Big)
+    \Bigg] \nonumber\\
+    &=& \frac{1}{\sigma^2}\frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \Bigg[
+        \frac{\alpha_{m0} J^2_0(a\alpha_{m0})}
+             {(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) -
+              (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+        \exp(-\alpha_{m0}^2Dt)
+        \nonumber\\
+    & & \Big(S_{m0}J_0(r_0\alpha_{m0}) - V_{m0}Y_0(r_0\alpha_{m0})\Big)
+        \nonumber\\
+    & & \Big(
+        S_{m0} \left(aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma)\right) -
+        V_{m0} \left(aY_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma)\right)
+        \Big)
+    \Bigg] \nonumber\\
+\end{eqnarray}
+%
+$S_{m0}$ and $V_{m0}$ have $\sigma$, and it will be canceled out with the first term $1/\sigma$.
+By defining the following functions,
+%
+\begin{eqnarray}
+    s_{m0} &=& \alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}) \\
+    v_{m0} &=& \alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0})
+\end{eqnarray}
+%
+the survival probability become
+%
+\begin{eqnarray}
+        P_{\mathrm{surv}}(t)
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \Bigg[
+        \frac{\alpha_{m0} J^2_0(a\alpha_{m0})}
+             {(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) -
+              (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+        \exp(-\alpha_{m0}^2Dt)
+        \nonumber\\
+    & & \Big(-s_{m0}J_0(r_0\alpha_{m0}) + v_{m0}Y_0(r_0\alpha_{m0})\Big)
+        \nonumber\\
+    & & \Big(
+        -s_{m0} \left(aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma)\right)
+        +v_{m0} \left(aY_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma)\right)
+        \Big)
+    \Bigg] \nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \Bigg[
+        \frac{\alpha_{m0} J^2_0(a\alpha_{m0})}
+             {(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) -
+              (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+        \exp(-\alpha_{m0}^2Dt)
+        \nonumber\\
+    & & \Big(v_{m0}Y_0(r_0\alpha_{m0}) - s_{m0}J_0(r_0\alpha_{m0})\Big)
+        \nonumber\\
+    & & \Big(
+        v_{m0} \left(aY_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma)\right) -
+        s_{m0} \left(aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma)\right)
+        \Big)
+    \Bigg]
 \end{eqnarray}
 
-Then the survival probability is
-
+Expand $s$ and $v$.
 \begin{eqnarray}
-    P_{\mathrm{surv}}(t)
-        &=& \frac{1}{\sigma^2} \frac{\pi^2}{2}\sum_{m=1}^{\infty}
-            \frac{\alpha_{m0}^2 J^2_0(a\alpha_{m0})}{(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) - (\alpha_{m0}J'_0(\sigma\alpha_{m0}) - kJ_0(\sigma\alpha_{m0}))^2}
-            \frac{\exp(-\alpha_{m0}^2Dt)}{\alpha_{m0}^2}\Bigg[\nonumber\\
-        & & \Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a J_1(\alpha_{m0}a) - \alpha_{m0}\sigma J_1(\alpha_{m0}\sigma) \Big] + \nonumber\\
-        & & \Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a Y_1(\alpha_{m0}a) - \alpha_{m0}\sigma Y_1(\alpha_{m0}\sigma) \Big]\Bigg]\nonumber\\
-        &=& \frac{\pi^2}{2\sigma^2} \sum_{m=1}^{\infty}
-            \frac{J^2_0(a\alpha_{m0}) \exp(-\alpha_{m0}^2Dt)}{(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) - (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
-            \Bigg[\nonumber\\
-        & & \Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a J_1(\alpha_{m0}a) - \alpha_{m0}\sigma J_1(\alpha_{m0}\sigma) \Big] + \nonumber\\
-        & & \Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a Y_1(\alpha_{m0}a) - \alpha_{m0}\sigma Y_1(\alpha_{m0}\sigma) \Big]\Bigg]\nonumber
+    & & v_{m0} \left(aY_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma)\right) -
+        s_{m0} \left(aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma)\right)
+        \nonumber\\
+    &=& v_{m0}aY_1(\alpha_{m0}a) - v_{m0}\sigma Y_1(\alpha_{m0}\sigma) -
+        s_{m0}aJ_1(\alpha_{m0}a) + s_{m0}\sigma J_1(\alpha_{m0}\sigma)
+        \nonumber\\
+    &=& (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))a      Y_1(a\alpha_{m0}) -
+        (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))\sigma Y_1(\sigma\alpha_{m0}) -
+        \nonumber\\
+    & & (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))a      J_1(a\alpha_{m0}) +
+        (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))\sigma J_1(\sigma\alpha_{m0})
+        \nonumber\\
+    &=& (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))a      Y_1(a\alpha_{m0}) -
+        (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))a      J_1(a\alpha_{m0}) +
+        \nonumber\\
+    & & (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))\sigma Y_1(\sigma\alpha_{m0}) -
+        (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))\sigma J_1(\sigma\alpha_{m0})
+\end{eqnarray}
+The second term will be simplified as the following.
+\begin{eqnarray}
+    & & (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))\sigma Y_1(\sigma\alpha_{m0}) -
+        (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))\sigma J_1(\sigma\alpha_{m0})
+        \nonumber\\
+    &=& \alpha_{m0}J_1(\sigma\alpha_{m0})\sigma Y_1(\sigma\alpha_{m0}) +
+        k          J_0(\sigma\alpha_{m0})\sigma Y_1(\sigma\alpha_{m0}) -
+        \nonumber\\
+    & & \alpha_{m0}Y_1(\sigma\alpha_{m0})\sigma J_1(\sigma\alpha_{m0}) -
+        k          Y_0(\sigma\alpha_{m0})\sigma J_1(\sigma\alpha_{m0})
+        \nonumber\\
+    &=& \alpha_{m0}\sigma (J_1(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0}) -
+                           Y_1(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0})) +
+        \nonumber\\
+    & & k\sigma (J_0(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0}) -
+                 Y_0(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0}))
+        \nonumber\\
+    &=& k\sigma (J_0(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0}) -
+                 Y_0(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0}))
+\end{eqnarray}
+%
+Here, there is a well-known equation exists,
+%
+\begin{eqnarray}
+    & &                J_0(x)Y_0'(x) - Y_0(x)J_0'(x) = \frac{2}{\pi x} \nonumber\\
+    &\Leftrightarrow& -J_0(x)Y_1 (x) + Y_0(x)J_1 (x) = \frac{2}{\pi x} \nonumber\\
+    &\Leftrightarrow&  Y_0(x)J_1 (x) - J_0(x)Y_1 (x) = \frac{2}{\pi x} \nonumber
+\end{eqnarray}
+%
+This equation can be used to further simplify this term.
+%
+\begin{eqnarray}
+    & & (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))\sigma Y_1(\sigma\alpha_{m0}) -
+        (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))\sigma J_1(\sigma\alpha_{m0})
+        \nonumber\\
+    &=& k\sigma (J_0(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0}) -
+                 Y_0(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0}))
+        \nonumber\\
+    &=& k\sigma\frac{-2}{\pi\sigma\alpha_{m0}}
+        \nonumber\\
+    &=& \frac{-2k}{\pi\alpha_{m0}}
+\end{eqnarray}
+%
+So the last term in the survival probability is
+%
+\begin{eqnarray}
+    & & v_{m0} \left(aY_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma)\right) -
+        s_{m0} \left(aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma)\right)
+        \nonumber\\
+    &=& (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))a      Y_1(a\alpha_{m0}) -
+        (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))a      J_1(a\alpha_{m0}) +
+        \nonumber\\
+    & & (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))\sigma Y_1(\sigma\alpha_{m0}) -
+        (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))\sigma J_1(\sigma\alpha_{m0})
+        \nonumber\\
+    &=& (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))a      Y_1(a\alpha_{m0}) -
+        (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))a      J_1(a\alpha_{m0}) +
+        \nonumber\\
+    & & \frac{-2k}{\pi\alpha_{m0}}
+\end{eqnarray}
+%
+The first term in the above is
+%
+\begin{eqnarray}
+    & & (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))a Y_1(a\alpha_{m0}) -
+        (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))a J_1(a\alpha_{m0}) +
+        \nonumber\\
+    &=& (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))a Y_1(a\alpha_{m0}) -
+        (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))a J_1(a\alpha_{m0}) +
+        \nonumber\\
+    &=& \alpha_{m0}J_1(\sigma\alpha_{m0})a Y_1(a\alpha_{m0}) + kJ_0(\sigma\alpha_{m0})a Y_1(a\alpha_{m0}) -
+        \alpha_{m0}Y_1(\sigma\alpha_{m0})a J_1(a\alpha_{m0}) - kY_0(\sigma\alpha_{m0})a J_1(a\alpha_{m0})
+        \nonumber\\
+    &=& a\alpha_{m0}J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) + akJ_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) -
+        a\alpha_{m0}Y_1(\sigma\alpha_{m0})J_1(a\alpha_{m0}) - akY_0(\sigma\alpha_{m0})J_1(a\alpha_{m0})
+        \nonumber\\
+    &=& a\alpha_{m0}(J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) - Y_1(\sigma\alpha_{m0})J_1(a\alpha_{m0}))
+        + ak(J_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) -Y_0(\sigma\alpha_{m0})J_1(a\alpha_{m0}))
+        \nonumber\\
+\end{eqnarray}
+%
+Then
+%
+\begin{eqnarray}
+        P_{\mathrm{surv}}(t)
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \Bigg[
+        \frac{\alpha_{m0} J^2_0(a\alpha_{m0})}
+             {(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) -
+              (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+        \exp(-\alpha_{m0}^2Dt)
+        \nonumber\\
+    & & \Big(v_{m0}Y_0(r_0\alpha_{m0}) - s_{m0}J_0(r_0\alpha_{m0})\Big)
+        \nonumber\\
+    & & \Big(
+        a\alpha_{m0}(J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) - Y_1(\sigma\alpha_{m0})J_1(a\alpha_{m0})) + \nonumber\\
+        \nonumber\\
+    & & ak          (J_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) - Y_0(\sigma\alpha_{m0})J_1(a\alpha_{m0}))
+        - \frac{2k}{\pi\alpha_{m0}}
+        \Big)
+    \Bigg]
+\end{eqnarray}
+%
+and
+%
+\begin{eqnarray}
+    & & v_{m0}Y_0(r_0\alpha_{m0}) - s_{m0}J_0(r_0\alpha_{m0})
+    \nonumber\\
+    &=& (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0})) Y_0(r_0\alpha_{m0}) -
+        (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0})) J_0(r_0\alpha_{m0})
+    \nonumber\\
+    &=& \alpha_{m0}J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) -
+    \nonumber\\
+    & & \alpha_{m0}Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}) - kY_0(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0})
+    \nonumber\\
+    &=& \alpha_{m0}(J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0})) +
+    \nonumber\\
+    & & k(J_0(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_0(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}))
 \end{eqnarray}
 
+Finally,
+\begin{eqnarray}
+    & & P_{\mathrm{surv}}(t)
+        \nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \Bigg[
+        \frac{a\alpha_{m0} J^2_0(a\alpha_{m0})}
+             {(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) -
+              (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+        \exp(-\alpha_{m0}^2Dt)
+        \nonumber\\
+    & & \Big(
+        \alpha_{m0}(J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0})) +
+        k(J_0(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_0(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}))
+        \Big)
+        \nonumber\\
+    & & \Big(
+        \alpha_{m0}(J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) - Y_1(\sigma\alpha_{m0})J_1(a\alpha_{m0})) +
+        k          (J_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) - Y_0(\sigma\alpha_{m0})J_1(a\alpha_{m0}))
+        - \frac{2k}{\pi a\alpha_{m0}}
+        \Big)
+    \Bigg]\nonumber
+\end{eqnarray}
+%
+ok, expand the last term except the constant term.
+%
+\begin{eqnarray}
+    & & \Big(
+        \alpha_{m0}(J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0})) +
+        k(J_0(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_0(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}))
+        \Big) \times
+        \nonumber\\
+    & & \Big(
+        \alpha_{m0}(J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) - Y_1(\sigma\alpha_{m0})J_1(a\alpha_{m0})) +
+        k          (J_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) - Y_0(\sigma\alpha_{m0})J_1(a\alpha_{m0}))
+        \Big)
+        \nonumber\\
+    &=& \alpha_{m0}^2
+        (J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}))
+        \times
+        (J_1(\sigma\alpha_{m0}) Y_1(a  \alpha_{m0}) - Y_1(\sigma\alpha_{m0}) J_1(a  \alpha_{m0}))
+        \nonumber\\
+    &+& k^2
+        (J_0(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_0(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}))
+        \times
+        (J_0(\sigma\alpha_{m0}) Y_1(a  \alpha_{m0}) - Y_0(\sigma\alpha_{m0}) J_1(a  \alpha_{m0}))
+        \nonumber\\
+    &+& k\alpha_{m0}
+        \Big(
+        (J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}))
+        \times
+        (J_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) - Y_0(\sigma\alpha_{m0})J_1(a\alpha_{m0}))
+        \nonumber\\
+    &+& (J_0(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_0(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}))
+        \times
+        (J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) - Y_1(\sigma\alpha_{m0})J_1(a\alpha_{m0}))
+        \Big)
+\end{eqnarray}
+%
+extracting the last term...
+%
+\begin{eqnarray}
+    & & k\alpha_{m0}
+        \Big(
+        (J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}))
+        \times
+        (J_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) - Y_0(\sigma\alpha_{m0})J_1(a\alpha_{m0}))
+        \nonumber\\
+    &+& (J_0(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_0(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}))
+        \times
+        (J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) - Y_1(\sigma\alpha_{m0})J_1(a\alpha_{m0}))
+        \Big)
+        \nonumber\\
+    &=& k\alpha_{m0}\Big( \nonumber\\
+    & & J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) J_0(\sigma\alpha_{m0}) Y_1(a  \alpha_{m0}) \nonumber\\
+    &-& J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) Y_0(\sigma\alpha_{m0}) J_1(a  \alpha_{m0}) \nonumber\\
+    &-& Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}) J_0(\sigma\alpha_{m0}) Y_1(a  \alpha_{m0}) \nonumber\\
+    &+& Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}) Y_0(\sigma\alpha_{m0}) J_1(a  \alpha_{m0}) \nonumber\\
+    &+& J_0(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) J_1(\sigma\alpha_{m0}) Y_1(a  \alpha_{m0}) \nonumber\\
+    &-& J_0(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) Y_1(\sigma\alpha_{m0}) J_1(a  \alpha_{m0}) \nonumber\\
+    &-& Y_0(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}) J_1(\sigma\alpha_{m0}) Y_1(a  \alpha_{m0}) \nonumber\\
+    &+& Y_0(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}) Y_1(\sigma\alpha_{m0}) J_1(a  \alpha_{m0}) \nonumber\\
+    & & \Big)
+    \nonumber\\
+    &=& k\alpha_{m0}\Big( \nonumber\\
+    & & J_0(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) Y_1(a  \alpha_{m0}) \nonumber\\
+    &+& J_0(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) Y_1(a  \alpha_{m0}) \nonumber\\
+    &+& Y_0(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}) J_1(a  \alpha_{m0}) \nonumber\\
+    &+& Y_0(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}) J_1(a  \alpha_{m0}) \nonumber\\
+    &-& Y_0(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) J_1(a  \alpha_{m0}) \nonumber\\
+    &-& Y_0(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}) Y_1(a  \alpha_{m0}) \nonumber\\
+    &-& J_0(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}) Y_1(a  \alpha_{m0}) \nonumber\\
+    &-& J_0(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) J_1(a  \alpha_{m0}) \nonumber\\
+    & & \Big)
+    \nonumber\\
+    &=& k\alpha_{m0}\Big( \nonumber\\
+    & & 2J_0(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) Y_1(a  \alpha_{m0}) \nonumber\\
+    &+& 2Y_0(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}) J_1(a  \alpha_{m0}) \nonumber\\
+    &-& Y_0(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0}) (J_0(r_0\alpha_{m0}) Y_1(a  \alpha_{m0}) + Y_0(r_0\alpha_{m0}) J_1(a  \alpha_{m0})) \nonumber\\
+    &-& J_0(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0}) (J_0(r_0\alpha_{m0}) Y_1(a  \alpha_{m0}) + Y_0(r_0\alpha_{m0}) J_1(a  \alpha_{m0})) \nonumber\\
+    & & \Big)
+    \nonumber\\
+    &=& k\alpha_{m0}\Big( \nonumber\\
+    & & 2J_0(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0}) Y_0(r_0\alpha_{m0}) Y_1(a  \alpha_{m0}) \nonumber\\
+    &+& 2Y_0(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0}) J_0(r_0\alpha_{m0}) J_1(a  \alpha_{m0}) \nonumber\\
+    &-& (Y_0(\sigma\alpha_{m0}) J_1(\sigma\alpha_{m0}) + J_0(\sigma\alpha_{m0}) Y_1(\sigma\alpha_{m0})) (J_0(r_0\alpha_{m0}) Y_1(a  \alpha_{m0}) + Y_0(r_0\alpha_{m0}) J_1(a  \alpha_{m0})) \nonumber\\
+    & & \Big)
+\end{eqnarray}
+
+% calculating the integration,
+% \begin{eqnarray}
+%     & & \int_\sigma^a R_{m0}(\sigma\alpha_{m0}, r) R_{m0}(\sigma\alpha_{m0}, r_0) rdr \nonumber\\
+%     &=& \int_\sigma^a \left(S_{m0} J_0\left(\sigma\alpha_{m0} \frac{r}{\sigma}\right) -
+%                             V_{m0} Y_0\left(\sigma\alpha_{m0} \frac{r}{\sigma}\right)\right)
+%                       \left(S_{m0} J_0\left(\sigma\alpha_{m0} \frac{r_0}{\sigma}\right) -
+%                             V_{m0} Y_0\left(\sigma\alpha_{m0} \frac{r_0}{\sigma}\right)\right)rdr\\
+%     &=& \int_\sigma^a \Big(S_{m0} J_0(\alpha_{m0} r  ) - V_{m0} Y_0(\alpha_{m0} r  )\Big)
+%                       \Big(S_{m0} J_0(\alpha_{m0} r_0) - V_{m0} Y_0(\alpha_{m0} r_0)\Big)rdr\\
+%     &=& \int_\sigma^a \Big(
+%             S_{m0}^2     J_0(\alpha_{m0} r) J_0(\alpha_{m0} r_0) -
+%             S_{m0}V_{m0} J_0(\alpha_{m0} r) Y_0(\alpha_{m0} r_0) - \nonumber\\
+%     & &     S_{m0}V_{m0} Y_0(\alpha_{m0} r) J_0(\alpha_{m0} r_0) +
+%             V_{m0}^2     Y_0(\alpha_{m0} r) Y_0(\alpha_{m0} r_0)
+%         \Big)rdr\\
+%     &=& S_{m0}^2     J_0(\alpha_{m0} r_0) \int_\sigma^a J_0(\alpha_{m0} r) rdr -
+%         S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \int_\sigma^a J_0(\alpha_{m0} r) rdr + \nonumber\\
+%     & & V_{m0}^2     Y_0(\alpha_{m0} r_0) \int_\sigma^a Y_0(\alpha_{m0} r) rdr -
+%         S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \int_\sigma^a Y_0(\alpha_{m0} r) rdr   \nonumber
+% \end{eqnarray}
+% 
+% Here, by using the following equation, we can calculate the above integral.
+% 
+% \begin{eqnarray}
+%     \int xJ_0(x) dx &=& xJ_1(x)\\
+%     \int xY_0(x) dx &=& xY_1(x)
+% \end{eqnarray}
+% %
+% By converting the variables,
+% %
+% \begin{eqnarray}
+%     \int_\sigma^a J_0(\alpha_{m0}r) rdr
+%     &=& \frac{1}{\alpha_{m0}}  \int_\sigma^a J_0(\alpha_{m0}r) \alpha_{m0}r dr \\
+%     &=& \frac{1}{\alpha_{m0}^2}\int_{\alpha_{m0}\sigma}^{\alpha_{m0}a} J_0(x) x dx \\
+%     &=& \frac{1}{\alpha_{m0}^2}\Big[\alpha_{m0}a J_1(\alpha_{m0}a) - \alpha_{m0}\sigma J_1(\alpha_{m0}\sigma) \Big] \\
+%     &=& \frac{1}{\alpha_{m0}}  \Big[aJ_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma) \Big] \\
+% \end{eqnarray}
+% %
+% By assigning this,
+% %
+% \begin{eqnarray}
+%     & & \Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big] \int_\sigma^a J_0(\alpha_{m0} r) rdr + \nonumber\\
+%     & & \Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big] \int_\sigma^a Y_0(\alpha_{m0} r) rdr   \nonumber\\
+%     &=& \frac{1}{\alpha_{m0}}\Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big]\Big[a J_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma) \Big] + \nonumber\\
+%     & & \frac{1}{\alpha_{m0}}\Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big]\Big[a Y_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma) \Big]   \nonumber\\
+% \end{eqnarray}
+% 
+% Then the survival probability become
+% \begin{eqnarray}
+%     P_{\mathrm{surv}}(t)
+%         &=& \frac{1}{\sigma^2} \frac{\pi^2}{2}\sum_{m=1}^{\infty}
+%             \frac{\alpha_{m0}^2 J^2_0(a\alpha_{m0})}{(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) - (\alpha_{m0}J'_0(\sigma\alpha_{m0}) - kJ_0(\sigma\alpha_{m0}))^2}
+%             \frac{\exp(-\alpha_{m0}^2Dt)}{\alpha_{m0}}\Bigg[\nonumber\\
+%         & & \Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big]\Big[a J_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma) \Big] + \nonumber\\
+%         & & \Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big]\Big[a Y_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma) \Big]\Bigg]\nonumber\\
+%         &=& \frac{\pi^2}{2\sigma^2} \sum_{m=1}^{\infty}
+%             \frac{\alpha_{m0}J^2_0(a\alpha_{m0}) \exp(-\alpha_{m0}^2Dt)}{(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) - (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+%             \Bigg[\nonumber\\
+%         & & \Big[S_{m0}^2 J_0(\alpha_{m0} r_0) - S_{m0}V_{m0} Y_0(\alpha_{m0} r_0) \Big]\Big[a J_1(\alpha_{m0}a) - \sigma J_1(\alpha_{m0}\sigma) \Big] + \nonumber\\
+%         & & \Big[V_{m0}^2 Y_0(\alpha_{m0} r_0) - S_{m0}V_{m0} J_0(\alpha_{m0} r_0) \Big]\Big[a Y_1(\alpha_{m0}a) - \sigma Y_1(\alpha_{m0}\sigma) \Big]\Bigg]\nonumber
+% \end{eqnarray}
+% %
+% By assigning these equations into the above,
+% %
+% \begin{eqnarray}
+%     S_{m0} &=& \sigma(-\alpha_{m0}Y_1(\sigma\alpha_{m0}) - kY_0(\sigma\alpha_{m0})) \\
+%     V_{m0} &=& \sigma(-\alpha_{m0}J_1(\sigma\alpha_{m0}) - kJ_0(\sigma\alpha_{m0})) \\
+% \end{eqnarray}
+% %
+% $\sigma$'s in the terms composed of $S_{m0}$ and $V_{m0}$ are canceled out by the first term
+% $\pi^2/2\sigma^2$. Also, they always appears as a pair of S and V (or themselves), the
+% sign also can be removed.
+% By converting $S$ and $V$ to $s$ and $v$, respectively,
+% %
+% \begin{eqnarray}
+%     s_{m0} &=& \alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}) \\
+%     v_{m0} &=& \alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0})
+% \end{eqnarray}
+% %
+% It can be converted into
+% %
+% \begin{eqnarray}
+%     P_{\mathrm{surv}}(t)
+%     &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+%         \frac{J^2_0(a\alpha_{m0}) \exp(-\alpha_{m0}^2Dt)}{(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) - (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+%         \Bigg[\nonumber\\
+%     & & \Big[s_{m0}^2 J_0(\alpha_{m0} r_0) - s_{m0}v_{m0} Y_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a J_1(\alpha_{m0}a) - \alpha_{m0}\sigma J_1(\alpha_{m0}\sigma) \Big] + \nonumber\\
+%     & & \Big[v_{m0}^2 Y_0(\alpha_{m0} r_0) - s_{m0}v_{m0} J_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a Y_1(\alpha_{m0}a) - \alpha_{m0}\sigma Y_1(\alpha_{m0}\sigma) \Big]\Bigg]\nonumber\\
+%     &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+%         \frac{J^2_0(a\alpha_{m0}) \exp(-\alpha_{m0}^2Dt)}{(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) - (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+%         \Bigg[\nonumber\\
+%     & & s_{m0}\Big[s_{m0} J_0(\alpha_{m0} r_0) - v_{m0} Y_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a J_1(\alpha_{m0}a) - \alpha_{m0}\sigma J_1(\alpha_{m0}\sigma) \Big] + \nonumber\\
+%     & & v_{m0}\Big[v_{m0} Y_0(\alpha_{m0} r_0) - s_{m0} J_0(\alpha_{m0} r_0) \Big]\Big[\alpha_{m0}a Y_1(\alpha_{m0}a) - \alpha_{m0}\sigma Y_1(\alpha_{m0}\sigma) \Big]\Bigg]\nonumber\\
+%     &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+%         \frac{\alpha_{m0}J^2_0(a\alpha_{m0}) \exp(-\alpha_{m0}^2Dt)}{(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) - (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+%         \nonumber\\
+%     & & \Big[s_{m0} J_0(\alpha_{m0} r_0) - v_{m0} Y_0(\alpha_{m0} r_0) \Big]\nonumber\\
+%     & & \Bigg[s_{m0}\Big[a J_1(a\alpha_{m0}) - \sigma J_1(\sigma\alpha_{m0}) \Big] -
+%               v_{m0}\Big[a Y_1(a\alpha_{m0}) - \sigma Y_1(\sigma\alpha_{m0}) \Big]\Bigg]\nonumber\\
+% \end{eqnarray}
+% %
+% Expanding the last term...
+% %
+% \begin{eqnarray}
+%     & & s_{m0}\Big[a J_1(a\alpha_{m0}) - \sigma J_1(\sigma\alpha_{m0}) \Big] -
+%         v_{m0}\Big[a Y_1(a\alpha_{m0}) - \sigma Y_1(\sigma\alpha_{m0}) \Big]\nonumber\\
+%     &=& s_{m0}a J_1(a\alpha_{m0}) - s_{m0}\sigma J_1(\sigma\alpha_{m0}) -
+%         v_{m0}a Y_1(a\alpha_{m0}) + v_{m0}\sigma Y_1(\sigma\alpha_{m0})\nonumber\\
+%     &=& a (s_{m0}J_1(a\alpha_{m0}) - v_{m0}Y_1(a\alpha_{m0})) -
+%         \sigma(s_{m0} J_1(\sigma\alpha_{m0}) - v_{m0} Y_1(\sigma\alpha_{m0}))\nonumber\\
+% \end{eqnarray}
+% %
+% The second term is
+% %
+% \begin{eqnarray}
+%     & & s_{m0} J_1(\sigma\alpha_{m0}) - v_{m0} Y_1(\sigma\alpha_{m0})\nonumber\\
+%     &=& (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))J_1(\sigma\alpha_{m0}) - \nonumber\\
+%     & & (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))Y_1(\sigma\alpha_{m0})\nonumber\\
+%     &=& \alpha_{m0} Y_1(\sigma\alpha_{m0})J_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0})J_1(\sigma\alpha_{m0}) - \nonumber\\
+%     & & \alpha_{m0} J_1(\sigma\alpha_{m0})Y_1(\sigma\alpha_{m0}) - kJ_0(\sigma\alpha_{m0})Y_1(\sigma\alpha_{m0})\nonumber\\
+%     &=& \alpha_{m0}(Y_1(\sigma\alpha_{m0})J_1(\sigma\alpha_{m0}) - J_1(\sigma\alpha_{m0})Y_1(\sigma\alpha_{m0})) + \nonumber\\
+%     & & k(Y_0(\sigma\alpha_{m0})J_1(\sigma\alpha_{m0}) - J_0(\sigma\alpha_{m0})Y_1(\sigma\alpha_{m0})) \nonumber\\
+%     &=& k(Y_0(\sigma\alpha_{m0})J_1(\sigma\alpha_{m0}) - J_0(\sigma\alpha_{m0})Y_1(\sigma\alpha_{m0})) \nonumber\\
+% \end{eqnarray}
+% %
+% This equation can be used to simplify this
+% %
+% \begin{eqnarray}
+%     & &                J_0(x)Y_0'(x) - Y_0(x)J_0'(x) = \frac{2}{\pi x} \nonumber\\
+%     &\Leftrightarrow& -J_0(x)Y_1 (x) + Y_0(x)J_1 (x) = \frac{2}{\pi x} \nonumber\\
+%     &\Leftrightarrow&  Y_0(x)J_1 (x) - J_0(x)Y_1 (x) = \frac{2}{\pi x} \nonumber
+% \end{eqnarray}
+% %
+% So
+% %
+% \begin{eqnarray}
+%     & & s_{m0} J_1(\sigma\alpha_{m0}) - v_{m0} Y_1(\sigma\alpha_{m0})\nonumber\\
+%     &=& k(Y_0(\sigma\alpha_{m0})J_1(\sigma\alpha_{m0}) - J_0(\sigma\alpha_{m0})Y_1(\sigma\alpha_{m0})) \nonumber\\
+%     &=& \frac{2k}{\pi\sigma\alpha_{m0}}
+% \end{eqnarray}
+% %
+% and
+% %
+% \begin{eqnarray}
+%     & & s_{m0}\Big[a J_1(a\alpha_{m0}) - \sigma J_1(\sigma\alpha_{m0}) \Big] -
+%         v_{m0}\Big[a Y_1(a\alpha_{m0}) - \sigma Y_1(\sigma\alpha_{m0}) \Big]\nonumber\\
+%     &=& a (s_{m0}J_1(a\alpha_{m0}) - v_{m0}Y_1(a\alpha_{m0})) -
+%         \sigma(s_{m0} J_1(\sigma\alpha_{m0}) - v_{m0} Y_1(\sigma\alpha_{m0}))\nonumber\\
+%     &=& a (s_{m0}J_1(a\alpha_{m0}) - v_{m0}Y_1(a\alpha_{m0})) -
+%         \sigma\frac{2k}{\pi\sigma\alpha_{m0}}\nonumber\\
+%     &=& a (s_{m0}J_1(a\alpha_{m0}) - v_{m0}Y_1(a\alpha_{m0})) -
+%         \frac{2k}{\pi\alpha_{m0}}\nonumber\\
+% \end{eqnarray}
+% %
+% expanding the first term,
+% %
+% \begin{eqnarray}
+%     & & s_{m0}J_1(a\alpha_{m0}) - v_{m0}Y_1(a\alpha_{m0})
+%     \nonumber\\
+%     &=& (\alpha_{m0}Y_1(\sigma\alpha_{m0}) + kY_0(\sigma\alpha_{m0}))J_1(a\alpha_{m0}) -
+%         \nonumber\\
+%     & & (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))Y_1(a\alpha_{m0})
+%         \nonumber\\
+%     &=& \alpha_{m0}Y_1(\sigma\alpha_{m0})J_1(a\alpha_{m0}) +
+%         k          Y_0(\sigma\alpha_{m0})J_1(a\alpha_{m0}) -
+%         \nonumber\\
+%     & & \alpha_{m0}J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) +
+%         k          J_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0})
+%         \nonumber\\
+%     &=& 2\alpha_{m0}J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) +
+%         \nonumber\\
+%     & & k(Y_0(\sigma\alpha_{m0})J_1(a\alpha_{m0}) -
+%           J_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0}))
+%         \nonumber\\
+% \end{eqnarray}
+% %
+% So
+% %
+% \begin{eqnarray}
+%     & & s_{m0}\Big[a J_1(a\alpha_{m0}) - \sigma J_1(\sigma\alpha_{m0}) \Big] -
+%         v_{m0}\Big[a Y_1(a\alpha_{m0}) - \sigma Y_1(\sigma\alpha_{m0}) \Big]\nonumber\\
+%     &=& a (s_{m0}J_1(a\alpha_{m0}) - v_{m0}Y_1(a\alpha_{m0})) -
+%         \frac{2k}{\pi\alpha_{m0}}\nonumber\\
+%     &=& a (2\alpha_{m0}J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) +
+%         k(Y_0(\sigma\alpha_{m0})J_1(a\alpha_{m0}) -
+%           J_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0}))) -
+%         \frac{2k}{\pi\alpha_{m0}}\nonumber\\
+%     &=& 2a\alpha_{m0}J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) +
+%         \nonumber\\
+%     & & ak(Y_0(\sigma\alpha_{m0})J_1(a\alpha_{m0}) -
+%           J_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0})) -
+%         \nonumber\\
+%     & & \frac{2k}{\pi\alpha_{m0}}\nonumber\\
+% \end{eqnarray}
+% %
+% The survival probability is
+% %
+% \begin{eqnarray}
+%     P_{\mathrm{surv}}(t)
+%     &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+%         \frac{\alpha_{m0}J^2_0(a\alpha_{m0}) \exp(-\alpha_{m0}^2Dt)}{(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) - (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+%         \nonumber\\
+%     & & \Big[s_{m0} J_0(\alpha_{m0} r_0) - v_{m0} Y_0(\alpha_{m0} r_0) \Big]\Bigg[\nonumber\\
+%     & & s_{m0}\Big[a J_1(a\alpha_{m0}) - \sigma J_1(\sigma\alpha_{m0}) \Big] -
+%         v_{m0}\Big[a Y_1(a\alpha_{m0}) - \sigma Y_1(\sigma\alpha_{m0}) \Big]\Bigg]\nonumber\\
+%     &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+%         \frac{\alpha_{m0}J^2_0(a\alpha_{m0}) \exp(-\alpha_{m0}^2Dt)}{(k^2 + \alpha_{m0}^2) J_0^2(a\alpha_{m0}) - (\alpha_{m0}J_1(\sigma\alpha_{m0}) + kJ_0(\sigma\alpha_{m0}))^2}
+%         \nonumber\\
+%     & & \Big[s_{m0} J_0(\alpha_{m0} r_0) - v_{m0} Y_0(\alpha_{m0} r_0) \Big]\nonumber\\
+%     & & \Bigg[
+%         2a\alpha_{m0}J_1(\sigma\alpha_{m0})Y_1(a\alpha_{m0}) +
+%         ak(Y_0(\sigma\alpha_{m0})J_1(a\alpha_{m0}) -
+%            J_0(\sigma\alpha_{m0})Y_1(a\alpha_{m0})) -
+%         \frac{2k}{\pi\alpha_{m0}}  \Bigg]
+% \end{eqnarray}
 
 
-%     R_{mn}(\beta_{mn}, r) &=& S_{mn}J_n\left(\beta_{mn} \frac{r}{\sigma}\right) -
-%                               V_{mn}Y_n\left(\beta_{mn} \frac{r}{\sigma}\right) \\
-%     R_{m0}(\beta_{m0}, r) &=& S_{m0}J_n\left(\beta_{m0} \frac{r}{\sigma}\right) -
-%                               V_{m0}Y_n\left(\beta_{m0} \frac{r}{\sigma}\right) \\
-%     R_{m0}(\beta_{m0}, r) &=& S_{m0} J_n\left(\beta_{m0} \frac{r}{\sigma}\right) -
-%                               V_{m0} Y_n\left(\beta_{m0} \frac{r}{\sigma}\right) \\
-%     S_{m0} &:=& -\beta_{m0}Y_1(\beta_{m0}) - \sigma kY_0(\beta_{m0}) \\
-%     V_{m0} &:=& -\beta_{m0}J_1(\beta_{m0}) - \sigma kJ_0(\beta_{m0}) \\
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
