@@ -82,69 +82,52 @@ void GreensFunction2DRadAbs::clearAlphaTable() const
 
 // The method evaluates the equation for finding the alphas for given alpha. This
 // is needed to find the alpha's at which the expression is zero -> alpha is the root.
-Real
-GreensFunction2DRadAbs::f_alpha0( const Real alpha ) const
+Real GreensFunction2DRadAbs::f_alpha0(const Real alpha) const
 {
+    const Real a    (this->geta());
+    const Real sigma(this->getSigma());
+    const Real h    (this->geth());
 
-    const Real a( this->geta() );
-    const Real sigma( getSigma() );
-    const Real h( this->geth() );
-    const Real s_An( sigma * alpha );
-    const Real a_An( a * alpha );
-    // Needed? TODO
-//  const Real h_s( h * sigma);
+    const Real sigma_alpha(sigma * alpha);
+    const Real     a_alpha(a     * alpha);
 
-    const Real J0_s_An (gsl_sf_bessel_J0(s_An));
-    const Real J1_s_An (gsl_sf_bessel_J1(s_An));
-    const Real J0_a_An (gsl_sf_bessel_J0(a_An));
+    const Real J0_sigma_alpha(gsl_sf_bessel_J0(sigma_alpha));
+    const Real J1_sigma_alpha(gsl_sf_bessel_J1(sigma_alpha));
+    const Real J0_a_alpha    (gsl_sf_bessel_J0(a_alpha));
 
-    const Real Y0_s_An (gsl_sf_bessel_Y0(s_An));
-    const Real Y1_s_An (gsl_sf_bessel_Y1(s_An));
-    const Real Y0_a_An (gsl_sf_bessel_Y0(a_An));
+    const Real Y0_sigma_alpha(gsl_sf_bessel_Y0(sigma_alpha));
+    const Real Y1_sigma_alpha(gsl_sf_bessel_Y1(sigma_alpha));
+    const Real Y0_a_alpha    (gsl_sf_bessel_Y0(a_alpha));
 
-//  const double rho1 ( ( (h_s * J0_s_An) + (s_An * J1_s_An) ) * Y0_a_An );
-//  const double rho2 ( ( (h_s * Y0_s_An) + (s_An * Y1_s_An) ) * J0_a_An );
-//  return (rho1 - rho2);
-
-    // Sigma can be divided out, roots will remain same:
-    // (Note: actually double checked this).
-    const Real rho1 ( ( (h * J0_s_An) + (alpha * J1_s_An) ) * Y0_a_An );
-    const Real rho2 ( ( (h * Y0_s_An) + (alpha * Y1_s_An) ) * J0_a_An );
-
+    const Real rho1((h * J0_sigma_alpha + alpha * J1_sigma_alpha) * Y0_a_alpha);
+    const Real rho2((h * Y0_sigma_alpha + alpha * Y1_sigma_alpha) * J0_a_alpha);
     return rho1 - rho2;
 }
 
 // f_alpha() Calculates the value of the mathematical function f_alpha(). The
 // roots (y=0) of this function are constants in the Green's Functions.
-Real GreensFunction2DRadAbs::f_alpha( const Real alpha,
-                                                    const Integer n ) const
+Real GreensFunction2DRadAbs::f_alpha(const Real alpha, const Integer n) const
 {
+    const Real a    (this->geta());
+    const Real sigma(this->getSigma());
+    const Real h    (this->geth());
 
-    const Real a( this->geta() );
-    const Real sigma( getSigma() );
-    const Real h( this->geth() );
-    const Real s_An( sigma * alpha );
-    const Real a_An( a * alpha );
-    const Real realn( static_cast<Real>( n ) );
-    const Real h_sigma( h * sigma);
+    const Real h_sigma_minus_n(h * sigma - n);
 
-    const Real Jn_s_An (gsl_sf_bessel_Jn(n,s_An));
-    const Real Jn1_s_An (gsl_sf_bessel_Jn(n+1,s_An));
-    const Real Jn_a_An (gsl_sf_bessel_Jn(n,a_An));
+    const Real sigma_alpha(sigma * alpha);
+    const Real     a_alpha(a     * alpha);
 
-    const Real Yn_s_An (gsl_sf_bessel_Yn(n,s_An));
-    const Real Yn1_s_An (gsl_sf_bessel_Yn(n+1,s_An));
-    const Real Yn_a_An (gsl_sf_bessel_Yn(n,a_An));
+    const Real Jn_sigma_alpha (gsl_sf_bessel_Jn(n,  sigma_alpha));
+    const Real Jn1_sigma_alpha(gsl_sf_bessel_Jn(n+1,sigma_alpha));
+    const Real Jn_a_alpha     (gsl_sf_bessel_Jn(n,  a_alpha));
 
-    const Real rho1 ( ( (h_sigma * Jn_s_An) + (s_An * Jn1_s_An) - realn*Jn_s_An ) * Yn_a_An );
-    const Real rho2 ( ( (h_sigma * Yn_s_An) + (s_An * Yn1_s_An) - realn*Yn_s_An ) * Jn_a_An );
-    return (rho1 - rho2);
+    const Real Yn_sigma_alpha (gsl_sf_bessel_Yn(n,  sigma_alpha));
+    const Real Yn1_sigma_alpha(gsl_sf_bessel_Yn(n+1,sigma_alpha));
+    const Real Yn_a_alpha     (gsl_sf_bessel_Yn(n,  a_alpha));
 
-//  Or..?
-//  const double rho1 ( ( ((h*sigma-realn) * Jn_s_An) + (s_An * Jn1_s_An) ) * Yn_a_An );
-//  const double rho2 ( ( ((h*sigma-realn) * Yn_s_An) + (s_An * Yn1_s_An) ) * Jn_a_An );
-//  return (rho1 - rho2);
-
+    const Real rho1((h_sigma_minus_n * Jn_sigma_alpha + sigma_alpha * Jn1_sigma_alpha) * Yn_a_alpha);
+    const Real rho2((h_sigma_minus_n * Yn_sigma_alpha + sigma_alpha * Yn1_sigma_alpha) * Jn_a_alpha);
+    return rho1 - rho2;
 }
 
 // calculates the constant part of the i-th term for the survival probability
