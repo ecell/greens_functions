@@ -21,5 +21,7 @@ foreach(TEST_NAME ${TEST_NAMES})
 endforeach(TEST_NAME)
 
 
-add_executable(dump_GreensFunction2DRadAbs dump_GreensFunction2DRadAbs.cpp)
-target_link_libraries(dump_GreensFunction2DRadAbs greens_functions)
+# add_executable(dump_GreensFunction2DRadAbs dump_GreensFunction2DRadAbs.cpp)
+# target_link_libraries(dump_GreensFunction2DRadAbs greens_functions)
+add_executable(dump_Psurv_GF2DRA dump_Psurv_GF2DRA.cpp)
+target_link_libraries(dump_Psurv_GF2DRA greens_functions)
