@@ -9,8 +9,6 @@
 namespace greens_functions
 {
 
-typedef std::vector<Real> RealVector;
-
 //static Logger& _log(Logger::get_logger("funcSum"));
 
 Real
@@ -26,7 +24,7 @@ funcSum_all(boost::function<Real(unsigned int i)> f, std::size_t max_i)
 
     sum = p_0;
 
-    RealVector::size_type i(1);
+    std::size_t i(1);
     while(i < max_i)
     {
         const Real p_i(f(i));
@@ -43,7 +41,7 @@ Real
 funcSum_all_accel(boost::function<Real(unsigned int i)> f,
                   std::size_t max_i, Real tolerance)
 {
-    RealVector pTable;
+    std::vector<Real> pTable;
     pTable.reserve(max_i);
 
     const Real p_0(f(0));
@@ -54,7 +52,7 @@ funcSum_all_accel(boost::function<Real(unsigned int i)> f,
 
     pTable.push_back(p_0);
 
-    RealVector::size_type i(1);
+    std::size_t i(1);
     for(;  i < max_i; ++i)
     {
         const Real p_i(f(i));
@@ -107,7 +105,7 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
     const unsigned int CONVERGENCE_CHECK(4);
 
     Real sum(0.0);
-    RealVector pTable;
+    std::vector<Real> pTable;
 
     const Real p_0(f(0));
     if (p_0 == 0.0)
@@ -122,7 +120,7 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
 
     unsigned int convergenceCounter(0);
 
-    RealVector::size_type i(1);
+    std::size_t i(1);
     while(i < max_i)
     {
         const Real p_i(f(i));
