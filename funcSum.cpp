@@ -39,13 +39,11 @@ funcSum_all_accel(boost::function<Real(unsigned int i)> f,
         return 0.0;
     }
 
-    std::vector<Real> pTable;
-    pTable.reserve(max_i);
-
-    pTable.push_back(p_0);
+    std::vector<Real> pTable(max_i);
+    pTable[0] = p_0;
     for(std::size_t i=1; i < max_i; ++i)
     {
-        pTable.push_back(f(i));
+        pTable[i] = f(i);
     }
 
     Real sum;
