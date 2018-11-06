@@ -21,16 +21,10 @@ funcSum_all(boost::function<Real(unsigned int i)> f, std::size_t max_i)
     }
 
     Real sum = p_0;
-
-    std::size_t i(1);
-    while(i < max_i)
+    for(std::size_t i=1; i < max_i; ++i)
     {
-        const Real p_i(f(i));
-        sum += p_i;
-
-        ++i;
+        sum += f(i);
     }
-
     return sum;
 }
 
@@ -49,20 +43,17 @@ funcSum_all_accel(boost::function<Real(unsigned int i)> f,
     }
 
     pTable.push_back(p_0);
-
-    std::size_t i(1);
-    for(;  i < max_i; ++i)
+    for(std::size_t i=1; i < max_i; ++i)
     {
-        const Real p_i(f(i));
-        pTable.push_back(p_i);
+        pTable.push_back(f(i));
     }
 
     Real sum;
     Real error;
     gsl_sum_levin_utrunc_workspace*
-        workspace(gsl_sum_levin_utrunc_alloc(i));
+        workspace(gsl_sum_levin_utrunc_alloc(max_i));
     gsl_sum_levin_utrunc_accel(&pTable[0], pTable.size(), workspace,
-                                &sum, &error);
+                               &sum, &error);
     if (fabs(error) >= fabs(sum * tolerance))
     {
 /*        _log.error("series acceleration error: %.16g"
@@ -116,14 +107,11 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
 
     unsigned int convergenceCounter(0);
 
-    std::size_t i(1);
-    while(i < max_i)
+    for(std::size_t i=1; i < max_i; ++i)
     {
         const Real p_i(f(i));
         pTable.push_back(p_i);
         sum += p_i;
-
-        ++i;
 
         if (fabs(sum) * tolerance >= fabs(p_i)) // '=' is important
         {
@@ -146,7 +134,7 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
     {
         Real error;
         gsl_sum_levin_utrunc_workspace*
-            workspace(gsl_sum_levin_utrunc_alloc(i));
+            workspace(gsl_sum_levin_utrunc_alloc(max_i));
         gsl_sum_levin_utrunc_accel(&pTable[0], pTable.size(), workspace,
             &sum, &error);
         if (fabs(error) >= fabs(sum * tolerance * 10))
