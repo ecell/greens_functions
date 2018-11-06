@@ -99,8 +99,6 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
     std::vector<Real> pTable;
     pTable.push_back(p_0);
 
-    bool extrapolationNeeded(true);
-
     unsigned int convergenceCounter(0);
 
     for(std::size_t i=1; i < max_i; ++i)
@@ -121,28 +119,24 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
 
         if (convergenceCounter >= CONVERGENCE_CHECK)
         {
-            extrapolationNeeded = false;
-            break;
+            return sum; // converged! series acceleration is not needed! yay!
         }
     }
 
-    if (extrapolationNeeded)
+    Real error;
+    gsl_sum_levin_utrunc_workspace*
+        workspace(gsl_sum_levin_utrunc_alloc(max_i));
+    gsl_sum_levin_utrunc_accel(
+        pTable.data(), pTable.size(), workspace, &sum, &error);
+    if (std::abs(error) >= std::abs(sum * tolerance * 10))
     {
-        Real error;
-        gsl_sum_levin_utrunc_workspace*
-            workspace(gsl_sum_levin_utrunc_alloc(max_i));
-        gsl_sum_levin_utrunc_accel(
-            pTable.data(), pTable.size(), workspace, &sum, &error);
-        if (std::abs(error) >= std::abs(sum * tolerance * 10))
-        {
 /*            _log.error("series acceleration error: %.16g"
-                      " (rel error: %.16g), terms_used = %d (%d given)",
-                      std::abs(error), std::abs(error / sum),
-                      workspace->terms_used, pTable.size()); */
-        }
-
-        gsl_sum_levin_utrunc_free(workspace);
+                  " (rel error: %.16g), terms_used = %d (%d given)",
+                  std::abs(error), std::abs(error / sum),
+                  workspace->terms_used, pTable.size()); */
     }
+
+    gsl_sum_levin_utrunc_free(workspace);
 
     return sum;
 }
