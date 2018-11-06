@@ -85,14 +85,6 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
 // - f: A       function object
 // - max_i:     maximum number of terms it will evaluate
 // - tolerance: convergence condition, default value 1-e8 (see .hpp)
-//
-// About Boost::function
-// ===
-// Boost::function doesn't do any type checking: It will take any object
-// and any signature you provide in its template parameter, and create an
-// object that's callable according to your signature and calls the object.
-// If that's impossible, it's a compile error.
-// (From: http://stackoverflow.com/questions/527413/how-boostfunction-and-boostbind-work)
 {
     // DEFAULT = 4
     const unsigned int CONVERGENCE_CHECK(4);
