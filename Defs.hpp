@@ -18,7 +18,6 @@ typedef unsigned long int UnsignedInteger;
 
 const Real SEPARATION_TOLERANCE(1e-07);
 const Real MINIMAL_SEPARATION_FACTOR(1.0 + SEPARATION_TOLERANCE);
-static const Real maximum_alpha2_Dt = -1e0 * log(std::numeric_limits<Real>::min());
 
 }
 #endif // __DEFS_HPP

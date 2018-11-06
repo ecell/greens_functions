@@ -141,7 +141,7 @@ inline sjy_table jnyn(const int n, const int resolution)
     matrix y_table(zeros(table_size, n+1));
     matrix ydot_table(zeros(table_size, n+1));
 
-    for (int i(0); i < z_table.size(); ++i)
+    for (table_type::size_type i(0); i < z_table.size(); ++i)
     {
         const double z(z_table.at(i));
 

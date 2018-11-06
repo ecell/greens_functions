@@ -98,7 +98,7 @@ protected:
 
 private:
     
-    mutable boost::array<Integer, MAX_ORDER+1> alphaOffsetTable;
+    // mutable boost::array<Integer, MAX_ORDER+1> alphaOffsetTable;
     mutable boost::array<RealVector, MAX_ORDER+1> alphaTable;
     //mutable std::vector<RealVector> alphaTable;
 

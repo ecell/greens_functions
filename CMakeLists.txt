@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
+
 # XXX remove `cmake_policy set old` later
 cmake_policy(SET CMP0048 OLD)
 project(greens_functions)
@@ -38,12 +39,12 @@ check_cxx_source_compiles("#include <cmath>
     }" ECELL_GREENS_FUNCTIONS_HAVE_SINCOS)
 
 configure_file(${PROJECT_SOURCE_DIR}/config.h.in
-               ${PROJECT_BINARY_DIR}/config.h)
-message(STATUS "config.h was generated: ${PROJECT_BINARY_DIR}/config.h")
+               ${CMAKE_BINARY_DIR}/greens_functions/config.h)
+install(FILES ${CMAKE_BINARY_DIR}/greens_functions/config.h DESTINATION "include/greens_functions")
+message(STATUS "config.h was generated: ${CMAKE_BINARY_DIR}/greens_functions/config.h")
 
-
-include_directories(${PROJECT_BINARY_DIR}) # to include config.h
-include_directories(${PROJECT_BINARY_DIR}/greens_functions)
+include_directories(${PROJECT_BINARY_DIR})
+# include_directories(${PROJECT_BINARY_DIR}/greens_functions)
 
 find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
@@ -62,26 +63,26 @@ else()
     message(FATAL_ERROR "GSL CBLAS Library could not be found. stop configuring.")
 endif()
 
+add_library(
+    greens_functions SHARED
+    ${CPP_FILES} ${HPP_FILES} "${CMAKE_BINARY_DIR}/greens_functions/config.h")
+target_link_libraries(
+    greens_functions ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
+
 if (NOT NO_BESSEL_TABLE)
     message(STATUS "prepairing to generate BesselTable.")
     add_subdirectory("${PROJECT_SOURCE_DIR}/tablegen")
-else()
-    message(STATUS "NO_BESSEL_TABLE is defined. stop generating BesselTable.")
-endif()
 
-add_library(greens_functions SHARED
-    ${CPP_FILES} ${HPP_FILES} "${PROJECT_BINARY_DIR}/config.h")
-target_link_libraries(greens_functions
-    ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
-
-if (NOT NO_BESSEL_TABLE)
     message(STATUS "adding dependency to BesselTable.")
     add_dependencies(greens_functions BesselTables)
 
-    install(FILES ${HPP_FILES}
-        "${PROJECT_BINARY_DIR}/SphericalBesselTable.hpp"
-        "${PROJECT_BINARY_DIR}/CylindricalBesselTable.hpp"
+    install(
+        FILES
+        "${CMAKE_BINARY_DIR}/greens_functions/SphericalBesselTable.hpp"
+        "${CMAKE_BINARY_DIR}/greens_functions/CylindricalBesselTable.hpp"
         DESTINATION "include/greens_functions")
+else()
+    message(STATUS "NO_BESSEL_TABLE is defined. stop generating BesselTable.")
 endif()
 
 install(TARGETS greens_functions DESTINATION lib)

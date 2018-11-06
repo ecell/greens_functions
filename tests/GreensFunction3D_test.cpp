@@ -96,7 +96,8 @@ BOOST_AUTO_TEST_CASE(GF3D_ip_r_infinity_is_one)
   Real D( 1e-12 ), r0( 5e-8 );
   GreensFunction3D gf( D, r0 );
 
-  Real t( 1e-5 ), r( 2.5e-8 ), ip;
+  Real t( 1e-5 ), ip;
+  // Real t( 1e-5 ), r( 2.5e-8 ), ip;
 
   ip = gf.ip_r( std::numeric_limits<Real>::infinity(), t );
   BOOST_CHECK_EQUAL( 1.0 ,ip );

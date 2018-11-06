@@ -54,7 +54,7 @@ private:
 
 public:
     GreensFunction1DAbsSinkAbs(Real D, Real k, Real r0, Real rsink, Real sigma, Real a)
-	: GreensFunction(D), k(k), r0(r0), sigma(sigma), a(a), rsink(rsink), l_scale(L_TYPICAL), t_scale(T_TYPICAL)
+	: GreensFunction(D), k(k), r0(r0), sigma(sigma), a(a), rsink(rsink), t_scale(T_TYPICAL) // , l_scale(L_TYPICAL)
     {
 	    /* Set variables which define a domain with the sink at the origin. 
 	       Futhermore r0 is assumed to be ringht from the sink. */
@@ -344,7 +344,7 @@ private:
     //Position of the sink in the domain.
     const Real rsink;
     // This is the length scale of the system
-    Real l_scale;
+    // Real l_scale;
     // This is the time scale of the system.
     Real t_scale;
     
