@@ -3,6 +3,10 @@
 #include <boost/bind.hpp>
 #include <gsl/gsl_sum.h>
 
+#ifdef ECELL_GREENS_FUNCTIONS_DEBUG_OUTPUT
+#include <iostream>
+#endif
+
 //#include "Logger.hpp"
 #include "funcSum.hpp"
 
@@ -51,14 +55,18 @@ funcSum_all_accel(boost::function<Real(unsigned int i)> f,
     gsl_sum_levin_utrunc_workspace* workspace(gsl_sum_levin_utrunc_alloc(max_i));
     gsl_sum_levin_utrunc_accel(
             pTable.data(), pTable.size(), workspace, &sum, &error);
+
+#ifdef ECELL_GREENS_FUNCTIONS_DEBUG_OUTPUT
     if (std::abs(error) >= std::abs(sum * tolerance))
     {
-/*        _log.error("series acceleration error: %.16g"
-                  " (rel error: %.16g), terms_used = %d (%d given)",
-                  std::abs(error), std::abs(error / sum),
-                  workspace->terms_used, pTable.size());
-        // TODO look into this crashing behaviour */
+        std::cerr << (boost::format("series acceleration error: %.16g"
+                " (rel error: %.16g), terms_used = %d (%d given)") %
+                std::abs(error) % std::abs(error / sum) %
+                workspace->terms_used % pTable.size()
+            ).str() << std::endl;
     }
+#endif // ECELL_GREENS_FUNCTIONS_DEBUG_OUTPUT
+
     gsl_sum_levin_utrunc_free(workspace);
 
     return sum;
@@ -128,13 +136,17 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
         workspace(gsl_sum_levin_utrunc_alloc(max_i));
     gsl_sum_levin_utrunc_accel(
         pTable.data(), pTable.size(), workspace, &sum, &error);
+
+#ifdef ECELL_GREENS_FUNCTIONS_DEBUG_OUTPUT
     if (std::abs(error) >= std::abs(sum * tolerance * 10))
     {
-/*            _log.error("series acceleration error: %.16g"
-                  " (rel error: %.16g), terms_used = %d (%d given)",
-                  std::abs(error), std::abs(error / sum),
-                  workspace->terms_used, pTable.size()); */
+        std::cerr << (boost::format("series acceleration error: %.16g"
+                " (rel error: %.16g), terms_used = %d (%d given)") %
+                std::abs(error) % std::abs(error / sum) %
+                workspace->terms_used % pTable.size()
+            ).str() << std::endl;
     }
+#endif // ECELL_GREENS_FUNCTIONS_DEBUG_OUTPUT
 
     gsl_sum_levin_utrunc_free(workspace);
 
