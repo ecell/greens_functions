@@ -97,6 +97,7 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
 
     Real sum(p_0);
     std::vector<Real> pTable;
+    pTable.reserve(max_i);
     pTable.push_back(p_0);
 
     unsigned int convergenceCounter(0);
