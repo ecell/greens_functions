@@ -14,7 +14,7 @@ typedef std::vector<Real> RealVector;
 //static Logger& _log(Logger::get_logger("funcSum"));
 
 Real
-funcSum_all(boost::function<Real(unsigned int i)> f, size_t max_i)
+funcSum_all(boost::function<Real(unsigned int i)> f, std::size_t max_i)
 {
     Real sum(0.0);
 
@@ -41,7 +41,7 @@ funcSum_all(boost::function<Real(unsigned int i)> f, size_t max_i)
 
 Real
 funcSum_all_accel(boost::function<Real(unsigned int i)> f,
-                  size_t max_i, Real tolerance)
+                  std::size_t max_i, Real tolerance)
 {
     RealVector pTable;
     pTable.reserve(max_i);
@@ -83,7 +83,7 @@ funcSum_all_accel(boost::function<Real(unsigned int i)> f,
 
 
 Real
-funcSum(boost::function<Real(unsigned int i)> f, size_t max_i, Real tolerance)
+funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real tolerance)
 // funcSum
 // ==
 // Will simply calculate the sum over a certain function f, until it converges
