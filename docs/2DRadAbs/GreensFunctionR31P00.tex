@@ -1,0 +1,354 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[top=2.1cm,left=2.0cm,right=2.0cm,footskip=2.0cm]{geometry}
+
+\lstset{
+    language = C++,
+}
+\newcommand{\inlinecode}[1]{{\colorbox[rgb]{0.9,0.9,0.9}{\lstinline|#1|}}}
+
+\begin{document}
+
+\title{GreensFunctionR31$\Phi$00}
+\author{Toru Niina}
+\maketitle
+
+\section{Overview}
+
+\begin{eqnarray}
+    G(r, \phi, t | r', \phi', \tau) &=&
+    \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\beta_{mn}^2\alpha(t-\tau)/a^2)}{2\pi N(\beta_{mn})}
+    R_{mn}(\beta_{mn}, r) R_{mn}(\beta_{mn}, r') +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\beta_{mn}^2\alpha(t-\tau)/a^2)}{\pi N(\beta_{mn})}
+    R_{mn}(\beta_{mn}, r) R_{mn}(\beta_{mn}, r')\cos(n(\phi - \phi'))\Bigg]
+\\
+    R_{mn} &=& S_{mn}J_n(\beta_{mn}r/a) - V_{mn}Y_n(\beta_{mn}r/a)
+\\
+    S_{mn} &=& \beta_{mn}Y'_n(\beta_{mn}) - \frac{ha}{k}Y_n(\beta_{mn})
+\\
+    V_{mn} &=& \beta_{mn}J'_n(\beta_{mn}) - \frac{ha}{k}J_n(\beta_{mn})
+\\
+    \frac{1}{N(\beta_{mn})} &=&
+        \frac{\pi^2}{2} \frac{\beta_{mn}^2 J_n^2(\beta_{mn}b/a)}
+        {C_{mn}J_n^2(\beta_{mn}b/a) - V_{mn}^2}
+\\
+    C_{mn} &=& \left(\frac{ha}{k}\right)^2 + \beta_{mn}^2\left[1 - \left(\frac{n}{\beta_{mn}}\right)^2\right]
+\end{eqnarray}
+and the $\beta_{mn}$'s are the positive roots of
+\begin{eqnarray}
+    S_{mn}J_n(\beta_{mn}b/a) - V_{mn}Y_n(\beta_{mn}b/a) = 0
+\end{eqnarray}
+
+
+This GF corresponds to the following equation.
+\begin{eqnarray}
+    \nabla^2 P &=& \frac{1}{\alpha}\frac{\partial P}{\partial t}
+\\
+    -k\frac{\partial P}{\partial r} + hP &=& 0,\ r = a
+\\
+    P &=& 0,\ r = b
+\end{eqnarray}
+This is equivalent to
+\begin{eqnarray}
+    \alpha\nabla^2 P &=& \frac{\partial P}{\partial t}     \\
+    \frac{\partial P}{\partial r} &=& \frac{h}{k}P,\ r = a \\
+    P &=& 0,\ r = b
+\end{eqnarray}
+
+assigning $\phi' = 0$ and $\tau = 0$,
+\begin{eqnarray}
+    G(r, \phi, t | r', 0, 0) &=&
+    \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\beta_{mn}^2\alpha t/a^2)}{2\pi N(\beta_{mn})}
+    R_{mn}(\beta_{mn}, r) R_{mn}(\beta_{mn}, r') +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\beta_{mn}^2\alpha t/a^2)}{\pi N(\beta_{mn})}
+    R_{mn}(\beta_{mn}, r) R_{mn}(\beta_{mn}, r')\cos(n\phi)\Bigg]
+\end{eqnarray}
+%
+by converting $\beta_{mn} = a\alpha_{mn}$,
+%
+\begin{eqnarray}
+    G(r, \phi, t | r', 0, 0) &=&
+    \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\alpha_{mn}^2\alpha(t))}{2\pi N(a\alpha_{mn})}
+    R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r') +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\alpha_{mn}^2\alpha(t))}{\pi N(a\alpha_{mn})}
+    R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r')\cos(n\phi)\Bigg]
+\\
+    R_{mn}(a\alpha_{mn}, r) &=& S_{mn}J_n(r\alpha_{mn}) - V_{mn}Y_n(r\alpha_{mn})
+\\
+    S_{mn} &=& a\left(\alpha_{mn}Y'_n(a\alpha_{mn}) - \frac{h}{k}Y_n(a\alpha_{mn})\right)
+\\
+    V_{mn} &=& a\left(\alpha_{mn}J'_n(a\alpha_{mn}) - \frac{h}{k}J_n(a\alpha_{mn})\right)
+\\
+    \frac{1}{N(a\alpha_{mn})} &=&
+        \frac{\pi^2}{2} \frac{a^2\alpha_{mn}^2 J_n^2(b\alpha_{mn})}
+        {C_{mn}J_n^2(b\alpha_{mn}) - V_{mn}^2}
+\\
+    C_{mn} &=& \left(\frac{ha}{k}\right)^2 + a^2\alpha_{mn}^2\left[1 - \left(\frac{n}{a\alpha_{mn}}\right)^2\right]
+\end{eqnarray}
+%
+and the $\alpha_{mn}$'s are the positive roots of
+%
+\begin{eqnarray}
+    S_{mn}J_n(b\alpha_{mn}) - V_{mn}Y_n(b\alpha_{mn}) = 0
+\end{eqnarray}
+
+By using the following equalities,
+\begin{eqnarray}
+    Y'_n(x) &=&  \frac{n}{x}Y_n(x) - Y_{n+1}(x) \\
+    J'_n(x) &=&  \frac{n}{x}J_n(x) - J_{n+1}(x)
+\end{eqnarray}
+$S_{mn}$ and $V_{mn}$ can be written as
+\begin{eqnarray}
+    S_{mn} &=& a\left(\alpha_{mn}\left(\frac{n}{a\alpha_{mn}}Y_n(a\alpha_{mn}) - Y_{n+1}(a\alpha_{mn})\right) -
+                      \frac{h}{k}Y_n(a\alpha_{mn})\right) \nonumber\\
+           &=& nY_n(a\alpha_{mn}) - a\alpha_{mn}Y_{n+1}(a\alpha_{mn}) - a\frac{h}{k}Y_n(a\alpha_{mn}) \nonumber\\
+    V_{mn} &=& nJ_n(a\alpha_{mn}) - a\alpha_{mn}J_{n+1}(a\alpha_{mn}) - a\frac{h}{k}J_n(a\alpha_{mn})
+\end{eqnarray}
+
+\subsection{survival probability}
+
+By integrating the probability over the whole area, the survival probability
+can be obtained as a function of time. Since the initial condition is a delta function
+centered at $r_0$, we can just replace $r'$ by $r_0$ to get $P(r, \theta, t)$.
+\begin{eqnarray}
+    P_{\mathrm{surv}}(t) &=& \int_a^b \int_0^{2\pi} P(r, \theta, t) rd\theta dr
+\nonumber\\
+    &=& \int_a^b \int_0^{2\pi}
+        \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+        \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+        R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+        & &\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+        \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+        R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0)\cos(n\phi)\Bigg] rdrd\theta
+\nonumber\\
+    &=& \int_a^b \int_0^{2\pi}
+        \frac{1}{a^2} \sum_{m=1}^{\infty}
+        \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+        R_{m0}(a\alpha_{m0}, r) R_{mn}(a\alpha_{m0}, r_0) rdrd\theta +
+\nonumber\\
+    & & \int_a^b \int_0^{2\pi}
+        \frac{1}{a^2} \sum_{m=1}^{\infty}\sum_{n=1}^{\infty}
+        \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+        R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0)\cos(n\phi) rdrd\theta
+\nonumber
+\end{eqnarray}
+%
+The second term vanishes after integration by $\theta$ because of $\cos$.
+%
+\begin{eqnarray}
+    P_{\mathrm{surv}}(t) &=& \int_a^b \int_0^{2\pi} P(r, \theta, t) rd\theta dr
+\nonumber\\
+    &=& \int_a^b \int_0^{2\pi}
+        \frac{1}{a^2} \sum_{m=1}^{\infty}
+        \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+        R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) rdrd\theta
+\nonumber\\
+    &=& \frac{2\pi}{a^2} \sum_{m=1}^{\infty} \left[
+        \frac{\exp(-\alpha_{mn}^2\alpha t)}{2\pi N(a\alpha_{mn})}
+        R_{mn}(a\alpha_{mn}, r_0) \int_a^b R_{mn}(a\alpha_{mn}, r) rdr\right]
+\nonumber
+\end{eqnarray}
+%
+By using the following equalities,
+%
+\begin{eqnarray}
+    \int xJ_0(x) dx &=& xJ_1(x)
+\nonumber\\
+    \int rJ_0(r\alpha) dr
+    &=& \int_a^b rJ_0(r\alpha) \frac{dr\alpha}{\alpha}
+     =  \frac{1}{\alpha^2} \int_{a\alpha}^{b\alpha} r\alpha J_0(r\alpha)dr\alpha
+\nonumber\\
+    &=& \frac{1}{\alpha^2} \Big[ r\alpha J_1(r\alpha) \Big]_{a\alpha}^{b\alpha}
+     =  \frac{1}{\alpha^2} \Big[ b\alpha J_1(b\alpha) - a\alpha J_1(a\alpha) \Big]
+\nonumber\\
+    &=& \frac{1}{\alpha} \Big[ bJ_1(b\alpha) - aJ_1(a\alpha) \Big]
+\end{eqnarray}
+%
+The integration can be derived as the folloing.
+%
+\begin{eqnarray}
+    & & \int_a^b R_{m0}(a\alpha_{m0}, r) rdr
+\nonumber\\
+    &=& \int_a^b S_{m0}J_0(r\alpha_{m0}) - V_{m0}Y_0(r\alpha_{m0}) rdr
+\nonumber\\
+    &=& S_{m0}\int_a^b J_0(r\alpha_{m0})rdr - V_{m0}\int_a^b Y_0(r\alpha_{m0}) rdr
+\nonumber\\
+    &=& S_{m0}\frac{1}{\alpha_{m0}}\Big[bJ_1(b\alpha_{m0}) - aJ_1(a\alpha_{m0})\Big] -
+        V_{m0}\frac{1}{\alpha_{m0}}\Big[bY_1(b\alpha_{m0}) - aY_1(a\alpha_{m0})\Big]
+\nonumber\\
+    &=& \frac{1}{\alpha_{m0}}\left[
+        S_{m0}\Big[bJ_1(b\alpha_{m0}) - aJ_1(a\alpha_{m0})\Big] -
+        V_{m0}\Big[bY_1(b\alpha_{m0}) - aY_1(a\alpha_{m0})\Big]\right]
+\nonumber\\
+    &=& \frac{1}{\alpha_{m0}}\left[
+        S_{m0}bJ_1(b\alpha_{m0}) - S_{m0}aJ_1(a\alpha_{m0}) -
+        V_{m0}bY_1(b\alpha_{m0}) + V_{m0}aY_1(a\alpha_{m0})\right]
+\nonumber\\
+    &=& \frac{1}{\alpha_{m0}}\left[
+        b(S_{m0}J_1(b\alpha_{m0}) - V_{m0}Y_1(b\alpha_{m0})) -
+        a(S_{m0}J_1(a\alpha_{m0}) - V_{m0}Y_1(a\alpha_{m0}))
+        \right]
+\end{eqnarray}
+%
+and defining $s_{m0}$ and $v_{m0}$ as the following,
+%
+\begin{eqnarray}
+    S_{m0} &=& -a\alpha_{m0}Y_1(a\alpha_{m0}) - a(h/k)Y_0(a\alpha_{m0}) \nonumber\\
+    V_{m0} &=& -a\alpha_{m0}J_1(a\alpha_{m0}) - a(h/k)J_0(a\alpha_{m0}) \nonumber\\
+    s_{m0} &=& -S_{m0}/a = \alpha_{m0}Y_1(a\alpha_{m0}) + (h/k)Y_0(a\alpha_{m0}) \nonumber\\
+    v_{m0} &=& -V_{m0}/a = \alpha_{m0}J_1(a\alpha_{m0}) + (h/k)J_0(a\alpha_{m0}) \nonumber
+\end{eqnarray}
+%
+expanding...
+%
+\begin{eqnarray}
+    P_{\mathrm{surv}}(t) &=& \int_a^b \int_0^{2\pi} P(r, \theta, t) rd\theta dr
+\nonumber\\
+    &=& \frac{2\pi}{a^2} \sum_{m=1}^{\infty} \left[
+         \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+         R_{m0}(a\alpha_{m0}, r_0) \int_a^b R_{m0}(a\alpha_{m0}, r) rdr\right]
+\nonumber\\
+    &=& \frac{1}{a^2} \sum_{m=1}^{\infty} \left[
+        \exp(-\alpha_{m0}^2\alpha t)\frac{\pi^2}{2}
+        \frac{a^2\alpha_{m0}^2 J_0^2(b\alpha_{mn})}{((ha/k)^2 + a^2\alpha_{m0}^2)J_0^2(b\alpha_{m0})-V_{mn}^2}
+         R_{m0}(a\alpha_{m0}, r_0) \int_a^b R_{m0}(a\alpha_{m0}, r) rdr\right]
+\nonumber\\
+    &=& \frac{\pi^2}{2a^2} \sum_{m=1}^{\infty} \left[
+        \frac{\exp(-\alpha_{m0}^2\alpha t)\alpha_{m0}^2 J_0^2(b\alpha_{mn})}
+             {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0})-v_{mn}^2}
+         R_{m0}(a\alpha_{m0}, r_0) \int_a^b R_{m0}(a\alpha_{m0}, r) rdr\right]
+\nonumber\\
+    &=& \frac{\pi^2}{2a^2} \sum_{m=1}^{\infty} \Bigg[
+        \frac{\exp(-\alpha_{m0}^2\alpha t)\alpha_{m0}^2 J_0^2(b\alpha_{mn})}
+             {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0})-v_{mn}^2}
+        \left[S_{m0}J_0(r_0\alpha_{m0}) - V_{m0}Y_0(r_0\alpha_{m0})\right]
+        \int_a^b R_{m0}(a\alpha_{m0}, r) rdr\Bigg]
+\nonumber\\
+    &=& \frac{\pi^2}{2a^2} \sum_{m=1}^{\infty} \Bigg[
+        \frac{\exp(-\alpha_{m0}^2\alpha t)\alpha_{m0}^2 J_0^2(b\alpha_{mn})}
+             {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0})-v_{mn}^2}
+        \left[S_{m0}J_0(r_0\alpha_{m0}) - V_{m0}Y_0(r_0\alpha_{m0})\right] \times
+\nonumber\\
+    & & \frac{1}{\alpha_{m0}}\left[
+        b(S_{m0}J_1(b\alpha_{m0}) - V_{m0}Y_1(b\alpha_{m0})) -
+        a(S_{m0}J_1(a\alpha_{m0}) - V_{m0}Y_1(a\alpha_{m0}))
+        \right]\Bigg]
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty} \Bigg[
+        \frac{\exp(-\alpha_{m0}^2\alpha t)\alpha_{m0} J_0^2(b\alpha_{mn})}
+             {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0})-v_{mn}^2}
+        \left[s_{m0}J_0(r_0\alpha_{m0}) - v_{m0}Y_0(r_0\alpha_{m0})\right] \times
+\nonumber\\
+    & & \left[
+        b(s_{m0}J_1(b\alpha_{m0}) - v_{m0}Y_1(b\alpha_{m0})) -
+        a(s_{m0}J_1(a\alpha_{m0}) - v_{m0}Y_1(a\alpha_{m0}))
+        \right]\Bigg]
+\nonumber
+\end{eqnarray}
+%
+Remember that the $alpha$'s are the roots of the following equation.
+%
+\begin{eqnarray}
+    S_{mn}J_n(b\alpha_{mn}) - V_{mn}Y_n(b\alpha_{mn}) = 0
+\end{eqnarray}
+%
+That means that we can convert $s_{m0}J_0(b\alpha_{m0})$ by $v_{m0}Y_n(b\alpha_{m0})$.
+Splitting $J_0^2$ in the first term to the latter terms, we can write down the
+formula as the following.
+%
+\begin{eqnarray}
+    P_{\mathrm{surv}}(t) &=& \int_a^b \int_0^{2\pi} P(r, \theta, t) rd\theta dr
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty} \Bigg[
+        \frac{\exp(-\alpha_{m0}^2\alpha t)\alpha_{m0}}
+             {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0})-v_{m0}^2}
+        J_0(b\alpha_{m0})\left[s_{m0}J_0(r_0\alpha_{m0}) - v_{m0}Y_0(r_0\alpha_{m0})\right] \times
+\nonumber\\
+    & & J_0(b\alpha_{m0})\left[
+        b(s_{m0}J_1(b\alpha_{m0}) - v_{m0}Y_1(b\alpha_{m0})) -
+        a(s_{m0}J_1(a\alpha_{m0}) - v_{m0}Y_1(a\alpha_{m0}))
+        \right]\Bigg]
+\nonumber
+\end{eqnarray}
+%
+The second term will be
+%
+\begin{eqnarray}
+    & & J_0(b\alpha_{m0})\left[s_{m0}J_0(r_0\alpha_{m0}) - v_{m0}Y_0(r_0\alpha_{m0})\right]
+\nonumber\\
+    &=& J_0(b\alpha_{m0})s_{m0}J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0})v_{m0}Y_0(r_0\alpha_{m0})
+\nonumber\\
+    &=& Y_0(b\alpha_{m0})v_{m0}J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0})v_{m0}Y_0(r_0\alpha_{m0})
+\nonumber\\
+    &=& v_{m0}\left[Y_0(b\alpha_{m0})J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r_0\alpha_{m0})\right]
+\end{eqnarray}
+%
+The same conversion can be applied to the last term,
+%
+\begin{eqnarray}
+    & & J_0(b\alpha_{m0})\left[
+        b(s_{m0}J_1(b\alpha_{m0}) - v_{m0}Y_1(b\alpha_{m0})) -
+        a(s_{m0}J_1(a\alpha_{m0}) - v_{m0}Y_1(a\alpha_{m0}))
+        \right]
+\nonumber\\
+    &=& b\left[J_0(b\alpha_{m0})s_{m0}J_1(b\alpha_{m0}) - J_0(b\alpha_{m0})v_{m0}Y_1(b\alpha_{m0})\right] -
+        a\left[J_0(b\alpha_{m0})s_{m0}J_1(a\alpha_{m0}) - J_0(b\alpha_{m0})v_{m0}Y_1(a\alpha_{m0})\right]
+\nonumber\\
+    &=& b\left[Y_0(b\alpha_{m0})v_{m0}J_1(b\alpha_{m0}) - J_0(b\alpha_{m0})v_{m0}Y_1(b\alpha_{m0})\right] -
+        a\left[Y_0(b\alpha_{m0})v_{m0}J_1(a\alpha_{m0}) - J_0(b\alpha_{m0})v_{m0}Y_1(a\alpha_{m0})\right]
+\nonumber\\
+    &=& bv_{m0}\left[Y_0(b\alpha_{m0})J_1(b\alpha_{m0}) - J_0(b\alpha_{m0})Y_1(b\alpha_{m0})\right] -
+        av_{m0}\left[Y_0(b\alpha_{m0})J_1(a\alpha_{m0}) - J_0(b\alpha_{m0})Y_1(a\alpha_{m0})\right]
+\end{eqnarray}
+%
+Here, we can use the well-known equality to reduce the complexity,
+%
+\begin{eqnarray}
+    J_n(x)Y'_n(x) - Y_n(x)J'_n(x) &=& \frac{2}{\pi x} \\
+    J_0(x)Y'_0(x) - Y_0(x)J'_0(x) &=& \frac{2}{\pi x} \nonumber\\
+    -J_0(x)Y_1(x) + Y_0(x)J_1(x)  &=& \frac{2}{\pi x} \nonumber
+\end{eqnarray}
+%
+since the first term of the last equation satisfies this condition,
+%
+\begin{eqnarray}
+    & & bv_{m0}\left[Y_0(b\alpha_{m0})J_1(b\alpha_{m0}) - J_0(b\alpha_{m0})Y_1(b\alpha_{m0})\right] -
+        av_{m0}\left[Y_0(b\alpha_{m0})J_1(a\alpha_{m0}) - J_0(b\alpha_{m0})Y_1(a\alpha_{m0})\right]
+\nonumber\\
+    &=& bv_{m0}\left[\frac{2}{\pi b\alpha_{m0}}\right] -
+        av_{m0}\left[Y_0(b\alpha_{m0})J_1(a\alpha_{m0}) - J_0(b\alpha_{m0})Y_1(a\alpha_{m0})\right]
+\nonumber\\
+    &=& v_{m0}\left[\frac{2}{\pi\alpha_{m0}} - a\left(Y_0(b\alpha_{m0})J_1(a\alpha_{m0}) - J_0(b\alpha_{m0})Y_1(a\alpha_{m0})\right)\right]
+\end{eqnarray}
+%
+Substituting these results into the survival probability, we get
+%
+\begin{eqnarray}
+    P_{\mathrm{surv}}(t) &=& \int_a^b \int_0^{2\pi} P(r, \theta, t) rd\theta dr
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty} \Bigg[
+        \frac{\exp(-\alpha_{m0}^2\alpha t)\alpha_{m0}v_{m0}^2}
+             {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0})-v_{m0}^2}
+        \left[Y_0(b\alpha_{m0})J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r_0\alpha_{m0})\right] \times
+\nonumber\\
+    & & \left[\frac{2}{\pi\alpha_{m0}} -
+        a\left(Y_0(b\alpha_{m0})J_1(a\alpha_{m0}) - J_0(b\alpha_{m0})Y_1(a\alpha_{m0})\right)\right]
+        \Bigg]
+\nonumber
+\end{eqnarray}
+
+
+\end{document}
