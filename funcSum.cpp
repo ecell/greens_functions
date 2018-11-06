@@ -48,10 +48,9 @@ funcSum_all_accel(boost::function<Real(unsigned int i)> f,
 
     Real sum;
     Real error;
-    gsl_sum_levin_utrunc_workspace*
-        workspace(gsl_sum_levin_utrunc_alloc(max_i));
-    gsl_sum_levin_utrunc_accel(&pTable[0], pTable.size(), workspace,
-                               &sum, &error);
+    gsl_sum_levin_utrunc_workspace* workspace(gsl_sum_levin_utrunc_alloc(max_i));
+    gsl_sum_levin_utrunc_accel(
+            pTable.data(), pTable.size(), workspace, &sum, &error);
     if (fabs(error) >= fabs(sum * tolerance))
     {
 /*        _log.error("series acceleration error: %.16g"
@@ -60,7 +59,6 @@ funcSum_all_accel(boost::function<Real(unsigned int i)> f,
                   workspace->terms_used, pTable.size());
         // TODO look into this crashing behaviour */
     }
-
     gsl_sum_levin_utrunc_free(workspace);
 
     return sum;
@@ -133,8 +131,8 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
         Real error;
         gsl_sum_levin_utrunc_workspace*
             workspace(gsl_sum_levin_utrunc_alloc(max_i));
-        gsl_sum_levin_utrunc_accel(&pTable[0], pTable.size(), workspace,
-            &sum, &error);
+        gsl_sum_levin_utrunc_accel(
+            pTable.data(), pTable.size(), workspace, &sum, &error);
         if (fabs(error) >= fabs(sum * tolerance * 10))
         {
 /*            _log.error("series acceleration error: %.16g"
