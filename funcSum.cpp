@@ -14,15 +14,13 @@ namespace greens_functions
 Real
 funcSum_all(boost::function<Real(unsigned int i)> f, std::size_t max_i)
 {
-    Real sum(0.0);
-
     const Real p_0(f(0));
     if (p_0 == 0.0)
     {
         return 0.0;
     }
 
-    sum = p_0;
+    Real sum = p_0;
 
     std::size_t i(1);
     while(i < max_i)
@@ -104,17 +102,15 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
     // DEFAULT = 4
     const unsigned int CONVERGENCE_CHECK(4);
 
-    Real sum(0.0);
-    std::vector<Real> pTable;
-
     const Real p_0(f(0));
     if (p_0 == 0.0)
     {
         return 0.0;
     }
 
+    Real sum(p_0);
+    std::vector<Real> pTable;
     pTable.push_back(p_0);
-    sum = p_0;
 
     bool extrapolationNeeded(true);
 
@@ -139,13 +135,11 @@ funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real toleran
             convergenceCounter = 0;
         }
 
-
         if (convergenceCounter >= CONVERGENCE_CHECK)
         {
             extrapolationNeeded = false;
             break;
         }
-
     }
 
     if (extrapolationNeeded)
