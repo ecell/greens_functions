@@ -33,14 +33,14 @@ Real
 funcSum_all_accel(boost::function<Real(unsigned int i)> f,
                   std::size_t max_i, Real tolerance)
 {
-    std::vector<Real> pTable;
-    pTable.reserve(max_i);
-
     const Real p_0(f(0));
     if (p_0 == 0.0)
     {
         return 0.0;
     }
+
+    std::vector<Real> pTable;
+    pTable.reserve(max_i);
 
     pTable.push_back(p_0);
     for(std::size_t i=1; i < max_i; ++i)
