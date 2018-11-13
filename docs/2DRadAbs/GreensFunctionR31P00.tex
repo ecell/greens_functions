@@ -412,24 +412,24 @@ For $n == 0$ case, it can be further simplified as
 To calculate the flux across the boundary, we need to first integrate it around $\theta$.
 %
 \begin{eqnarray}
-    \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t)d\theta &=&
+    \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t) rd\theta &=&
     \int_0^{2\pi}\frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
     \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
     \frac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r} R_{m0}(a\alpha_{m0}, r_0) +
 \nonumber\\
     & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
     \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
-    \frac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r} R_{mn}(a\alpha_{mn}, r_0)\cos(n\theta)\Bigg]d\theta.
+    \frac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r} R_{mn}(a\alpha_{mn}, r_0)\cos(n\theta)\Bigg]rd\theta.
 \nonumber\\
     &=&\frac{1}{a^2} \sum_{m=1}^{\infty}
     \frac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
-    \alpha_{m0}\left[V_{m0}Y_1(r\alpha_{m0}) - S_{m0}J_1(r\alpha_{m0}) \right] R_{m0}(a\alpha_{m0}, r_0)
+    \alpha_{m0}\left[V_{m0}Y_1(r\alpha_{m0}) - S_{m0}J_1(r\alpha_{m0}) \right] R_{m0}(a\alpha_{m0}, r_0)r
 \nonumber\\
     &=&\frac{1}{a^2} \sum_{m=1}^{\infty}\frac{\pi^2}{2}
     \frac{a^2\alpha_{m0}^2 J_0^2(b\alpha_{m0})}
          {C_{m0}J_0^2(b\alpha_{m0}) - V_{m0}^2}
     \exp(-\alpha_{m0}^2\alpha t)
-    \alpha_{m0}\left[V_{m0}Y_1(r\alpha_{m0}) - S_{m0}J_1(r\alpha_{m0}) \right] R_{m0}(a\alpha_{m0}, r_0)
+    \alpha_{m0}\left[V_{m0}Y_1(r\alpha_{m0}) - S_{m0}J_1(r\alpha_{m0}) \right] R_{m0}(a\alpha_{m0}, r_0)r
 \nonumber\\
     &=&\frac{\pi^2}{2a^2} \sum_{m=1}^{\infty}
     \frac{\alpha_{m0}^3\exp(-\alpha_{m0}^2\alpha t)}
@@ -437,7 +437,7 @@ To calculate the flux across the boundary, we need to first integrate it around 
 \nonumber\\
     & & \left[
         V_{m0}J_0(b\alpha_{m0})Y_1(r\alpha_{m0}) - S_{m0}J_0(b\alpha_{m0})J_1(r\alpha_{m0})
-    \right] J_0(b\alpha_{m0})R_{m0}(a\alpha_{m0}, r_0)
+    \right] J_0(b\alpha_{m0})R_{m0}(a\alpha_{m0}, r_0)r
 \end{eqnarray}
 %
 Here we can use the relationship
@@ -449,7 +449,7 @@ Here we can use the relationship
 to reduce the complexity,
 %
 \begin{eqnarray}
-        \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t)d\theta
+        \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t)rd\theta
     &=& \frac{\pi^2}{2a^2} \sum_{m=1}^{\infty}
     \frac{\alpha_{m0}^3\exp(-\alpha_{m0}^2\alpha t)}
          {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2} \times
@@ -460,7 +460,7 @@ to reduce the complexity,
 \nonumber\\
     & & V_{m0}\left[
         Y_0(b\alpha_{m0}) J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0}) Y_0(r_0\alpha_{m0})
-    \right]
+    \right]r
 \nonumber\\
     &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
     \frac{\alpha_{m0}^3 v_{m0}^2 \exp(-\alpha_{m0}^2\alpha t)}
@@ -471,14 +471,14 @@ to reduce the complexity,
 \nonumber\\
     & & \left[
         Y_0(b\alpha_{m0}) J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0}) Y_0(r_0\alpha_{m0})
-    \right]
+    \right]r
 \end{eqnarray}
 %
 And the value of this flux at $r=b$ is,
 %
 \begin{eqnarray}
     & & \left.
-    \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t)d\theta
+    \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t)rd\theta
     \right|_{r=b}
 \nonumber\\
     &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
@@ -486,11 +486,11 @@ And the value of this flux at $r=b$ is,
          {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
     \left[
         J_0(b\alpha_{m0})Y_1(b\alpha_{m0}) - Y_0(b\alpha_{m0})J_1(b\alpha_{m0})
-    \right] \times
+    \right]\times
 \nonumber\\
     & & \left[
         Y_0(b\alpha_{m0}) J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0}) Y_0(r_0\alpha_{m0})
-    \right]
+    \right] b
 \nonumber\\
     &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
     \frac{\alpha_{m0}^3 v_{m0}^2 \exp(-\alpha_{m0}^2\alpha t)}
@@ -498,9 +498,9 @@ And the value of this flux at $r=b$ is,
     \frac{-2}{\pi b\alpha_{m0}}
     \left[
         Y_0(b\alpha_{m0}) J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0}) Y_0(r_0\alpha_{m0})
-    \right]
+    \right]b
 \nonumber\\
-    &=& \frac{\pi}{b} \sum_{m=1}^{\infty}
+    &=& \pi \sum_{m=1}^{\infty}
     \frac{\alpha_{m0}^2 v_{m0}^2 \exp(-\alpha_{m0}^2\alpha t)}
          {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
     \left[
@@ -512,10 +512,10 @@ also, at $r=a$
 %
 \begin{eqnarray}
     & & \left.
-    \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t)d\theta
+    \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t)rd\theta
     \right|_{r=a}
 \nonumber\\
-    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    &=& \frac{a\pi^2}{2} \sum_{m=1}^{\infty}
     \frac{\alpha_{m0}^3 v_{m0}^2 \exp(-\alpha_{m0}^2\alpha t)}
          {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
     \left[
@@ -527,19 +527,360 @@ also, at $r=a$
     \right]
 \end{eqnarray}
 
+Note that at $r=a$, the sign of the flux from $[a, b)$ to the outside is opposite from the above form.
 
+\inlinecode{leaves()} and \inlinecode{leavea()} correspond to these.
 
+\subsection{drawR}
 
+To get the distribution along $r$, we first need to integrate the probability
+distribution along $\theta$.
 
+\begin{eqnarray}
+    P(r, \theta, t) &=&
+    \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0)\cos(n\theta)\Bigg]
+\nonumber\\
+    \int_0^{2\pi} P(r, \theta, t) rd\theta
+    &=& \frac{1}{a^2} \int_0^{2\pi} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0)\cos(n\theta)\Bigg] rd\theta
+\nonumber\\
+    &=& \frac{1}{a^2} \sum_{m=1}^{\infty}
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) r.
+\end{eqnarray}
+%
+Expanding this,
+%
+\begin{eqnarray}
+    \int_0^{2\pi} P(r, \theta, t) rd\theta
+    &=& \frac{1}{a^2} \sum_{m=1}^{\infty}
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) r
+\nonumber \\
+    &=& \frac{1}{a^2} \sum_{m=1}^{\infty}
+    \frac{\pi^2}{2}
+    \frac{\alpha_{m0}^2J_0^2(b\alpha_{m0})\exp(-\alpha_{m0}^2\alpha t)}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) r
+\nonumber \\
+    &=& \frac{1}{a^2} \sum_{m=1}^{\infty}
+    \frac{\pi^2}{2}
+    \frac{\alpha_{m0}^2\exp(-\alpha_{m0}^2\alpha t)}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
+    J_0(b\alpha_{m0})R_{m0}(a\alpha_{m0}, r) J_0(b\alpha_{m0})R_{m0}(a\alpha_{m0}, r_0) r
+\end{eqnarray}
+%
+Here, we can use the relationship
+%
+\begin{eqnarray}
+    R_{m0}(a\alpha_{m0}, r) &=& S_{m0}J_0(r\alpha_{m0}) - V_{m0}Y_0(r\alpha_{m0})
+\nonumber\\
+    S_{m0}J_0(b\alpha_{m0}) &=& V_{m0}Y_0(b\alpha_{m0})
+\nonumber\\
+    J_0(b\alpha_{m0})R_{m0}(a\alpha_{m0}, r)
+    &=& S_{m0}J_0(b\alpha_{m0})J_0(r\alpha_{m0}) - V_{m0}J_0(b\alpha_{m0})Y_0(r\alpha_{m0})
+\nonumber\\
+    &=& V_{m0}Y_0(b\alpha_{m0})J_0(r\alpha_{m0}) - V_{m0}J_0(b\alpha_{m0})Y_0(r\alpha_{m0})
+\nonumber\\
+    &=& V_{m0}\left(Y_0(b\alpha_{m0})J_0(r\alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r\alpha_{m0})\right)
+\end{eqnarray}
+%
+And the form of the distribution becomes
+%
+\begin{eqnarray}
+    & & \int_0^{2\pi} P(r, \theta, t) rd\theta
+\nonumber\\
+    &=& \frac{1}{a^2} \sum_{m=1}^{\infty}
+    \frac{\pi^2}{2}
+    \frac{\alpha_{m0}^2\exp(-\alpha_{m0}^2\alpha t)V_{m0}^2}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2} \times
+\nonumber\\
+    & & \left[Y_0(b\alpha_{m0})J_0(r  \alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r  \alpha_{m0})\right]
+        \left[Y_0(b\alpha_{m0})J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r_0\alpha_{m0})\right] r
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}^2\exp(-\alpha_{m0}^2\alpha t)v_{m0}^2}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2} \times
+\nonumber\\
+    & & \left[Y_0(b\alpha_{m0})J_0(r  \alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r  \alpha_{m0})\right]
+        \left[Y_0(b\alpha_{m0})J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r_0\alpha_{m0})\right] r.
+\end{eqnarray}
+%
+To determine the position of the particle stochastically based on
+this distribution, we also need to integrate this to a certain $R$.
+%
+\begin{eqnarray}
+    & & \int_a^R \int_0^{2\pi} P(r, \theta, t) rdrd\theta
+\nonumber\\
+    &=& \int_a^R \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}^2\exp(-\alpha_{m0}^2\alpha t)v_{m0}^2}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
+    \left[Y_0(b\alpha_{m0})J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r_0\alpha_{m0})\right]
+    \times
+\nonumber\\
+    & & \left[Y_0(b\alpha_{m0})J_0(r  \alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r  \alpha_{m0})\right]rdr
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}^2\exp(-\alpha_{m0}^2\alpha t)v_{m0}^2}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
+    \left[Y_0(b\alpha_{m0})J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r_0\alpha_{m0})\right]
+    \times
+\nonumber\\
+    & & \int_a^R \left[Y_0(b\alpha_{m0})J_0(r  \alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r  \alpha_{m0})\right]rdr
+\end{eqnarray}
 
+The integral is
+\begin{eqnarray}
+    & & \int_a^R \left[Y_0(b\alpha_{m0})J_0(r  \alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r  \alpha_{m0})\right]rdr
+\nonumber\\
+    &=& Y_0(b\alpha_{m0})\int_a^RJ_0(r\alpha_{m0})rdr -
+        J_0(b\alpha_{m0})\int_a^RY_0(r\alpha_{m0})rdr
+\nonumber\\
+    &=& Y_0(b\alpha_{m0})\left[\frac{rJ_1(r\alpha_{m0})}{\alpha_{m0}}\right]_a^R -
+        J_0(b\alpha_{m0})\left[\frac{rY_1(r\alpha_{m0})}{\alpha_{m0}}\right]_a^R
+\nonumber\\
+    &=& Y_0(b\alpha_{m0})\left[\frac{RJ_1(R\alpha_{m0})}{\alpha_{m0}} - \frac{a J_1(a\alpha_{m0})}{\alpha_{m0}}\right] -
+        J_0(b\alpha_{m0})\left[\frac{RY_1(R\alpha_{m0})}{\alpha_{m0}} - \frac{a Y_1(a\alpha_{m0})}{\alpha_{m0}}\right]
+\nonumber\\
+    &=& \frac{1}{\alpha_{m0}}\left[Y_0(b\alpha_{m0})RJ_1(R\alpha_{m0}) - Y_0(b\alpha_{m0})a J_1(a\alpha_{m0})\right] -
+        \frac{1}{\alpha_{m0}}\left[J_0(b\alpha_{m0})RY_1(R\alpha_{m0}) - J_0(b\alpha_{m0})a Y_1(a\alpha_{m0})\right]
+\nonumber\\
+    &=& \frac{R}{\alpha_{m0}}\left[Y_0(b\alpha_{m0})J_1(R\alpha_{m0}) - J_0(b\alpha_{m0})Y_1(R\alpha_{m0})\right] -
+        \frac{a}{\alpha_{m0}}\left[Y_0(b\alpha_{m0})J_1(a\alpha_{m0}) - J_0(b\alpha_{m0})Y_1(a\alpha_{m0})\right]
+\end{eqnarray}
+%
+putting it back to the formula, we get
+%
+\begin{eqnarray}
+    & & \int_a^{R} \int_0^{2\pi} P(r, \theta, t) rdrd\theta
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}^2\exp(-\alpha_{m0}^2\alpha t)v_{m0}^2}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
+    \left[Y_0(b\alpha_{m0})J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r_0\alpha_{m0})\right]
+    \times
+\nonumber\\
+    & & \left[
+        \frac{R}{\alpha_{m0}}\left[Y_0(b\alpha_{m0})J_1(R\alpha_{m0}) - J_0(b\alpha_{m0})Y_1(R\alpha_{m0})\right] -
+        \frac{a}{\alpha_{m0}}\left[Y_0(b\alpha_{m0})J_1(a\alpha_{m0}) - J_0(b\alpha_{m0})Y_1(a\alpha_{m0})\right]
+        \right]
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}\exp(-\alpha_{m0}^2\alpha t)v_{m0}^2}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
+    \left[Y_0(b\alpha_{m0})J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0})Y_0(r_0\alpha_{m0})\right]
+    \times
+\nonumber\\
+    & & \left[
+        RY_0(b\alpha_{m0})J_1(R\alpha_{m0}) - RJ_0(b\alpha_{m0})Y_1(R\alpha_{m0}) -
+        aY_0(b\alpha_{m0})J_1(a\alpha_{m0}) + aJ_0(b\alpha_{m0})Y_1(a\alpha_{m0})
+        \right]
+\end{eqnarray}
+This corresponds to \inlinecode{p_int_r_i_exp_table()}.
 
+\subsection{drawTheta}
+To determine the position of a particle based on the distribution, first we need
+to obtain cumulative distribution function.
 
+\begin{eqnarray}
+    P(r, \theta, t) &=&
+    \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0)\cos(n\theta)\Bigg]
+\nonumber\\
+    \int_0^{\phi} P(r, \theta, t) rd\theta
+    &=& \frac{1}{a^2} \int_0^{\phi} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0)\cos(n\theta)\Bigg] rd\theta
+\nonumber\\
+    &=& \frac{1}{a^2}  \sum_{m=1}^{\infty} \Bigg[
+    \phi r\frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ r
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0)
+    \int_0^\phi\cos(n\theta) d\theta
+    \Bigg]
+\nonumber\\
+    &=& \frac{1}{a^2}  \sum_{m=1}^{\infty} \Bigg[
+    \frac{\phi}{2\pi} r\frac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ r
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0) \frac{\sin(n\phi)}{n}
+    \Bigg]
+\nonumber\\
+    &=& \frac{1}{a^2} \frac{\phi}{2\pi} \sum_{m=1}^{\infty} \Bigg[
+    r\frac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0)\Bigg] +
+\nonumber\\
+    & & \frac{1}{a^2} \sum_{m=1}^{\infty}\sum_{n=1}^{\infty}\Bigg[
+    r \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0) \frac{\sin(n\phi)}{n}
+    \Bigg]
+\end{eqnarray}
+%
+We also need to divide this by $\int_0^{2\pi} P rd\theta$, and get
+%
+\begin{eqnarray}
+    \frac{\int_0^{\phi} P(r, \theta, t) rd\theta}
+         {\int_0^{2\pi} P(r, \theta, t) rd\theta}
+    &=& \frac{\phi}{2\pi} +
+    \cfrac{
+        \sum\limits_{m=1}^{\infty}\sum\limits_{n=1}^{\infty}
+        r\cfrac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+        R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0) \cfrac{\sin(n\phi)}{n}
+    }{
+        \sum\limits_{m=1}^{\infty}
+        r\cfrac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+        R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0)
+    }
+\nonumber\\
+    &=& \frac{\phi}{2\pi} + \frac{1}{\pi}
+    \cfrac{
+        \sum\limits_{m=1}^{\infty}\sum\limits_{n=1}^{\infty}
+        \cfrac{\exp(-\alpha_{mn}^2\alpha t)}{N(a\alpha_{mn})}
+        R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0) \cfrac{\sin(n\phi)}{n}
+    }{
+        \sum\limits_{m=1}^{\infty}
+        \cfrac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+        R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0)
+    }
+\nonumber\\
+    &=& \frac{\phi}{2\pi} + \frac{1}{\pi}\sum_{n=1}^{\infty}\left[
+    \cfrac{
+        \sum\limits_{m=1}^{\infty}
+        \cfrac{\exp(-\alpha_{mn}^2\alpha t)}{N(a\alpha_{mn})}
+        R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0)
+    }{
+        \sum\limits_{m=1}^{\infty}
+        \cfrac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+        R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0)
+    }
+    \right] \frac{\sin(n\phi)}{n}
+\end{eqnarray}
 
+When the particle is on $r=b$, we need to take another way to find the location
+of the particle because the density distribution is always 0 at $r=b$.
+In that case, we use $\partial P / \partial r$ on $r=b$.
 
-
-
-
-
-
+\begin{eqnarray}
+    \frac{\partial P}{\partial r}(r, \theta, t) &=&
+    \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+    \frac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r} R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    \frac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r} R_{mn}(a\alpha_{mn}, r_0)\cos(n\theta)\Bigg].
+\end{eqnarray}
+%
+The cumulative distribution function is
+%
+\begin{eqnarray}
+    \int_0^\phi\frac{\partial P}{\partial r}(r, \theta, t) rd\theta
+    &=& \int_0^\phi\frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+    \frac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r} R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    \frac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r} R_{mn}(a\alpha_{mn}, r_0)\cos(n\theta)\Bigg] rd\theta
+\nonumber\\
+    &=& \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    r\frac{\phi}{2\pi}\frac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+    \frac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r} R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    r\frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    \frac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r} R_{mn}(a\alpha_{mn}, r_0)
+    \int_0^\phi\cos(n\theta)d\theta\Bigg]
+\nonumber\\
+    &=& \frac{1}{a^2} \frac{\phi}{2\pi} \sum_{m=1}^{\infty} \Bigg[
+    r\frac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+    \frac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r} R_{m0}(a\alpha_{m0}, r_0)\Bigg] +
+\nonumber\\
+    & & \frac{1}{a^2}\sum_{m=1}^{\infty}\sum_{n=1}^{\infty} \Bigg[
+    r\frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    \frac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r} R_{mn}(a\alpha_{mn}, r_0)
+    \frac{\sin(n\phi)}{n}\Bigg]
+\end{eqnarray}
+%
+And the $\int_0^{2\pi} \partial P / \partial r |_a$ is
+%
+\begin{eqnarray}
+    \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t) rd\theta
+    &=& \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    r\frac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+    \frac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r} R_{m0}(a\alpha_{m0}, r_0)\Bigg]
+\end{eqnarray}
+%
+So the relative cumulative probability is
+%
+\begin{eqnarray}
+    \frac{\int_0^{\phi} (\partial P(r, \theta, t)/\partial r) rd\theta}
+         {\int_0^{2\pi} (\partial P(r, \theta, t)/\partial r) rd\theta}
+    &=& \frac{\phi}{2\pi} +
+    \cfrac{
+        \sum\limits_{m=1}^{\infty}\sum\limits_{n=1}^{\infty}
+        r\cfrac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+        \cfrac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r}
+        R_{mn}(a\alpha_{mn}, r_0)
+        \cfrac{\sin(n\phi)}{n}
+    }{
+        \sum\limits_{m=1}^{\infty}
+        r\cfrac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+        \cfrac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r}
+        R_{m0}(a\alpha_{m0}, r_0)
+    }
+\nonumber\\
+    &=& \frac{\phi}{2\pi} + \frac{1}{\pi}
+    \cfrac{
+        \sum\limits_{m=1}^{\infty}\sum\limits_{n=1}^{\infty}
+        \cfrac{\exp(-\alpha_{mn}^2\alpha t)}{N(a\alpha_{mn})}
+        \cfrac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r}
+        R_{mn}(a\alpha_{mn}, r_0) \cfrac{\sin(n\phi)}{n}
+    }{
+        \sum\limits_{m=1}^{\infty}
+        \cfrac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+        \cfrac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r}
+        R_{m0}(a\alpha_{m0}, r_0)
+    }
+\nonumber\\
+    &=& \frac{\phi}{2\pi} + \frac{1}{\pi}\sum_{n=1}^{\infty}\left[
+    \cfrac{
+        \sum\limits_{m=1}^{\infty}
+        \cfrac{\exp(-\alpha_{mn}^2\alpha t)}{N(a\alpha_{mn})}
+        \cfrac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r}
+        R_{mn}(a\alpha_{mn}, r_0)
+    }{
+        \sum\limits_{m=1}^{\infty}
+        \cfrac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+        \cfrac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r}
+        R_{m0}(a\alpha_{m0}, r_0)
+    }
+    \right] \frac{\sin(n\phi)}{n}
+\end{eqnarray}
 
 \end{document}
