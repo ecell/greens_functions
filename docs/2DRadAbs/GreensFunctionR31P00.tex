@@ -21,8 +21,8 @@
 \begin{eqnarray}
     G(r, \phi, t | r', \phi', \tau) &=&
     \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
-    \frac{\exp(-\beta_{mn}^2\alpha(t-\tau)/a^2)}{2\pi N(\beta_{mn})}
-    R_{mn}(\beta_{mn}, r) R_{mn}(\beta_{mn}, r') +
+    \frac{\exp(-\beta_{m0}^2\alpha(t-\tau)/a^2)}{2\pi N(\beta_{m0})}
+    R_{m0}(\beta_{m0}, r) R_{m0}(\beta_{m0}, r') +
 \nonumber\\
     & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
     \frac{\exp(-\beta_{mn}^2\alpha(t-\tau)/a^2)}{\pi N(\beta_{mn})}
@@ -65,8 +65,8 @@ assigning $\phi' = 0$ and $\tau = 0$,
 \begin{eqnarray}
     G(r, \phi, t | r', 0, 0) &=&
     \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
-    \frac{\exp(-\beta_{mn}^2\alpha t/a^2)}{2\pi N(\beta_{mn})}
-    R_{mn}(\beta_{mn}, r) R_{mn}(\beta_{mn}, r') +
+    \frac{\exp(-\beta_{m0}^2\alpha t/a^2)}{2\pi N(\beta_{m0})}
+    R_{m0}(\beta_{m0}, r) R_{m0}(\beta_{m0}, r') +
 \nonumber\\
     & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
     \frac{\exp(-\beta_{mn}^2\alpha t/a^2)}{\pi N(\beta_{mn})}
@@ -78,11 +78,11 @@ by converting $\beta_{mn} = a\alpha_{mn}$,
 \begin{eqnarray}
     G(r, \phi, t | r', 0, 0) &=&
     \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
-    \frac{\exp(-\alpha_{mn}^2\alpha(t))}{2\pi N(a\alpha_{mn})}
-    R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r') +
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r') +
 \nonumber\\
     & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
-    \frac{\exp(-\alpha_{mn}^2\alpha(t))}{\pi N(a\alpha_{mn})}
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
     R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r')\cos(n\phi)\Bigg]
 \\
     R_{mn}(a\alpha_{mn}, r) &=& S_{mn}J_n(r\alpha_{mn}) - V_{mn}Y_n(r\alpha_{mn})
@@ -349,6 +349,197 @@ Substituting these results into the survival probability, we get
         \Bigg]
 \nonumber
 \end{eqnarray}
+
+\subsection{drawEventKind}
+
+To determine from which boundary the particle vanishes, we need to compare the fluxes
+across two boundaries. The probability distribution is
+
+\begin{eqnarray}
+    P(r, \theta, t) &=&
+    \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+    R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0)\cos(n\theta)\Bigg].
+\end{eqnarray}
+%
+And the differentiation of this function is
+%
+\begin{eqnarray}
+    \frac{\partial P}{\partial r}(r, \theta, t) &=&
+    \frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+    \frac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r} R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    \frac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r} R_{mn}(a\alpha_{mn}, r_0)\cos(n\theta)\Bigg].
+\end{eqnarray}
+%
+Here, $\partial R_{mn} / \partial r$ is
+%
+\begin{eqnarray}
+        \frac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r}
+    &=& \frac{\partial }{\partial r} \left[
+        S_{mn}J_n(r\alpha_{mn}) - V_{mn}Y_n(r\alpha_{mn})
+        \right]
+\nonumber \\
+    &=& S_{mn}\frac{\partial J_n(r\alpha_{mn})}{\partial r} -
+        V_{mn}\frac{\partial Y_n(r\alpha_{mn})}{\partial r}
+\nonumber \\
+    &=& S_{mn}\frac{\alpha_{mn}}{2}\left[J_{n-1}(r\alpha_{mn}) - J_{n+1}(r\alpha_{mn})\right] -
+        V_{mn}\frac{\alpha_{mn}}{2}\left[Y_{n-1}(r\alpha_{mn}) - Y_{n+1}(r\alpha_{mn})\right].
+\end{eqnarray}
+%
+For $n == 0$ case, it can be further simplified as
+%
+\begin{eqnarray}
+        \frac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r}
+    &=& \frac{\partial }{\partial r} \left[
+        S_{m0}J_0(r\alpha_{m0}) - V_{m0}Y_0(r\alpha_{m0})
+        \right]
+\nonumber \\
+    &=& S_{m0}\frac{\partial J_0(r\alpha_{m0})}{\partial r} -
+        V_{m0}\frac{\partial Y_0(r\alpha_{m0})}{\partial r}
+\nonumber \\
+    &=& -S_{m0}\alpha_{m0}J_1(r\alpha_{m0}) +
+         V_{m0}\alpha_{m0}Y_1(r\alpha_{m0}).
+\end{eqnarray}
+%
+To calculate the flux across the boundary, we need to first integrate it around $\theta$.
+%
+\begin{eqnarray}
+    \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t)d\theta &=&
+    \int_0^{2\pi}\frac{1}{a^2} \sum_{m=1}^{\infty} \Bigg[
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{2\pi N(a\alpha_{m0})}
+    \frac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r} R_{m0}(a\alpha_{m0}, r_0) +
+\nonumber\\
+    & &\ \ \ \ \sum_{n=1}^{\infty}\ \ \ 
+    \frac{\exp(-\alpha_{mn}^2\alpha t)}{\pi N(a\alpha_{mn})}
+    \frac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r} R_{mn}(a\alpha_{mn}, r_0)\cos(n\theta)\Bigg]d\theta.
+\nonumber\\
+    &=&\frac{1}{a^2} \sum_{m=1}^{\infty}
+    \frac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
+    \alpha_{m0}\left[V_{m0}Y_1(r\alpha_{m0}) - S_{m0}J_1(r\alpha_{m0}) \right] R_{m0}(a\alpha_{m0}, r_0)
+\nonumber\\
+    &=&\frac{1}{a^2} \sum_{m=1}^{\infty}\frac{\pi^2}{2}
+    \frac{a^2\alpha_{m0}^2 J_0^2(b\alpha_{m0})}
+         {C_{m0}J_0^2(b\alpha_{m0}) - V_{m0}^2}
+    \exp(-\alpha_{m0}^2\alpha t)
+    \alpha_{m0}\left[V_{m0}Y_1(r\alpha_{m0}) - S_{m0}J_1(r\alpha_{m0}) \right] R_{m0}(a\alpha_{m0}, r_0)
+\nonumber\\
+    &=&\frac{\pi^2}{2a^2} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}^3\exp(-\alpha_{m0}^2\alpha t)}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2} \times
+\nonumber\\
+    & & \left[
+        V_{m0}J_0(b\alpha_{m0})Y_1(r\alpha_{m0}) - S_{m0}J_0(b\alpha_{m0})J_1(r\alpha_{m0})
+    \right] J_0(b\alpha_{m0})R_{m0}(a\alpha_{m0}, r_0)
+\end{eqnarray}
+%
+Here we can use the relationship
+%
+\begin{eqnarray}
+    S_{mn}J_n(b\alpha_{mn}) - V_{mn}Y_n(b\alpha_{mn}) = 0,
+\end{eqnarray}
+%
+to reduce the complexity,
+%
+\begin{eqnarray}
+        \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t)d\theta
+    &=& \frac{\pi^2}{2a^2} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}^3\exp(-\alpha_{m0}^2\alpha t)}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2} \times
+\nonumber\\
+    & & V_{m0}\left[
+        J_0(b\alpha_{m0})Y_1(r\alpha_{m0}) - Y_0(b\alpha_{m0})J_1(r\alpha_{m0})
+    \right] \times
+\nonumber\\
+    & & V_{m0}\left[
+        Y_0(b\alpha_{m0}) J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0}) Y_0(r_0\alpha_{m0})
+    \right]
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}^3 v_{m0}^2 \exp(-\alpha_{m0}^2\alpha t)}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
+    \left[
+        J_0(b\alpha_{m0})Y_1(r\alpha_{m0}) - Y_0(b\alpha_{m0})J_1(r\alpha_{m0})
+    \right] \times
+\nonumber\\
+    & & \left[
+        Y_0(b\alpha_{m0}) J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0}) Y_0(r_0\alpha_{m0})
+    \right]
+\end{eqnarray}
+%
+And the value of this flux at $r=b$ is,
+%
+\begin{eqnarray}
+    & & \left.
+    \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t)d\theta
+    \right|_{r=b}
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}^3 v_{m0}^2 \exp(-\alpha_{m0}^2\alpha t)}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
+    \left[
+        J_0(b\alpha_{m0})Y_1(b\alpha_{m0}) - Y_0(b\alpha_{m0})J_1(b\alpha_{m0})
+    \right] \times
+\nonumber\\
+    & & \left[
+        Y_0(b\alpha_{m0}) J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0}) Y_0(r_0\alpha_{m0})
+    \right]
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}^3 v_{m0}^2 \exp(-\alpha_{m0}^2\alpha t)}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
+    \frac{-2}{\pi b\alpha_{m0}}
+    \left[
+        Y_0(b\alpha_{m0}) J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0}) Y_0(r_0\alpha_{m0})
+    \right]
+\nonumber\\
+    &=& \frac{\pi}{b} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}^2 v_{m0}^2 \exp(-\alpha_{m0}^2\alpha t)}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
+    \left[
+        J_0(b\alpha_{m0}) Y_0(r_0\alpha_{m0}) - Y_0(b\alpha_{m0}) J_0(r_0\alpha_{m0})
+    \right]
+\end{eqnarray}
+%
+also, at $r=a$
+%
+\begin{eqnarray}
+    & & \left.
+    \int_0^{2\pi}\frac{\partial P}{\partial r}(r, \theta, t)d\theta
+    \right|_{r=a}
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum_{m=1}^{\infty}
+    \frac{\alpha_{m0}^3 v_{m0}^2 \exp(-\alpha_{m0}^2\alpha t)}
+         {((h/k)^2 + \alpha_{m0}^2)J_0^2(b\alpha_{m0}) - v_{m0}^2}
+    \left[
+        J_0(b\alpha_{m0})Y_1(a\alpha_{m0}) - Y_0(b\alpha_{m0})J_1(a\alpha_{m0})
+    \right] \times
+\nonumber\\
+    & & \left[
+        Y_0(b\alpha_{m0}) J_0(r_0\alpha_{m0}) - J_0(b\alpha_{m0}) Y_0(r_0\alpha_{m0})
+    \right]
+\end{eqnarray}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \end{document}
