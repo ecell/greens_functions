@@ -1,6 +1,11 @@
-all:
+all: 2DRadAbs R31P00
+
+R31P00:
+	platex GreensFunctionR31P00.tex && platex GreensFunctionR31P00.tex && dvipdfmx GreensFunctionR31P00.dvi
+
+2DRadAbs:
 	platex GreensFunction2DRadAbs.tex && platex GreensFunction2DRadAbs.tex && dvipdfmx GreensFunction2DRadAbs.dvi
 
 .PHONY: clean
 clean:
-	rm GreensFunction2DRadAbs.aux GreensFunction2DRadAbs.dvi GreensFunction2DRadAbs.log GreensFunction2DRadAbs.pdf
+	rm *.aux *.dvi *.log *.pdf
