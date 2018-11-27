@@ -8,7 +8,7 @@ using greens_functions::Real;
 
 void plot_with_ka(const Real ka, const std::string fname)
 {
-    std::ofstream ofs(fname);
+    std::ofstream ofs(fname.c_str());
     ofs << std::setprecision(15);
 
     const Real D  = 1.0;
