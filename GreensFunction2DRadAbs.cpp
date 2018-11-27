@@ -857,18 +857,30 @@ GreensFunction2DRadAbs::p_survival_table( const        Real t,
                 "couldn't converge; max terms reached: %1%\n") % maxi;
     }
 
-    if( psurvTable.size() < maxi + 1 )           // if the dimensions are good then this means
-    {                                            // that the table is filled
-        getAlpha( 0, maxi );                      // this updates the table of roots
-        this->createPsurvTable( psurvTable);      // then the table is filled with data
+    if( psurvTable.size() < maxi + 1 )       // if the dimensions are good then this means
+    {                                        // that the table is filled
+        getAlpha( 0, maxi );                 // this updates the table of roots
+        this->createPsurvTable( psurvTable); // then the table is filled with data
     }
-        // A sum over terms is performed, where convergence is assumed. It is not
+
+    // A sum over terms is performed, where convergence is assumed. It is not
     // clear if this is a just assumption.
-    // TODO!
-    p = funcSum_all( boost::bind( &GreensFunction2DRadAbs::p_survival_i_exp_table,
-                                  this,
-                                  _1, t, psurvTable ),
-                                  maxi ); // calculate the sum at time t
+    if(maxi < 8) //TODO consider this threshold
+    {
+        p = funcSum_all(boost::bind(
+                    &GreensFunction2DRadAbs::p_survival_i_exp_table,
+                    this, _1, t, psurvTable
+                ), maxi); // calculate the sum at time t
+    }
+    else
+    {
+        p = funcSum(boost::bind(
+                    &GreensFunction2DRadAbs::p_survival_i_exp_table,
+                    this, _1, t, psurvTable
+                ), maxi); // calculate the sum at time t
+    }
+    assert(std::isfinite(p));
+
     return p*M_PI*M_PI_2;
 }
 
