@@ -3,7 +3,7 @@
 \usepackage{mathrsfs}
 \usepackage{color}
 \usepackage{listings}
-\usepackage[top=2.1cm,left=2.0cm,right=2.0cm,footskip=2.0cm]{geometry}
+\usepackage[top=2.1cm,left=1.0cm,right=1.0cm,footskip=2.0cm]{geometry}
 
 \lstset{
     language = C++,
@@ -759,7 +759,7 @@ We also need to divide this by $\int_0^{2\pi} P rd\theta$, and get
 \nonumber\\
     &=& \frac{\phi}{2\pi} + \frac{1}{\pi}
     \cfrac{
-        \sum\limits_{m=1}^{\infty}\sum\limits_{n=1}^{\infty}
+        \sum\limits_{n=1}^{\infty}\sum\limits_{m=1}^{\infty}
         \cfrac{\exp(-\alpha_{mn}^2\alpha t)}{N(a\alpha_{mn})}
         R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0) \cfrac{\sin(n\phi)}{n}
     }{
@@ -767,18 +767,115 @@ We also need to divide this by $\int_0^{2\pi} P rd\theta$, and get
         \cfrac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
         R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0)
     }
-\nonumber\\
-    &=& \frac{\phi}{2\pi} + \frac{1}{\pi}\sum_{n=1}^{\infty}\left[
-    \cfrac{
-        \sum\limits_{m=1}^{\infty}
-        \cfrac{\exp(-\alpha_{mn}^2\alpha t)}{N(a\alpha_{mn})}
-        R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0)
-    }{
-        \sum\limits_{m=1}^{\infty}
+\end{eqnarray}
+%
+The denominator of the right hand side is
+%
+\begin{eqnarray}
+    & & \sum\limits_{m=1}^{\infty}
         \cfrac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
         R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0)
+\nonumber\\
+    &=& \sum\limits_{m=1}^{\infty}
+        \frac{\pi^2}{2} \frac{a^2\alpha_{m0}^2 J_0^2(b\alpha_{m0})}
+        {\left[(ha/k)^2 + a^2\alpha_{m0}^2\right]J_0^2(b\alpha_{m0}) - V_{m0}^2}
+        \exp(-\alpha_{m0}^2\alpha t)
+        R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0)
+\nonumber\\
+    &=& \sum\limits_{m=1}^{\infty} \frac{\pi^2}{2}
+        \frac{a^2\alpha_{m0}^2 J_0^2(b\alpha_{m0})\exp(-\alpha_{m0}^2\alpha t)}
+        {\left[(ha/k)^2 + a^2\alpha_{m0}^2\right]J_0^2(b\alpha_{m0}) - V_{m0}^2}
+        R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0)
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum\limits_{m=1}^{\infty}
+        \frac{\alpha_{m0}^2 J_0^2(b\alpha_{m0})\exp(-\alpha_{m0}^2\alpha t)}
+        {\left[(h/k)^2 + \alpha_{m0}^2\right]J_0^2(b\alpha_{m0}) - v_{m0}^2}
+        R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0)
+\end{eqnarray}
+%
+and the numerator is
+%
+\begin{eqnarray}
+    & & \sum\limits_{n=1}^{\infty}\sum\limits_{m=1}^{\infty}
+        \cfrac{\exp(-\alpha_{mn}^2\alpha t)}{N(a\alpha_{mn})}
+        R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0) \cfrac{\sin(n\phi)}{n}
+\nonumber\\
+    &=& \sum\limits_{n=1}^{\infty}\sum\limits_{m=1}^{\infty} \frac{\pi^2}{2}
+        \frac{a^2\alpha_{mn}^2 J_n^2(b\alpha_{mn})}
+        {\left[
+            \left(\frac{ha}{k}\right)^2 +
+            a^2\alpha_{mn}^2\left[1 - \left(\frac{n}{a\alpha_{mn}}\right)^2\right]
+            \right]J_n^2(b\alpha_{mn}) - V_{mn}^2}
+        \exp(-\alpha_{mn}^2\alpha t)
+        R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0) \cfrac{\sin(n\phi)}{n}
+\nonumber\\
+    &=& \frac{\pi^2}{2} \sum\limits_{n=1}^{\infty}\sum\limits_{m=1}^{\infty}
+        \frac{\alpha_{mn}^2 J_n^2(b\alpha_{mn})\exp(-\alpha_{mn}^2\alpha t)}
+        {\left[
+            \left(\frac{h}{k}\right)^2 +
+            \alpha_{mn}^2 - \left(\frac{n}{a}\right)^2
+        \right]J_n^2(b\alpha_{mn}) - v_{mn}^2}
+        R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0) \cfrac{\sin(n\phi)}{n}.
+\end{eqnarray}
+%
+Therefore
+%
+\begin{eqnarray}
+    \frac{\int_0^{\phi} P(r, \theta, t) rd\theta}
+         {\int_0^{2\pi} P(r, \theta, t) rd\theta}
+    &=& \frac{\phi}{2\pi} + \frac{1}{\pi}
+    \cfrac{
+        \cfrac{\pi^2}{2} \sum\limits_{n=1}^{\infty}\sum\limits_{m=1}^{\infty}
+        \cfrac{\alpha_{mn}^2 J_n^2(b\alpha_{mn})\exp(-\alpha_{mn}^2\alpha t)}
+        {\left[(h/k)^2 + \alpha_{mn}^2 - (n/a)^2\right]J_n^2(b\alpha_{mn}) - v_{mn}^2}
+        R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0) \cfrac{\sin(n\phi)}{n}
+    }{
+        \cfrac{\pi^2}{2} \sum\limits_{m=1}^{\infty}
+        \cfrac{\alpha_{m0}^2 J_0^2(b\alpha_{m0})\exp(-\alpha_{m0}^2\alpha t)}
+        {\left[(h/k)^2 + \alpha_{m0}^2\right]J_0^2(b\alpha_{m0}) - v_{m0}^2}
+        R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0)
     }
-    \right] \frac{\sin(n\phi)}{n}
+\nonumber\\
+    &=& \frac{\phi}{2\pi} + \frac{1}{\pi}
+    \cfrac{
+        \sum\limits_{n=1}^{\infty}\sum\limits_{m=1}^{\infty}
+        \cfrac{\alpha_{mn}^2 J_n^2(b\alpha_{mn})\exp(-\alpha_{mn}^2\alpha t)}
+        {\left[(h/k)^2 + \alpha_{mn}^2 - (n/a)^2\right]J_n^2(b\alpha_{mn}) - v_{mn}^2}
+        R_{mn}(a\alpha_{mn}, r) R_{mn}(a\alpha_{mn}, r_0) \cfrac{\sin(n\phi)}{n}
+    }{
+        \sum\limits_{m=1}^{\infty}
+        \cfrac{\alpha_{m0}^2 J_0^2(b\alpha_{m0})\exp(-\alpha_{m0}^2\alpha t)}
+        {\left[(h/k)^2 + \alpha_{m0}^2\right]J_0^2(b\alpha_{m0}) - v_{m0}^2}
+        R_{m0}(a\alpha_{m0}, r) R_{m0}(a\alpha_{m0}, r_0).
+    }
+\nonumber
+\end{eqnarray}
+%
+In general,
+%
+\begin{eqnarray}
+    R_{mn}(a\alpha_{mn}, r) &=& S_{mn}J_n(r\alpha_{mn}) - V_{mn}Y_n(r\alpha_{mn})
+\nonumber\\
+    J_n(b\alpha_{mn})R_{mn}(a\alpha_{mn}, r)
+    &=& J_n(b\alpha_{mn})S_{mn}J_n(r\alpha_{mn}) - J_n(b\alpha_{mn})V_{mn}Y_n(r\alpha_{mn})
+\nonumber\\
+    &=& Y_n(b\alpha_{mn})V_{mn}J_n(r\alpha_{mn}) - J_n(b\alpha_{mn})V_{mn}Y_n(r\alpha_{mn})
+\nonumber\\
+    &=& V_{mn}\left(Y_n(b\alpha_{mn})J_n(r\alpha_{mn}) - J_n(b\alpha_{mn})Y_n(r\alpha_{mn})\right)
+\nonumber
+\end{eqnarray}
+%
+Hence
+%
+\begin{eqnarray}
+    R_{mn}(a\alpha_{mn}, r) &=& S_{mn}J_n(r\alpha_{mn}) - V_{mn}Y_n(r\alpha_{mn})
+\nonumber\\
+    J_n^2(b\alpha_{mn})R_{mn}(a\alpha_{mn}, r)R_{mn}(a\alpha_{mn}, r_0)
+    &=& V_{mn}^2
+        \left(Y_n(b\alpha_{mn})J_n(r  \alpha_{mn}) - J_n(b\alpha_{mn})Y_n(r  \alpha_{mn})\right)
+\nonumber\\
+    & & \times\ \ \ \left(Y_n(b\alpha_{mn})J_n(r_0\alpha_{mn}) - J_n(b\alpha_{mn})Y_n(r_0\alpha_{mn})\right).
+\nonumber
 \end{eqnarray}
 
 When the particle is on $r=b$, we need to take another way to find the location
@@ -857,7 +954,7 @@ So the relative cumulative probability is
 \nonumber\\
     &=& \frac{\phi}{2\pi} + \frac{1}{\pi}
     \cfrac{
-        \sum\limits_{m=1}^{\infty}\sum\limits_{n=1}^{\infty}
+        \sum\limits_{n=1}^{\infty}\sum\limits_{m=1}^{\infty}
         \cfrac{\exp(-\alpha_{mn}^2\alpha t)}{N(a\alpha_{mn})}
         \cfrac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r}
         R_{mn}(a\alpha_{mn}, r_0) \cfrac{\sin(n\phi)}{n}
@@ -867,20 +964,6 @@ So the relative cumulative probability is
         \cfrac{\partial R_{m0}(a\alpha_{m0}, r)}{\partial r}
         R_{m0}(a\alpha_{m0}, r_0)
     }
-\nonumber\\
-    &=& \frac{\phi}{2\pi} + \frac{1}{\pi}\sum_{n=1}^{\infty}\left[
-    \cfrac{
-        \sum\limits_{m=1}^{\infty}
-        \cfrac{\exp(-\alpha_{mn}^2\alpha t)}{N(a\alpha_{mn})}
-        \cfrac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r}
-        R_{mn}(a\alpha_{mn}, r_0)
-    }{
-        \sum\limits_{m=1}^{\infty}
-        \cfrac{\exp(-\alpha_{m0}^2\alpha t)}{N(a\alpha_{m0})}
-        \cfrac{\partial R_{mn}(a\alpha_{mn}, r)}{\partial r}
-        R_{m0}(a\alpha_{m0}, r_0)
-    }
-    \right] \frac{\sin(n\phi)}{n}
 \end{eqnarray}
 
 \end{document}
