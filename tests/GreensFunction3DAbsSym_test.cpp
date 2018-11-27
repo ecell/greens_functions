@@ -59,9 +59,9 @@ BOOST_AUTO_TEST_CASE(GF3DAbsSym_DrawR)
 
   Real t( gf.drawTime( 0.5 ) );
 
-  Real r( gf.drawR( 0.0, t ) );
-  r = gf.drawR( 0.5, t );
-  r = gf.drawR( 1.0 - 1e-16, t );
+  gf.drawR( 0.0, t );
+  gf.drawR( 0.5, t );
+  gf.drawR( 1.0 - 1e-16, t );
 }
 
 BOOST_AUTO_TEST_CASE(GF3DAbsSym_DrawR_zerot)

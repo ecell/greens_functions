@@ -3,78 +3,69 @@
 #include <boost/bind.hpp>
 #include <gsl/gsl_sum.h>
 
+#ifdef ECELL_GREENS_FUNCTIONS_DEBUG_OUTPUT
+#include <iostream>
+#endif
+
 //#include "Logger.hpp"
 #include "funcSum.hpp"
 
 namespace greens_functions
 {
 
-typedef std::vector<Real> RealVector;
-
 //static Logger& _log(Logger::get_logger("funcSum"));
 
-Real 
-funcSum_all(boost::function<Real(unsigned int i)> f, size_t max_i)
+Real
+funcSum_all(boost::function<Real(unsigned int i)> f, std::size_t max_i)
 {
-    Real sum(0.0);
-
     const Real p_0(f(0));
     if (p_0 == 0.0)
     {
         return 0.0;
     }
 
-    sum = p_0;
-
-    RealVector::size_type i(1); 
-    while(i < max_i)
+    Real sum = p_0;
+    for(std::size_t i=1; i < max_i; ++i)
     {
-        const Real p_i(f(i));
-        sum += p_i;
-
-        ++i;
+        sum += f(i);
     }
-
     return sum;
 }
 
 
-Real 
+Real
 funcSum_all_accel(boost::function<Real(unsigned int i)> f,
-                  size_t max_i, Real tolerance)
+                  std::size_t max_i, Real tolerance)
 {
-    RealVector pTable;
-    pTable.reserve(max_i);
-
     const Real p_0(f(0));
     if (p_0 == 0.0)
     {
         return 0.0;
     }
 
-    pTable.push_back(p_0);
-
-    RealVector::size_type i(1);
-    for(;  i < max_i; ++i)
+    std::vector<Real> pTable(max_i);
+    pTable[0] = p_0;
+    for(std::size_t i=1; i < max_i; ++i)
     {
-        const Real p_i(f(i));
-        pTable.push_back(p_i);
+        pTable[i] = f(i);
     }
 
     Real sum;
     Real error;
-    gsl_sum_levin_utrunc_workspace* 
-        workspace(gsl_sum_levin_utrunc_alloc(i));
-    gsl_sum_levin_utrunc_accel(&pTable[0], pTable.size(), workspace, 
-                                &sum, &error);
-    if (fabs(error) >= fabs(sum * tolerance))
+    gsl_sum_levin_utrunc_workspace* workspace(gsl_sum_levin_utrunc_alloc(max_i));
+    gsl_sum_levin_utrunc_accel(
+            pTable.data(), pTable.size(), workspace, &sum, &error);
+
+#ifdef ECELL_GREENS_FUNCTIONS_DEBUG_OUTPUT
+    if (std::abs(error) >= std::abs(sum * tolerance))
     {
-/*        _log.error("series acceleration error: %.16g"
-                  " (rel error: %.16g), terms_used = %d (%d given)",
-                  fabs(error), fabs(error / sum),
-                  workspace->terms_used, pTable.size());
-        // TODO look into this crashing behaviour */
+        std::cerr << (boost::format("series acceleration error: %.16g"
+                " (rel error: %.16g), terms_used = %d (%d given)") %
+                std::abs(error) % std::abs(error / sum) %
+                workspace->terms_used % pTable.size()
+            ).str() << std::endl;
     }
+#endif // ECELL_GREENS_FUNCTIONS_DEBUG_OUTPUT
 
     gsl_sum_levin_utrunc_free(workspace);
 
@@ -82,32 +73,21 @@ funcSum_all_accel(boost::function<Real(unsigned int i)> f,
 }
 
 
-Real 
-funcSum(boost::function<Real(unsigned int i)> f, size_t max_i, Real tolerance)
+Real
+funcSum(boost::function<Real(unsigned int i)> f, std::size_t max_i, Real tolerance)
 // funcSum
 // ==
 // Will simply calculate the sum over a certain function f, until it converges
-// (i.e. the sum > tolerance*current_term for a CONVERGENCE_CHECK number of 
+// (i.e. the sum > tolerance*current_term for a CONVERGENCE_CHECK number of
 // terms), or a maximum number of terms is summed (usually 2000).
 //
 // Input:
 // - f: A       function object
 // - max_i:     maximum number of terms it will evaluate
 // - tolerance: convergence condition, default value 1-e8 (see .hpp)
-// 
-// About Boost::function
-// ===
-// Boost::function doesn't do any type checking: It will take any object 
-// and any signature you provide in its template parameter, and create an 
-// object that's callable according to your signature and calls the object. 
-// If that's impossible, it's a compile error.
-// (From: http://stackoverflow.com/questions/527413/how-boostfunction-and-boostbind-work)
 {
     // DEFAULT = 4
-    const unsigned int CONVERGENCE_CHECK(4);    
-
-    Real sum(0.0);
-    RealVector pTable;
+    const unsigned int CONVERGENCE_CHECK(4);
 
     const Real p_0(f(0));
     if (p_0 == 0.0)
@@ -115,25 +95,22 @@ funcSum(boost::function<Real(unsigned int i)> f, size_t max_i, Real tolerance)
         return 0.0;
     }
 
+    Real sum(p_0);
+    std::vector<Real> pTable;
+    pTable.reserve(max_i);
     pTable.push_back(p_0);
-    sum = p_0;
-
-    bool extrapolationNeeded(true);
 
     unsigned int convergenceCounter(0);
 
-    RealVector::size_type i(1); 
-    while(i < max_i)
+    for(std::size_t i=1; i < max_i; ++i)
     {
         const Real p_i(f(i));
         pTable.push_back(p_i);
         sum += p_i;
 
-        ++i;
-
-        if (fabs(sum) * tolerance >= fabs(p_i)) // '=' is important
+        if (std::abs(sum) * tolerance >= std::abs(p_i)) // '=' is important
         {
-            ++convergenceCounter;          
+            ++convergenceCounter;
         }
         // this screws it up; why?
         else
@@ -141,32 +118,30 @@ funcSum(boost::function<Real(unsigned int i)> f, size_t max_i, Real tolerance)
             convergenceCounter = 0;
         }
 
-
         if (convergenceCounter >= CONVERGENCE_CHECK)
         {
-            extrapolationNeeded = false;
-            break;
+            return sum; // converged! series acceleration is not needed! yay!
         }
-        
     }
 
-    if (extrapolationNeeded)
+    Real error;
+    gsl_sum_levin_utrunc_workspace*
+        workspace(gsl_sum_levin_utrunc_alloc(max_i));
+    gsl_sum_levin_utrunc_accel(
+        pTable.data(), pTable.size(), workspace, &sum, &error);
+
+#ifdef ECELL_GREENS_FUNCTIONS_DEBUG_OUTPUT
+    if (std::abs(error) >= std::abs(sum * tolerance * 10))
     {
-        Real error;
-        gsl_sum_levin_utrunc_workspace* 
-            workspace(gsl_sum_levin_utrunc_alloc(i));
-        gsl_sum_levin_utrunc_accel(&pTable[0], pTable.size(), workspace, 
-            &sum, &error);
-        if (fabs(error) >= fabs(sum * tolerance * 10))
-        {
-/*            _log.error("series acceleration error: %.16g"
-                      " (rel error: %.16g), terms_used = %d (%d given)",
-                      fabs(error), fabs(error / sum),
-                      workspace->terms_used, pTable.size()); */
-        }
-
-        gsl_sum_levin_utrunc_free(workspace);
+        std::cerr << (boost::format("series acceleration error: %.16g"
+                " (rel error: %.16g), terms_used = %d (%d given)") %
+                std::abs(error) % std::abs(error / sum) %
+                workspace->terms_used % pTable.size()
+            ).str() << std::endl;
     }
+#endif // ECELL_GREENS_FUNCTIONS_DEBUG_OUTPUT
+
+    gsl_sum_levin_utrunc_free(workspace);
 
     return sum;
 }

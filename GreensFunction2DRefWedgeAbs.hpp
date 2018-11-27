@@ -105,6 +105,7 @@ namespace greens_functions
     private:
 
         static const Real CUTOFF;//1e-10, provisionally.
+        static const Real maximum_alpha2_Dt;
 
         const Real D_;
         const Real a_;

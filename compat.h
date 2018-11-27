@@ -1,7 +1,7 @@
 #ifndef ECELL_GREENS_FUNCTIONS_COMPAT_HPP
 #define ECELL_GREENS_FUNCTIONS_COMPAT_HPP
 
-#include "config.h"
+#include <greens_functions/config.h>
 #include <cmath>
 #include <limits>
 

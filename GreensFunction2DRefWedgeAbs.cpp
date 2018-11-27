@@ -10,6 +10,8 @@
 
 namespace greens_functions
 {
+    const Real GreensFunction2DRefWedgeAbs::maximum_alpha2_Dt = -1e0 * log(std::numeric_limits<Real>::min());
+
     const Real GreensFunction2DRefWedgeAbs::CUTOFF = 1e-10;
 
     GreensFunction2DRefWedgeAbs::GreensFunction2DRefWedgeAbs(const Real D,

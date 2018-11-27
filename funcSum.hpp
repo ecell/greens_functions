@@ -1,5 +1,5 @@
-#if !defined( __FUNCSUM_HPP )
-#define __FUNCSUM_HPP
+#ifndef ECELL_GREENS_FUNCTIONS_FUNCSUM_HPP
+#define ECELL_GREENS_FUNCTIONS_FUNCSUM_HPP
 
 #include <boost/function.hpp>
 #include <cstddef>
@@ -19,4 +19,4 @@ Real funcSum(boost::function<Real(unsigned int i)> f,
              std::size_t max_i, Real tolerance = TOLERANCE);
 
 }
-#endif /* __FUNCSUM_HPP */
+#endif /* ECELL_GREENS_FUNCTIONS_FUNCSUM_HPP */

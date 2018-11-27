@@ -3,7 +3,7 @@
 #include "compat.h"
 
 #ifndef NO_BESSEL_TABLE
-#include "CylindricalBesselTable.hpp"
+#include <greens_functions/CylindricalBesselTable.hpp>
 #endif
 
 #include "CylindricalBesselGenerator.hpp"
