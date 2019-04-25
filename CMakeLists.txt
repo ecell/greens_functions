@@ -64,7 +64,7 @@ else()
 endif()
 
 add_library(
-    greens_functions SHARED
+    greens_functions STATIC
     ${CPP_FILES} ${HPP_FILES} "${CMAKE_BINARY_DIR}/greens_functions/config.h")
 target_link_libraries(
     greens_functions ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
