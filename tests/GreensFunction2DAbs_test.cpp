@@ -1,4 +1,5 @@
 #define BOOST_TEST_MODULE "GreensFunction2DAbs_test"
+#define _USE_MATH_DEFINES
 
 #ifdef UNITTEST_FRAMEWORK_LIBRARY_EXIST
 #   include <boost/test/unit_test.hpp>
@@ -8,7 +9,7 @@
 #endif
 
 #include "../GreensFunction2DAbs.hpp"
-#include <iostream> 
+#include <iostream>
 
 using namespace greens_functions;
 
