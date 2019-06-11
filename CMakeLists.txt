@@ -49,25 +49,12 @@ include_directories(${PROJECT_BINARY_DIR})
 find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
-find_library(GSL_LIBRARIES gsl)
-if(GSL_LIBRARIES)
-    message(STATUS      "GNU Scientific Library found: ${GSL_LIBRARIES}")
-else()
-    message(FATAL_ERROR "GNU Scientific Library could not be found. stop configuring.")
-endif()
+find_package(GSL REQUIRED)
+include_directories(${GSL_INCLUDE_DIRS})
 
-find_library(GSL_CBLAS_LIBRARIES gslcblas)
-if(GSL_CBLAS_LIBRARIES)
-    message(STATUS      "GSL CBLAS Library found: ${GSL_CBLAS_LIBRARIES}")
-else()
-    message(FATAL_ERROR "GSL CBLAS Library could not be found. stop configuring.")
-endif()
-
-add_library(
-    greens_functions STATIC
+add_library(greens_functions STATIC
     ${CPP_FILES} ${HPP_FILES} "${CMAKE_BINARY_DIR}/greens_functions/config.h")
-target_link_libraries(
-    greens_functions ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
+target_link_libraries(greens_functions ${GSL_LIBRARIES})
 
 if (NOT NO_BESSEL_TABLE)
     message(STATUS "prepairing to generate BesselTable.")
