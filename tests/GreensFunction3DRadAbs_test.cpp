@@ -9,6 +9,7 @@
 
 #include "../GreensFunction.hpp"
 #include "../GreensFunction3DRadAbs.hpp"
+#include <boost/config.hpp>
 
 using namespace greens_functions;
 
@@ -416,7 +417,7 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_drawTheta_alpha0)
   {
     alpha = gf.alpha0_i(i);
     error = fabs( gf.f_alpha0(alpha) / alpha );
-    maxerror = std::max(error, maxerror);
+    maxerror = std::max BOOST_PREVENT_MACRO_SUBSTITUTION (error, maxerror);
   }
 
   BOOST_CHECK( fabs(maxerror) <= 1e-10 );
@@ -581,7 +582,7 @@ BOOST_AUTO_TEST_CASE(GF3DRadAbs_ip_theta_never_negative)
   {
     theta = i * M_PI / resolution;
     p = gf.p_theta(theta, r, t) / pint / resolution;
-    pmin = std::min(pmin, p);
+    pmin = std::min BOOST_PREVENT_MACRO_SUBSTITUTION (pmin, p);
   }
 
   BOOST_CHECK( pmin >= 0.0 );

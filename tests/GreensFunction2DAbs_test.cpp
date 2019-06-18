@@ -9,6 +9,7 @@
 #endif
 
 #include "../GreensFunction2DAbs.hpp"
+#include <boost/config.hpp>
 #include <iostream>
 
 using namespace greens_functions;
@@ -342,7 +343,7 @@ BOOST_AUTO_TEST_CASE(GF2DAbs_p_int_theta_never_negative)
     {
         theta = i * M_PI / resolution;
         p = gf.p_int_theta(r, theta, t);
-        pmin = std::min(pmin, p);
+        pmin = std::min BOOST_PREVENT_MACRO_SUBSTITUTION (pmin, p);
     }
  
     BOOST_CHECK(0.0 <= pmin);
