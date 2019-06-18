@@ -70,16 +70,4 @@ inline bool isfinite(long double x)
 
 } // greens_functions
 #endif // ISFINITE
-
-#ifdef _MSC_BUILD
-#ifdef min
-#undef min
-#endif
-#ifdef max
-#undef max
-#endif
-#define NOMINMAX
-#define GSL_DLL
-#endif // MSVC & Windows
-
 #endif // ECELL_GREENS_FUNCTIONS_COMPAT_HPP

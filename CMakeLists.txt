@@ -27,6 +27,11 @@ set (HPP_FILES
     findRoot.hpp funcSum.hpp freeFunctions.hpp PairGreensFunction.hpp
 )
 
+if(WIN32) # This includes Win64.
+    add_definitions(-DNOMINMAX)
+    add_definitions(-DGSL_DLL)
+endif()
+
 add_definitions(-DHAVE_CONFIG_H)
 
 # check some functions are supported or not...
