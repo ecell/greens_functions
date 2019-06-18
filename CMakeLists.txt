@@ -46,7 +46,12 @@ message(STATUS "config.h was generated: ${CMAKE_BINARY_DIR}/greens_functions/con
 include_directories(${PROJECT_BINARY_DIR})
 # include_directories(${PROJECT_BINARY_DIR}/greens_functions)
 
-find_package(Boost REQUIRED)
+option(GREENS_FUNCTIONS_LINK_BOOST_LIBRARY "link boost.unit_test_framework library" OFF)
+if(GREENS_FUNCTIONS_LINK_BOOST_LIBRARY)
+    find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+else()
+    find_package(Boost REQUIRED)
+endif()
 include_directories(${Boost_INCLUDE_DIRS})
 
 find_package(GSL REQUIRED)
