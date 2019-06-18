@@ -59,7 +59,7 @@ include_directories(${GSL_INCLUDE_DIRS})
 
 add_library(greens_functions STATIC
     ${CPP_FILES} ${HPP_FILES} "${CMAKE_BINARY_DIR}/greens_functions/config.h")
-target_link_libraries(greens_functions ${GSL_LIBRARIES})
+target_link_libraries(greens_functions GSL::gsl GSL::gslcblas)
 
 if (NOT NO_BESSEL_TABLE)
     message(STATUS "prepairing to generate BesselTable.")
