@@ -79,6 +79,7 @@ inline bool isfinite(long double x)
 #undef max
 #endif
 #define NOMINMAX
+#define GSL_DLL
 #endif // MSVC & Windows
 
 #endif // ECELL_GREENS_FUNCTIONS_COMPAT_HPP
