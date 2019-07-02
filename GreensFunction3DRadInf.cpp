@@ -176,6 +176,13 @@ static Real p_reaction_F(Real t, p_reaction_params* params)
 Real
 GreensFunction3DRadInf::p_int_r(Real r, Real t) const
 {
+    // the test code requires p_int_r to be zero if t == 0. And to avoid
+    // divide-by-zero, we need to return immediately.
+    if(t == 0.0)
+    {
+        return 0.0;
+    }
+
     const Real kf(getkf());
     const Real D(getD());
     const Real sigma(getSigma());
