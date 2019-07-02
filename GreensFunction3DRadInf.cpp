@@ -190,23 +190,23 @@ GreensFunction3DRadInf::p_int_r(Real r, Real t) const
     const Real ksigma2(2.0 * kf * sigma);
     const Real alphasqrtt(alpha * sqrt(t));
 
-    const Real r_r0__2s___sqrtDt4((r - 2.0 * sigma + r0) / sqrtDt4);
-    const Real r_r0__sqrtDt4((r - r0) / sqrtDt4);
-    const Real r0_s__sqrtDt4((r0 - sigma) / sqrtDt4);
+    const Real r_r0_2s_sqrtDt4((r - 2.0 * sigma + r0) / sqrtDt4);
+    const Real r_r0_sqrtDt4((r - r0) / sqrtDt4);
+    const Real r0_s_sqrtDt4((r0 - sigma) / sqrtDt4);
 
-    const Real term1((expm1(- gsl_pow_2(r_r0__2s___sqrtDt4 ))
-                        - expm1(- gsl_pow_2(r_r0__sqrtDt4))) *
+    const Real term1((expm1(- gsl_pow_2(r_r0_2s_sqrtDt4 ))
+                        - expm1(- gsl_pow_2(r_r0_sqrtDt4))) *
                         sqrt(Dt / M_PI));
 
-    const Real erf_r_r0__2s___sqrtDt4(erf(r_r0__2s___sqrtDt4));
-    const Real term2(kf_kD * r0 * erf(r_r0__sqrtDt4)
-                      + kf_kD * r0 * erf_r_r0__2s___sqrtDt4
+    const Real erf_r_r0_2s_sqrtDt4(erf(r_r0_2s_sqrtDt4));
+    const Real term2(kf_kD * r0 * erf(r_r0_sqrtDt4)
+                      + kf_kD * r0 * erf_r_r0_2s_sqrtDt4
                       + ksigma2 *
-                      (erf(r0_s__sqrtDt4) - erf_r_r0__2s___sqrtDt4));
+                      (erf(r0_s_sqrtDt4) - erf_r_r0_2s_sqrtDt4));
 
-    const Real term3(kf * sigma * W(r0_s__sqrtDt4, alphasqrtt)
+    const Real term3(kf * sigma * W(r0_s_sqrtDt4, alphasqrtt)
                       - (kf * r + kD * (r - sigma)) *
-                      W(r_r0__2s___sqrtDt4, alphasqrtt));
+                      W(r_r0_2s_sqrtDt4, alphasqrtt));
 
     const Real result((1 / r0) * (term1 + (1 / kf_kD) *
                                       ((0.5 * term2) + term3)));
