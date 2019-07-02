@@ -1,5 +1,5 @@
-#if !defined(__PLAINPAIRGREENSFUNCTION)
-#define __PLAINPAIRGREENSFUNCTION 
+#ifndef GREENS_FUNCTIONS_GF_3D_RAD_INF_HPP
+#define GREENS_FUNCTIONS_GF_3D_RAD_INF_HPP
 
 #include <cmath>
 #include <vector>
@@ -119,4 +119,4 @@ private:
 
 
 }
-#endif // __PLAINPAIRGREENSFUNCTION 
+#endif // GREENS_FUNCTIONS_GF_3D_RAD_INF_HPP
