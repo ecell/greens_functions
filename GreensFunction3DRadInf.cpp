@@ -47,12 +47,12 @@ GreensFunction3DRadInf::~GreensFunction3DRadInf()
     ; // do nothing
 }
 
-Real 
+Real
 GreensFunction3DRadInf::p_corr_R(Real alpha, unsigned int n, Real r, Real t) const
 {
     const Real D(this->getD());
     const Real sigma(this->getSigma());
-    
+
     const Real ks(getkf() * sigma);
     const Real realn(static_cast<Real>(n));
     const Real ks_m_n(ks - realn);
@@ -92,17 +92,17 @@ GreensFunction3DRadInf::p_corr_R(Real alpha, unsigned int n, Real r, Real t) con
     return result;
 }
 
-struct GreensFunction3DRadInf::p_corr_R_params 
-{ 
+struct GreensFunction3DRadInf::p_corr_R_params
+{
     const GreensFunction3DRadInf* const gf;
     unsigned int n;
     const Real r;
-    const Real t; 
+    const Real t;
 };
 
 Real GreensFunction3DRadInf::p_corr_R_F(Real alpha, p_corr_R_params* params)
 {
-    const GreensFunction3DRadInf* const gf(params->gf); 
+    const GreensFunction3DRadInf* const gf(params->gf);
 
     const unsigned int n(params->n);
     const Real r(params->r);
@@ -151,15 +151,15 @@ Real GreensFunction3DRadInf::p_reaction(Real t) const
     return __p_reaction_irr(t, r0, kf, D, sigma, alpha, kD);
 }
 
-struct p_reaction_params 
-{ 
+struct p_reaction_params
+{
     const GreensFunction3DRadInf* const gf;
     const Real rnd;
 };
 
 static Real p_reaction_F(Real t, p_reaction_params* params)
 {
-    const GreensFunction3DRadInf* const gf(params->gf); 
+    const GreensFunction3DRadInf* const gf(params->gf);
     const Real kf(gf->getkf());
     const Real D(gf->getD());
     const Real sigma(gf->getSigma());
@@ -173,7 +173,7 @@ static Real p_reaction_F(Real t, p_reaction_params* params)
 }
 
 
-Real 
+Real
 GreensFunction3DRadInf::p_int_r(Real r, Real t) const
 {
     const Real kf(getkf());
@@ -195,27 +195,27 @@ GreensFunction3DRadInf::p_int_r(Real r, Real t) const
     const Real r0_s__sqrtDt4((r0 - sigma) / sqrtDt4);
 
     const Real term1((expm1(- gsl_pow_2(r_r0__2s___sqrtDt4 ))
-                        - expm1(- gsl_pow_2(r_r0__sqrtDt4))) * 
+                        - expm1(- gsl_pow_2(r_r0__sqrtDt4))) *
                         sqrt(Dt / M_PI));
 
     const Real erf_r_r0__2s___sqrtDt4(erf(r_r0__2s___sqrtDt4));
-    const Real term2(kf_kD * r0 * erf(r_r0__sqrtDt4) 
+    const Real term2(kf_kD * r0 * erf(r_r0__sqrtDt4)
                       + kf_kD * r0 * erf_r_r0__2s___sqrtDt4
-                      + ksigma2 * 
+                      + ksigma2 *
                       (erf(r0_s__sqrtDt4) - erf_r_r0__2s___sqrtDt4));
 
-    const Real term3(kf * sigma * W(r0_s__sqrtDt4, alphasqrtt) 
+    const Real term3(kf * sigma * W(r0_s__sqrtDt4, alphasqrtt)
                       - (kf * r + kD * (r - sigma)) *
                       W(r_r0__2s___sqrtDt4, alphasqrtt));
 
-    const Real result((1 / r0) * (term1 + (1 / kf_kD) * 
+    const Real result((1 / r0) * (term1 + (1 / kf_kD) *
                                       ((0.5 * term2) + term3)));
 
     return result;
 }
 
-struct p_int_r_params 
-{ 
+struct p_int_r_params
+{
     const GreensFunction3DRadInf* const gf;
     const Real t;
     const Real rnd;
@@ -223,7 +223,7 @@ struct p_int_r_params
 
 static Real p_int_r_F(Real r, p_int_r_params* params)
 {
-    const GreensFunction3DRadInf* const gf(params->gf); 
+    const GreensFunction3DRadInf* const gf(params->gf);
 
     const Real t(params->t);
     const Real rnd(params->rnd);
@@ -261,10 +261,10 @@ Real GreensFunction3DRadInf::drawTime(Real rnd) const
 
     p_reaction_params params = { this, rnd };
 
-    gsl_function F = 
+    gsl_function F =
         {
             reinterpret_cast<double (*)(double, void*)>(&p_reaction_F),
-            &params 
+            &params
         };
 
     const gsl_root_fsolver_type* solverType(gsl_root_fsolver_brent);
@@ -297,12 +297,12 @@ Real GreensFunction3DRadInf::drawTime(Real rnd) const
 
         ++i;
     }
-  
+
     const Real r(gsl_root_fsolver_root(solver));
     gsl_root_fsolver_free(solver);
 
     return r;
-} 
+}
 
 
 
@@ -337,10 +337,10 @@ Real GreensFunction3DRadInf::drawR(Real rnd, Real t) const
 
     p_int_r_params params = { this, t, rnd * psurv };
 
-    gsl_function F = 
+    gsl_function F =
         {
             reinterpret_cast<double (*)(double, void*)>(&p_int_r_F),
-            &params 
+            &params
         };
 
 
@@ -440,7 +440,7 @@ Real GreensFunction3DRadInf::drawR(Real rnd, Real t) const
 
         ++i;
     }
-  
+
     const Real r(gsl_root_fsolver_root(solver));
     gsl_root_fsolver_free(solver);
 
@@ -448,7 +448,7 @@ Real GreensFunction3DRadInf::drawR(Real rnd, Real t) const
 }
 
 
-Real 
+Real
 GreensFunction3DRadInf::Rn(unsigned int n, Real r, Real t,
                             gsl_integration_workspace* workspace,
                             Real tol) const
@@ -457,13 +457,13 @@ GreensFunction3DRadInf::Rn(unsigned int n, Real r, Real t,
     Real error;
 
     p_corr_R_params params = { this, n, r, t };
-    gsl_function F = 
+    gsl_function F =
         {
             reinterpret_cast<double (*)(double, void*)>(&p_corr_R_F),
             &params
         };
 
-    const Real umax(sqrt(40.0 / (this->getD() * t))); 
+    const Real umax(sqrt(40.0 / (this->getD() * t)));
 
     gsl_integration_qag(&F, 0.0,
                          umax,
@@ -487,7 +487,7 @@ Real GreensFunction3DRadInf::ip_corr_n(unsigned int n, RealVector const& RnTable
 
     const Real lgnd_n_m1(lgndTable[n]);   // n-1
     const Real lgnd_n_p1(lgndTable[n+2]); // n+1
-    
+
     return RnTable[n] * (lgnd_n_m1 - lgnd_n_p1);// / (1.0 + 2.0 * n);
 }
 
@@ -535,7 +535,7 @@ Real GreensFunction3DRadInf::ip_corr_table(Real theta, Real r,
     }
 
     const Real cos_theta(cos(theta));
-    
+
     // lgndTable is offset by 1. lengTable[0] -> n = -1
 
     RealVector lgndTable(tableSize + 2);
@@ -552,7 +552,7 @@ Real GreensFunction3DRadInf::ip_corr_table(Real theta, Real r,
     return result;
 }
 
-Real 
+Real
 GreensFunction3DRadInf::ip_free(Real theta, Real r, Real t) const
 {
     return ip_theta_free(theta, r, r0, t, getD());
@@ -580,7 +580,7 @@ Real GreensFunction3DRadInf::p_theta_table(Real theta, Real r,
                                             Real t, RealVector const& RnTable) const
 {
     const Real p_free(this->p_free(theta, r, t));
-    const Real p_corr(this->p_corr_table(theta, r, t, RnTable)); 
+    const Real p_corr(this->p_corr_table(theta, r, t, RnTable));
 
 //    return p_free;
     return (p_free + p_corr);
@@ -589,7 +589,7 @@ Real GreensFunction3DRadInf::p_theta_table(Real theta, Real r,
 Real GreensFunction3DRadInf::ip_theta_table(Real theta, Real r, Real t, RealVector const& RnTable) const
 {
     const Real p_free(this->ip_free(theta, r, t));
-    const Real p_corr(this->ip_corr_table(theta, r, t, RnTable)); 
+    const Real p_corr(this->ip_corr_table(theta, r, t, RnTable));
 
     return (p_free + p_corr);
 }
@@ -614,12 +614,12 @@ void GreensFunction3DRadInf::makeRnTable(RealVector& RnTable,
     const Real D(getD());
     const Real kf(getkf());
 
-    {  
+    {
         // First, estimate the size of p_corr, and if it's small enough,
         // we don't need to calculate it in the first place.
         const Real pirr(p_irr(r, t, r0, kf, D, sigma));
         const Real ipfree_max(ip_free(M_PI, r, t) * 2 * M_PI * r * r);
-        
+
         if(fabs((pirr - ipfree_max) / ipfree_max) < 1e-8)
         {
             return;
@@ -629,23 +629,23 @@ void GreensFunction3DRadInf::makeRnTable(RealVector& RnTable,
 
     const Real pfreemax(p_free_max(r, r0, t, D));
 
-    gsl_integration_workspace* 
+    gsl_integration_workspace*
         workspace(gsl_integration_workspace_alloc(2000));
-    
+
     Real Rn_prev(0.0);
     const Real RnFactor(1.0 / (4.0 * M_PI * sqrt(r * r0)));
 
     const Real integrationTolerance(pfreemax / RnFactor * THETA_TOLERANCE);
     const Real truncationTolerance(pfreemax * THETA_TOLERANCE * 1e-1);
-    
+
     unsigned int n(0);
-    for (;;) 
+    for (;;)
     {
-        const Real Rn(this->Rn(n, r, t, workspace, 
+        const Real Rn(this->Rn(n, r, t, workspace,
                                  integrationTolerance));
-        
+
         RnTable.push_back(Rn);
-        
+
         // truncate when converged enough.
         const Real absRn(fabs(Rn));
         if(absRn * RnFactor < truncationTolerance &&
@@ -659,27 +659,27 @@ void GreensFunction3DRadInf::makeRnTable(RealVector& RnTable,
 //            log_.info("GreensFunction3DRadInf: Rn didn't converge");
             break;
         }
-        
+
         Rn_prev = fabs(Rn);
-        
+
         ++n;
     }
 
     gsl_integration_workspace_free(workspace);
 }
 
-struct GreensFunction3DRadInf::p_theta_params 
-{ 
+struct GreensFunction3DRadInf::p_theta_params
+{
     const GreensFunction3DRadInf* const gf;
     const Real r;
     const Real t;
     GreensFunction3DRadInf::RealVector const& RnTable;
     const Real value;
 };
-    
+
 Real GreensFunction3DRadInf::ip_theta_F(Real theta, p_theta_params* params)
 {
-    const GreensFunction3DRadInf* const gf(params->gf); 
+    const GreensFunction3DRadInf* const gf(params->gf);
     const Real r(params->r);
     const Real t(params->t);
     GreensFunction3DRadInf::RealVector const& RnTable(params->RnTable);
@@ -733,10 +733,10 @@ Real GreensFunction3DRadInf::drawTheta(Real rnd, Real r, Real t) const
 
     p_theta_params params = { this, r, t, RnTable, rnd * ip_theta_pi };
 
-    gsl_function F = 
+    gsl_function F =
         {
             reinterpret_cast<double (*)(double, void*)>(&ip_theta_F),
-            &params 
+            &params
         };
 
     const gsl_root_fsolver_type* solverType(gsl_root_fsolver_brent);
@@ -769,7 +769,7 @@ Real GreensFunction3DRadInf::drawTheta(Real rnd, Real r, Real t) const
 
         ++i;
     }
-  
+
     theta = gsl_root_fsolver_root(solver);
     gsl_root_fsolver_free(solver);
 
