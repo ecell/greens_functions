@@ -1,5 +1,5 @@
-#if !defined( __PAIRGREENSFUNCTION_HPP )
-#define __PAIRGREENSFUNCTION_HPP
+#ifndef GREENS_FUNCTIONS_PAIR_GREENS_FUNCION_HPP
+#define GREENS_FUNCTIONS_PAIR_GREENS_FUNCION_HPP
 
 #include "Defs.hpp"
 #include <string>

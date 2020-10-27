@@ -1,5 +1,5 @@
-#if !defined( __FREEPAIRGREENSFUNCTION )
-#define __FREEPAIRGREENSFUNCTION 
+#ifndef GREENS_FUNCTIONS_3D_HPP
+#define GREENS_FUNCTIONS_3D_HPP
 
 #include "compat.h"
 

@@ -1,5 +1,5 @@
-#if !defined( __DEFS_HPP )
-#define __DEFS_HPP
+#ifndef GREENS_FUNCTIONS_DEFS_HPP
+#define GREENS_FUNCTIONS_DEFS_HPP
 
 #include <cstddef>
 #include <limits>

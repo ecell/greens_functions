@@ -1,5 +1,5 @@
-#ifndef FACTORIAL_HPP
-#define FACTORIAL_HPP
+#ifndef GREENS_FUNCTIONS_FACTORIAL_HPP
+#define GREENS_FUNCTIONS_FACTORIAL_HPP
 
 namespace greens_functions{
 

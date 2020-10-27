@@ -1,5 +1,5 @@
-#ifndef GREENS_FUNCTION_2D_ABS
-#define GREENS_FUNCTION_2D_ABS
+#ifndef GREENS_FUNCTION_2D_ABS_HPP
+#define GREENS_FUNCTION_2D_ABS_HPP
 #include <vector>
 #include <string>
 #include <iostream>

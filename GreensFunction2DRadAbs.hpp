@@ -7,8 +7,8 @@
 // Written by Laurens Bossen. Adapted by Martijn Wehrens.
 // FOM Institute AMOLF.
 
-#if !defined( __FIRSTPASSAGEPAIRGREENSFUNCTION2D_HPP )
-#define __FIRSTPASSAGEPAIRGREENSFUNCTION2D_HPP
+#ifndef GREENS_FUNCTION_2D_RAD_ABS_HPP
+#define GREENS_FUNCTION_2D_RAD_ABS_HPP
 
 #include <vector>
 #include <boost/tuple/tuple.hpp>

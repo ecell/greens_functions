@@ -1,5 +1,5 @@
-#if !defined( __FIRSTPASSAGEGREENSFUNCTION_HPP)
-#define __FIRSTPASSAGEGREENSFUNCTION_HPP
+#ifndef GREENS_FUNCTIONS_3D_ABS_SYM_HPP
+#define GREENS_FUNCTIONS_3D_ABS_SYM_HPP
 
 #include "Defs.hpp"
 //#include "Logger.hpp"

@@ -1,5 +1,5 @@
-#ifndef GREENS_FUNCTIONS_GF_3D_RAD_INF_HPP
-#define GREENS_FUNCTIONS_GF_3D_RAD_INF_HPP
+#ifndef GREENS_FUNCTIONS_3D_RAD_INF_HPP
+#define GREENS_FUNCTIONS_3D_RAD_INF_HPP
 
 #include <cmath>
 #include <vector>

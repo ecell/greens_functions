@@ -1,5 +1,5 @@
-#if !defined( __FIRSTPASSAGEGREENSFUNCTION2D_HPP )
-#define __FIRSTPASSAGEGREENSFUNCTION2D_HPP
+#ifndef GREENS_FUNCTION_2D_ABS_SYM_HPP
+#define GREENS_FUNCTION_2D_ABS_SYM_HPP
 
 #include <vector>
 #include <boost/multi_array.hpp>
