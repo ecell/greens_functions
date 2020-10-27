@@ -30,8 +30,8 @@ private:
     static const unsigned int MAX_ALPHA_SEQ = 1005;
 
 public:
-    
-    GreensFunction3DAbs(Real D, Real r0, Real a); 
+
+    GreensFunction3DAbs(Real D, Real r0, Real a);
 
     virtual ~GreensFunction3DAbs();
 
@@ -43,11 +43,11 @@ public:
     virtual Real drawTime(Real rnd) const;
 
     virtual EventKind drawEventType(Real rnd, Real t) const;
-    
+
     virtual Real drawR(Real rnd, Real t) const;
-    
+
     virtual Real drawTheta(Real rnd, Real r, Real t) const;
-    
+
     Real p_survival(Real t) const;
 
     Real dp_survival(Real t) const;
@@ -83,21 +83,21 @@ public:
 
 protected:
 
-    Real p_theta_table(Real theta, Real r, Real t, 
+    Real p_theta_table(Real theta, Real r, Real t,
                        RealVector const& p_nTable ) const;
 
     Real ip_theta_table(Real theta, Real r, Real t,
                         RealVector const& p_nTable ) const;
 
     void makep_nTable(RealVector& p_nTable, Real r, Real t) const;
-    
+
     void makedp_nTable(RealVector& p_nTable, Real t) const;
 
     struct ip_theta_params;
     static Real ip_theta_F(Real theta, ip_theta_params const* params);
 
 private:
-    
+
     // mutable boost::array<Integer, MAX_ORDER+1> alphaOffsetTable;
     mutable boost::array<RealVector, MAX_ORDER+1> alphaTable;
     //mutable std::vector<RealVector> alphaTable;
@@ -107,4 +107,4 @@ private:
 //    static Logger& log_;
 };
 }//greens_functions
-#endif // __FIRSTPASSAGEPAIRGREENSFUNCTION 
+#endif // __FIRSTPASSAGEPAIRGREENSFUNCTION

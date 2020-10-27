@@ -313,8 +313,8 @@ protected:
 
 private:
 
-    const Real h;
-    const Real a;
+    Real h;
+    Real a;
 
     // Tables that hold calculated roots (y=0) of "alpha" function for each
     // order n.

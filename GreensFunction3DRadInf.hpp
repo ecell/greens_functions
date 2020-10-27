@@ -111,8 +111,8 @@ private:
     static Real ip_theta_F(Real theta, p_theta_params* params);
 
 private:
-    const Real kD;
-    const Real alpha;
+    Real kD;
+    Real alpha;
 
 //    static Logger& log_;
 };

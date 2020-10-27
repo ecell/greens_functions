@@ -16,9 +16,9 @@ public:
     virtual Real drawTime(Real rnd) const = 0;
 
     virtual EventKind drawEventType(Real rnd, Real t) const = 0;
-    
+
     virtual Real drawR(Real rnd, Real t) const = 0;
-    
+
     virtual Real drawTheta(Real rnd, Real r, Real t) const = 0;
 };
 

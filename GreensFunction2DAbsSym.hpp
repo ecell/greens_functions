@@ -15,17 +15,10 @@ class GreensFunction2DAbsSym
 public:
 
     GreensFunction2DAbsSym( const Real D, const Real a )
-	:
-	D( D ),
-        a( a )
-    {
-	;
-    }
+        : D( D ), a( a )
+    {}
 
-    virtual ~GreensFunction2DAbsSym()
-    {
-	;
-    }
+    virtual ~GreensFunction2DAbsSym() {}
 
     const char* getName() const
     {
@@ -34,7 +27,7 @@ public:
 
     const Real getD() const
     {
-	return this->D;
+        return this->D;
     }
 
     const Real geta() const
@@ -42,7 +35,7 @@ public:
         return this->a;
     }
 
-    const Real p_survival( const Real t ) const; 
+    const Real p_survival( const Real t ) const;
 
     const Real drawTime( const Real rnd ) const;
 
@@ -58,24 +51,24 @@ private:
 
     struct p_survival_params
     {
-	const GreensFunction2DAbsSym* const gf;
-	const Real rnd;
+        const GreensFunction2DAbsSym* const gf;
+        const Real rnd;
     };
 
-    static const Real p_survival_F( const Real t, 
+    static const Real p_survival_F( const Real t,
 				    const p_survival_params* params );
 
     struct p_r_params
     {
-	const GreensFunction2DAbsSym* const gf;
-	const Real t;
-	const Real target;
+        const GreensFunction2DAbsSym* const gf;
+        const Real t;
+        const Real target;
     };
 
-    static const Real p_r_free_F( const Real r, 
+    static const Real p_r_free_F( const Real r,
                                   const p_r_params* params );
 
-    static const Real p_r_F( const Real r, 
+    static const Real p_r_F( const Real r,
 			     const p_r_params* params );
 
 // private variables
@@ -87,12 +80,12 @@ private:
     // 5.6: ~1e-8, 6.0: ~1e-9
     static const Real CUTOFF_H;
 
-    const Real D;
+    Real D;
 
-    const Real a;
-    
+    Real a;
+
 //    static Logger& log_;
-    
+
 };
 
 
