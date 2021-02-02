@@ -325,7 +325,7 @@ private:
     //
     // This constant will simply be M_PI/(a-Sigma), the value to which the
     // distance between roots of f_alpha() should converge.
-    const Real estimated_alpha_root_distance_;
+    Real estimated_alpha_root_distance_;
 
     // Table which tells us at which x we're left with scanning the alpha
     // function for a sign change, for a given order n. (A sign change would
