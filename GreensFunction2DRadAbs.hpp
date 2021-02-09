@@ -20,13 +20,12 @@
 
 #include "PairGreensFunction.hpp"
 
-namespace greens_functions{
-
-class GreensFunction2DRadAbs
-    :
-    public PairGreensFunction
+namespace greens_functions
 {
 
+class GreensFunction2DRadAbs
+    : public PairGreensFunction
+{
 public:
     // Defines vector from template defined in standard template library,
     // gives it's membervalues type Real. std:: clarifies the std namespace.
@@ -76,39 +75,39 @@ public:
     }
 
     GreensFunction2DRadAbs( const Real D,
-                    const Real kf,
-                               const Real r0,
-                    const Real Sigma,
-                            const Real a );
+            const Real kf,
+            const Real r0,
+            const Real Sigma,
+            const Real a );
 
     virtual ~GreensFunction2DRadAbs();
 
     Real geth() const
     {
-    return this->h;
+        return this->h;
     }
 
     Real geta() const
     {
-    return this->a;
+        return this->a;
     }
 
     Real getestimated_alpha_root_distance_() const
     {
-    return this->estimated_alpha_root_distance_;
+        return this->estimated_alpha_root_distance_;
     }
 
     virtual Real drawTime( const Real rnd) const;
 
     virtual EventKind drawEventType( const Real rnd,
-                   const Real t ) const;
+            const Real t ) const;
 
     virtual Real drawR( const Real rnd,
-              const Real t ) const;
+            const Real t ) const;
 
     virtual Real drawTheta( const Real rnd,
-              const Real r,
-              const Real t ) const;
+            const Real r,
+            const Real t ) const;
 
     Real f_alpha0( const Real alpha ) const;
 
@@ -118,7 +117,7 @@ public:
     Real p_survival( const Real t) const;
 
     Real p_survival_table( const Real t,
-                 RealVector& table ) const;
+            RealVector& table ) const;
 
 
     Real leaves( const Real t) const;
@@ -131,13 +130,13 @@ public:
 
 
     Real p_m_alpha( const unsigned int n,
-              const unsigned int m,
-              const Real r,
-              const Real t ) const;
+            const unsigned int m,
+            const Real r,
+            const Real t ) const;
 
     Real dp_m_alpha_at_a( const unsigned int n,
-                const unsigned int m,
-                const Real t ) const;
+            const unsigned int m,
+            const Real t ) const;
 
     // methods below are kept public for debugging purpose.
 
@@ -145,26 +144,26 @@ public:
 
 
     void GiveRootInterval(  Real& low,
-                                  Real& high,
-                                  const Integer n
-                               ) const;
+            Real& high,
+            const Integer n
+            ) const;
 
 
     void GiveRootIntervalSimple(  Real& low, Real& high,
-                                        const Integer n, const Real i
-                                     ) const;
+            const Integer n, const Real i
+            ) const;
 
     Real getAlphaRoot0( const Real low,
-                              const Real high
-                            ) const;
+            const Real high
+            ) const;
 
     Real getAlphaRootN( const Real low,
-                              const Real high,
-                              const Integer n
-                            ) const;
+            const Real high,
+            const Integer n
+            ) const;
 
     Real getAlphaRoot(  const Real high, const Real low, const Integer n
-                           ) const;
+            ) const;
 
     void decideOnMethod2(size_t n, RealVector::size_type i) const;
 
@@ -181,70 +180,70 @@ public:
     Real leaves_i( const Real alpha) const;
 
     boost::tuple<Real,Real,Real> Y0J0J1_constants ( const Real alpha,
-                                                          const Real t) const;
+            const Real t) const;
 
-//    const Real getAlpha( const size_t n, const RealVector::size_type i ) const;
+    //    const Real getAlpha( const size_t n, const RealVector::size_type i ) const;
 
-//    const Real getAlpha0( const RealVector::size_type i ) const;
+    //    const Real getAlpha0( const RealVector::size_type i ) const;
 
     Real givePDFTheta( const Real theta,
-                       const Real r,
-                       const Real t ) const;
+            const Real r,
+            const Real t ) const;
 
     Real givePDFR( const Real r, const Real t ) const;
 
     void dumpRoots( int n );
 
-protected:
+  protected:
 
     void clearAlphaTable() const;
 
 
     RealVector& getAlphaTable( const size_t n ) const
     {
-    return this->alphaTable[n];
+        return this->alphaTable[n];
     }
 
     Real p_int_r_table( const Real r,
-                const RealVector& Y0_aAnTable,
-                const RealVector& J0_aAnTable,
-                const RealVector& Y0J1J0Y1Table ) const;
+            const RealVector& Y0_aAnTable,
+            const RealVector& J0_aAnTable,
+            const RealVector& Y0J1J0Y1Table ) const;
 
     Real ip_theta_table( const Real theta,
-                   const RealVector& p_nTable ) const;
+            const RealVector& p_nTable ) const;
 
     Real p_survival_i_exp_table( const unsigned int i,
-                       const Real t,
-                       const RealVector& table ) const;
+            const Real t,
+            const RealVector& table ) const;
 
     Real leavea_i_exp( const unsigned int i,
-                 const Real alpha) const;
+            const Real alpha) const;
 
     Real leaves_i_exp( const unsigned int i,
-                 const Real alpha) const;
+            const Real alpha) const;
 
     Real ip_theta_n( const unsigned int m,
-               const Real theta,
-               const RealVector& p_nTable ) const;
+            const Real theta,
+            const RealVector& p_nTable ) const;
 
 
     Real p_int_r_i_exp_table( const unsigned int i,
-                    const Real r,
-                    const RealVector& Y0_aAnTable,
-                    const RealVector& J0_aAnTable,
-                    const RealVector& Y0J1J0Y1Table ) const;
+            const Real r,
+            const RealVector& Y0_aAnTable,
+            const RealVector& J0_aAnTable,
+            const RealVector& Y0J1J0Y1Table ) const;
 
     void createPsurvTable( RealVector& table) const;
 
     void createY0J0Tables( RealVector& Y0_Table, RealVector& J0_Table, RealVector& Y0J1J0Y1_Table,
-                const Real t ) const;
+            const Real t ) const;
 
     void makep_mTable( RealVector& p_mTable,
-               const Real r,
-               const Real t ) const;
+            const Real r,
+            const Real t ) const;
 
     void makedp_m_at_aTable( RealVector& p_mTable,
-                 const Real t ) const;
+            const Real t ) const;
 
     unsigned int guess_maxi( const Real t ) const;
 
@@ -267,51 +266,51 @@ protected:
     };
 
     static Real
-    f_alpha_aux_F( const Real alpha,
-           const f_alpha_aux_params* const params );
+        f_alpha_aux_F( const Real alpha,
+                const f_alpha_aux_params* const params );
 
     struct p_survival_table_params
     {
-    const GreensFunction2DRadAbs* const gf;
-//    const Real r0;
-    RealVector& table;
-    const Real rnd;
+        const GreensFunction2DRadAbs* const gf;
+        //    const Real r0;
+        RealVector& table;
+        const Real rnd;
     };
 
     static Real
-    p_survival_table_F( const Real t,
-                        const p_survival_table_params* const params );
+        p_survival_table_F( const Real t,
+                const p_survival_table_params* const params );
 
     struct p_int_r_params
     {
-    const GreensFunction2DRadAbs* const gf;
-    const Real t;
-//    const Real r0;
-    const RealVector& Y0_aAnTable;
-    const RealVector& J0_aAnTable;
-    const RealVector& Y0J1J0Y1Table;
-    const Real rnd;
+        const GreensFunction2DRadAbs* const gf;
+        const Real t;
+        //    const Real r0;
+        const RealVector& Y0_aAnTable;
+        const RealVector& J0_aAnTable;
+        const RealVector& Y0J1J0Y1Table;
+        const Real rnd;
     };
 
     static Real
-    p_int_r_F( const Real r,
-           const p_int_r_params* const params );
+        p_int_r_F( const Real r,
+                const p_int_r_params* const params );
 
     struct ip_theta_params
     {
-    const GreensFunction2DRadAbs* const gf;
-    const Real r;
-//    const Real r0;
-    const Real t;
-    const RealVector& p_nTable;
-    const Real value;
+        const GreensFunction2DRadAbs* const gf;
+        const Real r;
+        //    const Real r0;
+        const Real t;
+        const RealVector& p_nTable;
+        const Real value;
     };
 
     static Real
-    ip_theta_F( const Real theta,
-        const ip_theta_params* const params );
+        ip_theta_F( const Real theta,
+                const ip_theta_params* const params );
 
-private:
+  private:
 
     Real h;
     Real a;
@@ -343,7 +342,7 @@ private:
     // converge.
     mutable boost::array<int, MAX_ORDER+1> alpha_correctly_estimated_;
 
-//    static Logger& log_;
+    //    static Logger& log_;
 
 };
 
