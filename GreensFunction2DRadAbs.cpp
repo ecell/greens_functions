@@ -323,7 +323,7 @@ void
 GreensFunction2DRadAbs::createPsurvTable( RealVector& table) const
 {
 
-    const RealVector& alphaTable_0( this->getAlphaTable( 0 ) );	// get the roots for the survival probability
+    const RealVector& alphaTable_0( this->getAlphaTable( 0 ) );    // get the roots for the survival probability
 
     table.clear();                              // empty the table
     table.reserve( alphaTable_0.size() );       // and get the nescessary memory
@@ -560,7 +560,7 @@ GreensFunction2DRadAbs::getAlphaRootN( const Real low,  // root lies between low
 {
     // f_alpha_aux_params is a struct: {gf, n, value}
     // n is the summation index (the order of the Bessel functions used
-    f_alpha_aux_params params = { this, n, 0 };	// TODO: purpose of this zero is unclear!!!
+    f_alpha_aux_params params = { this, n, 0 };    // TODO: purpose of this zero is unclear!!!
 
     gsl_function F =
     {
@@ -777,7 +777,7 @@ GreensFunction2DRadAbs::p_int_r_i_exp_table( const unsigned int i,
                                              const RealVector& Y0J1J0Y1Table ) const
 {
 
-        const Real alpha( this->getAlpha( 0, i ) );	// get the root An
+        const Real alpha( this->getAlpha( 0, i ) );    // get the root An
         const Real r_An( r*alpha);
 
         const Real J1_rAn (gsl_sf_bessel_J1(r_An));
@@ -1017,7 +1017,7 @@ Real GreensFunction2DRadAbs::drawTime( const Real rnd) const
             high *= 10;
             value = GSL_FN_EVAL( &F, high );
 
-            if( fabs( high ) >= 1e10 )	// if high time is way too high forget about it
+            if( fabs( high ) >= 1e10 )    // if high time is way too high forget about it
             {
                 std::cerr << boost::format(
                     "Couldn't adjust high. F(%1%) = %2%; r0 = %3%,") %
@@ -1088,7 +1088,7 @@ GreensFunction2DRadAbs::drawEventType( const Real rnd,
     // leavea() and/or leaves().
 
     // Here, use a rather large threshold for safety.
-    const unsigned int H( 6 ); 				// 6 times the msd travelled as threshold
+    const unsigned int H( 6 );                 // 6 times the msd travelled as threshold
     const Real max_dist( H * sqrt( 4.0 * D * t ) );
     const Real a_dist( a - r0 );
     const Real s_dist( r0 - sigma );
@@ -1109,8 +1109,8 @@ GreensFunction2DRadAbs::drawEventType( const Real rnd,
         }
     }
 
-    const Real reaction( leaves( t ) );	// flux through rad boundary
-    const Real escape( leavea( t ) );	// flux through abs boundary
+    const Real reaction( leaves( t ) );    // flux through rad boundary
+    const Real escape( leavea( t ) );    // flux through abs boundary
     const Real value( reaction / ( reaction + escape ) );
 
     if( rnd <= value )
@@ -1258,9 +1258,9 @@ const Real GreensFunction2DRadAbs::p_m_alpha( const unsigned int n,
 
     // calculate the needed bessel functions
     const Real Jm_sAnm   (gsl_sf_bessel_Jn(m, s_Anm));
-    const Real Jmp1_sAnm (gsl_sf_bessel_Jn(m+1, s_Anm));	// prime
+    const Real Jmp1_sAnm (gsl_sf_bessel_Jn(m+1, s_Anm));    // prime
 //  const Real Jm_sAnm   (s.J(m, s_Anm));
-//  const Real Jmp1_sAnm (s.J(m+1, s_Anm));	// prime
+//  const Real Jmp1_sAnm (s.J(m+1, s_Anm));    // prime
 
     const Real Jm_aAnm   (gsl_sf_bessel_Jn(m, a_Anm));
     const Real Ym_aAnm   (gsl_sf_bessel_Yn(m, a_Anm));
@@ -1741,9 +1741,9 @@ void GreensFunction2DRadAbs::dumpRoots( int n )
 const Real
 GreensFunction2DRadAbs::debug_ip_theta_table( const Real theta) const
 {
-    const RealVector& p_nTable( params->p_nTable );	// table with useful constants
+    const RealVector& p_nTable( params->p_nTable );    // table with useful constants
 
-    const unsigned int maxm( p_nTable.size()-1 );	// get the length of the sum
+    const unsigned int maxm( p_nTable.size()-1 );    // get the length of the sum
                                                         // it is shifted one because the first entry should
                                                         // be used (m=0)
 

@@ -56,7 +56,7 @@ private:
     };
 
     static const Real p_survival_F( const Real t,
-				    const p_survival_params* params );
+                    const p_survival_params* params );
 
     struct p_r_params
     {
@@ -69,7 +69,7 @@ private:
                                   const p_r_params* params );
 
     static const Real p_r_F( const Real r,
-			     const p_r_params* params );
+                 const p_r_params* params );
 
 // private variables
 private:

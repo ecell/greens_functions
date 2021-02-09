@@ -34,20 +34,20 @@ GreensFunction2DAbsSym::p_survival( const Real t ) const
     const Real a( geta() );
     const Real Dt( -D * t );
 
-    const Integer N( 100 );	// number of terms to use
+    const Integer N( 100 );    // number of terms to use
     Real sum( 0. );
     Real aAn (0);
     Real An (0);
     Real J1_aAn(0);
     Real term(0);
 
-    const Real threshold( CUTOFF );	// 
+    const Real threshold( CUTOFF );    // 
 
     //std::cout << "p_survival_2D ";
     //std::cout << "time: " << t << std::endl;
     for( Integer n( 1 ); n <= N; ++n )
     {
-        aAn = gsl_sf_bessel_zero_J0(n);		// gsl roots of J0(aAn)
+        aAn = gsl_sf_bessel_zero_J0(n);        // gsl roots of J0(aAn)
         An = aAn/a;
         J1_aAn = gsl_sf_bessel_J1(aAn);
         term = (exp(An*An*Dt))/(An*J1_aAn);
@@ -156,7 +156,7 @@ GreensFunction2DAbsSym::drawTime( const Real rnd ) const
     };
 
     //for (Real t=0.0001; t<=1; t+=0.0001)
-    //{	std::cout << t << " " << GSL_FN_EVAL( &F, t) << std::endl;
+    //{    std::cout << t << " " << GSL_FN_EVAL( &F, t) << std::endl;
     //}
 
     // Find a good interval to determine the first passage time in
@@ -254,7 +254,7 @@ GreensFunction2DAbsSym::drawR( const Real rnd, const Real t ) const
     gsl_function F;
     Real psurv;
 
-//  if( a <= thresholdDistance )	// if the domain is not so big, the boundaries are felt
+//  if( a <= thresholdDistance )    // if the domain is not so big, the boundaries are felt
 //  {
         psurv = p_survival( t );
         //psurv = p_int_r( a, t );
@@ -265,10 +265,10 @@ GreensFunction2DAbsSym::drawR( const Real rnd, const Real t ) const
 
         F.function = reinterpret_cast<double (*)(double, void*)>( &p_r_F );
 /*  }
-    else				// if the domain is very big, just use the free solution
+    else                // if the domain is very big, just use the free solution
     {
         // p_int_r < p_int_r_free
-        if( p_int_r_free( a, t ) < rnd )	// if the particle is outside the domain?
+        if( p_int_r_free( a, t ) < rnd )    // if the particle is outside the domain?
         {
             std::cerr << "p_int_r_free( a, t ) < rnd, returning a." 
                       << std::endl;
