@@ -368,7 +368,7 @@ GreensFunction2DRadAbs::createY0J0Tables( RealVector& Y0_Table,
 
 
 // Creates the values for in the tables Y0, J0 and Y0J1J0Y1
-const boost::tuple<Real,Real,Real>
+boost::tuple<Real,Real,Real>
 GreensFunction2DRadAbs::Y0J0J1_constants ( const Real alpha,
                                                         const Real t) const
 {
@@ -790,7 +790,7 @@ GreensFunction2DRadAbs::p_int_r_i_exp_table( const unsigned int i,
 
 // This tries to guess the maximum number of n iterations it needs for calculating the survival probability
 // Not really sure yet how this works
-const unsigned int
+unsigned int
 GreensFunction2DRadAbs::guess_maxi( const Real t ) const
 {
 
