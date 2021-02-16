@@ -1,5 +1,5 @@
-#if !defined( __FIRSTPASSAGEPAIRGREENSFUNCTION_HPP )
-#define __FIRSTPASSAGEPAIRGREENSFUNCTION_HPP 
+#ifndef GREENS_FUNCTIONS_3D_RAD_ABS_HPP
+#define GREENS_FUNCTIONS_3D_RAD_ABS_HPP
 
 #include <vector>
 #include <boost/array.hpp>
@@ -32,9 +32,9 @@ private:
 
 
 public:
-    
+
     GreensFunction3DRadAbs(Real D, Real kf, Real r0, Real Sigma, Real a);
-    
+
     virtual ~GreensFunction3DRadAbs();
 
     Real geth() const
@@ -51,26 +51,26 @@ public:
     {
         return this->r0;
     }
-    
+
     virtual Real drawTime(Real rnd) const;
 
-    std::pair<Real, EventKind> 
+    std::pair<Real, EventKind>
     drawTime2(Real rnd1, Real rnd2) const;
 
     virtual EventKind drawEventType(Real rnd, Real t) const;
 
     virtual Real drawR(Real rnd, Real t) const;
-    
+
     virtual Real drawTheta(Real rnd, Real r, Real t) const;
-    
+
     Real f_alpha0(Real alpha) const;
     Real f_alpha0_aux(Real alpha) const;
-  
+
     Real f_alpha(Real alpha, Integer n) const;
     Real f_alpha_aux(Real alpha, Integer n) const;
 
     Real p_0(Real t, Real r) const;
-    
+
     Real p_survival(Real t) const;
 
     Real p_survival_table(Real t, RealVector& table) const;
@@ -187,7 +187,7 @@ protected:
     Real getAlpha0(RealVector::size_type i) const
     {
         RealVector& alphaTable( this->alphaTable[0] );
-        
+
         RealVector::size_type oldSize( alphaTable.size() );
 
         if( oldSize <= i )
@@ -213,7 +213,7 @@ protected:
     Real dp_theta_at_a(Real theta, Real t ) const;
 
 
-    Real p_theta_table(Real theta, Real r, Real t, 
+    Real p_theta_table(Real theta, Real r, Real t,
                        RealVector const& p_nTable ) const;
 
     void make_p_thetaTable( RealVector& pTable, Real r, Real t,
@@ -243,9 +243,9 @@ protected:
 
     void initializeAlphaTable(unsigned int n) const;
     void updateAlphaTable0(Real t) const;
-    void updateAlphaTable(unsigned int n, Real t) const; 
+    void updateAlphaTable(unsigned int n, Real t) const;
 
-    void createPsurvTable(RealVector& table) const; 
+    void createPsurvTable(RealVector& table) const;
     void createNum_r0Table(RealVector& table) const;
 
     void createPleaveFactorTable(RealVector& table) const;
@@ -255,26 +255,26 @@ protected:
                             RealVector const& pleaveFactorTable) const;
 
     void makep_nTable(RealVector& p_nTable, Real r, Real t) const;
-    
+
     void makedp_n_at_aTable(RealVector& p_nTable, Real t) const;
 
     unsigned int guess_maxi(Real t) const;
 
-    Real 
+    Real
     drawPleaves(gsl_function const& F,
                 gsl_root_fsolver* solver,
                 Real t_guess,
                 RealVector& pleaveFactorTable,
                 RealVector& pleavesTable) const;
 
-    Real 
+    Real
     drawPleavea(gsl_function const& F,
                 gsl_root_fsolver* solver,
                 Real t_guess,
                 RealVector& pleaveFactorTable,
                 RealVector& pleavesTable) const;
 
-    
+
     Real num_r0(Real alpha) const;
 
     Real pleaveFactor(Real alpha) const;
@@ -284,14 +284,14 @@ protected:
 
 
 private:
-    
-    const Real h;
-    const Real hsigma_p_1;
+
+    Real h;
+    Real hsigma_p_1;
 
     mutable boost::array<Integer, MAX_ORDER+1> alphaOffsetTable;
     mutable boost::array<RealVector, MAX_ORDER+1> alphaTable;
 
-    const Real a;
+    Real a;
 
 //    static Logger& log_;
 };

@@ -1,5 +1,5 @@
-#if !defined( __GREENSFUNCTION1DABSABS_HPP )
-#define __GREENSFUNCTION1DABSABS_HPP
+#ifndef GREENS_FUNCTIONS_1D_ABS_ABS_HPP
+#define GREENS_FUNCTIONS_1D_ABS_ABS_HPP
 
 #include <sstream>
 #include <iostream>

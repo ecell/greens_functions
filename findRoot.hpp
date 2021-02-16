@@ -1,5 +1,5 @@
-#ifndef FIND_ROOT_HPP
-#define FIND_ROOT_HPP
+#ifndef GREENS_FUNCTIONS_FIND_ROOT_HPP
+#define GREENS_FUNCTIONS_FIND_ROOT_HPP
 
 #include <gsl/gsl_roots.h>
 

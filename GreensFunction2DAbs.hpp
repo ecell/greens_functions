@@ -1,5 +1,5 @@
-#ifndef GREENS_FUNCTION_2D_ABS
-#define GREENS_FUNCTION_2D_ABS
+#ifndef GREENS_FUNCTION_2D_ABS_HPP
+#define GREENS_FUNCTION_2D_ABS_HPP
 #include <vector>
 #include <string>
 #include <iostream>
@@ -84,9 +84,9 @@ class GreensFunction2DAbs
 
     static const Real CUTOFF;//1e-10, provisionally.
 
-    const Real D;
-    const Real a;
-    const Real r0;
+    Real D;
+    Real a;
+    Real r0;
 };
 }//greens_functions
 #endif//GREENS_FUNCTION_2D_ABS

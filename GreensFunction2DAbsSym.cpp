@@ -26,28 +26,28 @@ const Real GreensFunction2DAbsSym::CUTOFF = 1e-10;
 const Real GreensFunction2DAbsSym::CUTOFF_H = 6.0;
 
 // an alternative form, which is not very convergent.
-const Real 
+const Real
 GreensFunction2DAbsSym::p_survival( const Real t ) const
 {
-  
+
     const Real D( getD() );
     const Real a( geta() );
     const Real Dt( -D * t );
 
-    const Integer N( 100 );	// number of terms to use
+    const Integer N( 100 );    // number of terms to use
     Real sum( 0. );
     Real aAn (0);
     Real An (0);
     Real J1_aAn(0);
     Real term(0);
 
-    const Real threshold( CUTOFF );	// 
+    const Real threshold( CUTOFF );    //
 
     //std::cout << "p_survival_2D ";
     //std::cout << "time: " << t << std::endl;
     for( Integer n( 1 ); n <= N; ++n )
     {
-        aAn = gsl_sf_bessel_zero_J0(n);		// gsl roots of J0(aAn)
+        aAn = gsl_sf_bessel_zero_J0(n);        // gsl roots of J0(aAn)
         An = aAn/a;
         J1_aAn = gsl_sf_bessel_J1(aAn);
         term = (exp(An*An*Dt))/(An*J1_aAn);
@@ -63,13 +63,13 @@ GreensFunction2DAbsSym::p_survival( const Real t ) const
         }
     }
     return (2.0/a) * sum;
-} 
+}
 
 
-const Real 
+const Real
 GreensFunction2DAbsSym::p_int_r_free( const Real r, const Real t ) const
 {
-  
+
     const Real D( getD() );
     const Real Dt( D * t );
     const Real sqrtDt( sqrt( Dt ) );
@@ -80,11 +80,11 @@ GreensFunction2DAbsSym::p_int_r_free( const Real r, const Real t ) const
 }
 
 
-const Real 
-GreensFunction2DAbsSym::p_int_r( const Real r, 
+const Real
+GreensFunction2DAbsSym::p_int_r( const Real r,
                                     const Real t ) const
 {
-  
+
     const Real a( geta() );
     const Real D( getD() );
     const Real Dt( -D * t );
@@ -94,7 +94,7 @@ GreensFunction2DAbsSym::p_int_r( const Real r,
     Real sum( 0.0 );
     int n(1);
 
-//    const Real maxn( ( a / M_PI ) * sqrt( log( exp( DtPIsq_asq ) / CUTOFF ) / 
+//    const Real maxn( ( a / M_PI ) * sqrt( log( exp( DtPIsq_asq ) / CUTOFF ) /
 //                                          ( D * t ) ) );
 
     const Integer N_MAX( 10000 );
@@ -116,25 +116,25 @@ GreensFunction2DAbsSym::p_int_r( const Real r,
     while (fabs( term/sum ) > threshold && n <= N_MAX);
 
     return (2.0/(a*a)) * sum;
-} 
+}
 
 
 const Real
 GreensFunction2DAbsSym::p_survival_F( const Real t,
                                           const p_survival_params* params )
 {
-  
-    const GreensFunction2DAbsSym* const gf( params->gf ); 
+
+    const GreensFunction2DAbsSym* const gf( params->gf );
     const Real rnd( params->rnd );
 
     return 1 - gf->p_survival( t ) - rnd;
 }
 
 
-const Real 
+const Real
 GreensFunction2DAbsSym::drawTime( const Real rnd ) const
 {
-  
+
     THROW_UNLESS( std::invalid_argument, rnd < 1.0 && rnd >= 0.0 );
 
     const Real a( geta() );
@@ -150,13 +150,13 @@ GreensFunction2DAbsSym::drawTime( const Real rnd ) const
 
     p_survival_params params = { this, rnd };
 
-    gsl_function F = 
+    gsl_function F =
     {
-            reinterpret_cast<double (*)(double, void*)>( &p_survival_F ), &params 
+            reinterpret_cast<double (*)(double, void*)>( &p_survival_F ), &params
     };
 
     //for (Real t=0.0001; t<=1; t+=0.0001)
-    //{	std::cout << t << " " << GSL_FN_EVAL( &F, t) << std::endl;
+    //{    std::cout << t << " " << GSL_FN_EVAL( &F, t) << std::endl;
     //}
 
     // Find a good interval to determine the first passage time in
@@ -212,8 +212,8 @@ const Real
 GreensFunction2DAbsSym::p_r_free_F( const Real r,
                                         const p_r_params* params )
 {
-  
-    const GreensFunction2DAbsSym* const gf( params->gf ); 
+
+    const GreensFunction2DAbsSym* const gf( params->gf );
     const Real t( params->t );
     const Real target( params->target );
 
@@ -225,8 +225,8 @@ const Real
 GreensFunction2DAbsSym::p_r_F( const Real r,
                                   const p_r_params* params )
 {
-  
-    const GreensFunction2DAbsSym* const gf( params->gf ); 
+
+    const GreensFunction2DAbsSym* const gf( params->gf );
     const Real t( params->t );
     const Real target( params->target );
 
@@ -234,10 +234,10 @@ GreensFunction2DAbsSym::p_r_F( const Real r,
 }
 
 
-const Real 
-GreensFunction2DAbsSym::drawR( const Real rnd, const Real t ) const 
+const Real
+GreensFunction2DAbsSym::drawR( const Real rnd, const Real t ) const
 {
-  
+
     THROW_UNLESS( std::invalid_argument, rnd <= 1.0 && rnd >= 0.0 );
     THROW_UNLESS( std::invalid_argument, t >= 0.0 );
 
@@ -254,7 +254,7 @@ GreensFunction2DAbsSym::drawR( const Real rnd, const Real t ) const
     gsl_function F;
     Real psurv;
 
-//  if( a <= thresholdDistance )	// if the domain is not so big, the boundaries are felt
+//  if( a <= thresholdDistance )    // if the domain is not so big, the boundaries are felt
 //  {
         psurv = p_survival( t );
         //psurv = p_int_r( a, t );
@@ -265,12 +265,12 @@ GreensFunction2DAbsSym::drawR( const Real rnd, const Real t ) const
 
         F.function = reinterpret_cast<double (*)(double, void*)>( &p_r_F );
 /*  }
-    else				// if the domain is very big, just use the free solution
+    else                // if the domain is very big, just use the free solution
     {
         // p_int_r < p_int_r_free
-        if( p_int_r_free( a, t ) < rnd )	// if the particle is outside the domain?
+        if( p_int_r_free( a, t ) < rnd )    // if the particle is outside the domain?
         {
-            std::cerr << "p_int_r_free( a, t ) < rnd, returning a." 
+            std::cerr << "p_int_r_free( a, t ) < rnd, returning a."
                       << std::endl;
             return a;
         }
@@ -294,7 +294,7 @@ GreensFunction2DAbsSym::drawR( const Real rnd, const Real t ) const
 
     const Real r( findRoot( F, solver, low, high, 1e-18, 1e-12,
                             "GreensFunction2DAbsSym::drawR" ) );
-  
+
     gsl_root_fsolver_free( solver );
 
     return r;
@@ -306,7 +306,7 @@ const std::string GreensFunction2DAbsSym::dump() const
     std::ostringstream ss;
     ss << "D = " << this->getD() << ", a = " << this->geta() << std::endl;
     return ss.str();
-}    
+}
 /*
 Logger& GreensFunction2DAbsSym::log_(
         Logger::get_logger("GreensFunction2DAbsSym"));*/

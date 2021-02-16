@@ -1,15 +1,16 @@
-#if !defined( __GREENSFUNCTION_HPP )
-#define __GREENSFUNCTION_HPP
+#ifndef GREENS_FUNCTIONS_GREENSFUNCTION_HPP
+#define GREENS_FUNCTIONS_GREENSFUNCTION_HPP
 
 #include "Defs.hpp"
 
-namespace greens_functions{
+namespace greens_functions
+{
 
 class GreensFunction
 {
 public:
 
-enum EventKind
+    enum EventKind
     {
         IV_ESCAPE,
         IV_REACTION
@@ -18,16 +19,16 @@ enum EventKind
 public:
     GreensFunction( const Real D )
       : D( D ) {}
-  
+
     ~GreensFunction() {}
-  
+
     Real getD() const
     {
         return this->D;
     }
 
 protected:
-    const Real D;
+    Real D;
 };
 
 }

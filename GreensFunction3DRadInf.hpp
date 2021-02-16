@@ -1,5 +1,5 @@
-#ifndef GREENS_FUNCTIONS_GF_3D_RAD_INF_HPP
-#define GREENS_FUNCTIONS_GF_3D_RAD_INF_HPP
+#ifndef GREENS_FUNCTIONS_3D_RAD_INF_HPP
+#define GREENS_FUNCTIONS_3D_RAD_INF_HPP
 
 #include <cmath>
 #include <vector>
@@ -111,8 +111,8 @@ private:
     static Real ip_theta_F(Real theta, p_theta_params* params);
 
 private:
-    const Real kD;
-    const Real alpha;
+    Real kD;
+    Real alpha;
 
 //    static Logger& log_;
 };

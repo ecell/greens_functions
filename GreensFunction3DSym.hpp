@@ -1,5 +1,5 @@
-#if !defined( __FREEGREENSFUNCTION )
-#define __FREEGREENSFUNCTION 
+#ifndef GREENS_FUNCTIONS_3D_SYM_HPP
+#define GREENS_FUNCTIONS_3D_SYM_HPP
 
 #include "compat.h"
 
@@ -21,23 +21,23 @@ class GreensFunction3DSym
     :
     public GreensFunction
 {
-    
+
 private:
 
     static const Real TOLERANCE;
 
     static const Real H;
-    
+
 public:
-    
+
     GreensFunction3DSym( const Real D )
         :
         GreensFunction( D )
     {
         ; // do nothing
     }
-    
-    
+
+
     ~GreensFunction3DSym()
     {
         ; // do nothing
@@ -47,13 +47,13 @@ public:
     {
         return std::numeric_limits<Real>::infinity();
     }
-    
+
     Real drawR( const Real rnd, const Real t ) const;
-    
+
     Real p_r( const Real r, const Real t ) const;
 
     Real ip_r( const Real r, const Real t ) const;
-    
+
 
     std::string dump() const;
 
@@ -69,4 +69,4 @@ private:
 
 
 }
-#endif // __FREEGREENSFUNCTION 
+#endif // __FREEGREENSFUNCTION

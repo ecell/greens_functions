@@ -1,5 +1,5 @@
-#if !defined( __FIRSTPASSAGEGREENSFUNCTION_HPP)
-#define __FIRSTPASSAGEGREENSFUNCTION_HPP
+#ifndef GREENS_FUNCTIONS_3D_ABS_SYM_HPP
+#define GREENS_FUNCTIONS_3D_ABS_SYM_HPP
 
 #include "Defs.hpp"
 //#include "Logger.hpp"
@@ -26,7 +26,7 @@ public:
         return this->a;
     }
 
-    Real p_survival(Real t) const; 
+    Real p_survival(Real t) const;
 
     Real drawTime(Real rnd) const;
 
@@ -36,7 +36,7 @@ public:
     Real p_int_r_free(Real r, Real t) const;
 
     Real p_r_fourier(Real r, Real t) const;
-	
+
     std::string dump() const;
 
     const char* getName() const
@@ -55,7 +55,7 @@ private:
     // 5.6: ~1e-8, 6.0: ~1e-9
     static const Real CUTOFF_H;
 
-    const Real a;
+    Real a;
 
 //    static Logger& log_;
 };

@@ -1,5 +1,5 @@
-#ifndef ECELL_GREENS_FUNCTIONS_FUNCSUM_HPP
-#define ECELL_GREENS_FUNCTIONS_FUNCSUM_HPP
+#ifndef GREENS_FUNCTIONS_FUNCSUM_HPP
+#define GREENS_FUNCTIONS_FUNCSUM_HPP
 
 #include <boost/function.hpp>
 #include <cstddef>
