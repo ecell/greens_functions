@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 2.6)
 # XXX remove `cmake_policy set old` later
 cmake_policy(SET CMP0048 OLD)
 project(greens_functions)
-enable_testing()
 
 set (CPP_FILES
     GreensFunction1DAbsAbs.cpp GreensFunction1DAbsSinkAbs.cpp GreensFunction1DRadAbs.cpp
@@ -95,4 +94,8 @@ install(FILES ${HPP_FILES} DESTINATION "include/greens_functions")
 # target_link_libraries( _greens_functions
 #     ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES} ${BOOST_PYTHON})
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/tests")
+# Test this project, if and only if this is the root project.
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    enable_testing()
+    add_subdirectory("${PROJECT_SOURCE_DIR}/tests")
+endif()
