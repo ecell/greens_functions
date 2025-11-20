@@ -4,3 +4,14 @@ bin/*
 .DS_Store
 *~
 *.swp
+# Generated CMake files and build artifacts
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+*.a
+greens_functions/
+tablegen/make_cjy_table
+tablegen/make_sjy_table
+tests/GreensFunction*_test

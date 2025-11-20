@@ -1,5 +1,5 @@
 # greens functions
 
-[![Build Status](https://travis-ci.org/ecell/greens_functions.svg?branch=master)](https://travis-ci.org/ecell/greens_functions)
+[![CI](https://github.com/ecell/greens_functions/workflows/CI/badge.svg)](https://github.com/ecell/greens_functions/actions)
 
 for eGFRD simulation.
