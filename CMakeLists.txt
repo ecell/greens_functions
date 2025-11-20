@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.6)
-
 # XXX remove `cmake_policy set old` later
 cmake_policy(SET CMP0048 OLD)
 project(greens_functions)
