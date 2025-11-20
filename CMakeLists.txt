@@ -1,5 +1,3 @@
-# XXX remove `cmake_policy set old` later
-cmake_policy(SET CMP0048 OLD)
 project(greens_functions)
 
 set (CPP_FILES
